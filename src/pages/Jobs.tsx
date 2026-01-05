@@ -138,12 +138,12 @@ const Jobs = () => {
                 {/* Category Filter */}
                 <div className="mb-6">
                   <label className="text-sm font-medium text-foreground mb-3 block">Category</label>
-                  <Select value={category || ''} onValueChange={(value) => updateFilter('category', value)}>
+                  <Select value={category || 'all'} onValueChange={(value) => updateFilter('category', value === 'all' ? '' : value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Categories</SelectItem>
+                      <SelectItem value="all">All Categories</SelectItem>
                       {JOB_CATEGORIES.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                           {cat.icon} {cat.label}
@@ -156,12 +156,12 @@ const Jobs = () => {
                 {/* Job Type Filter */}
                 <div className="mb-6">
                   <label className="text-sm font-medium text-foreground mb-3 block">Job Type</label>
-                  <Select value={type} onValueChange={(value) => updateFilter('type', value)}>
+                  <Select value={type || 'all'} onValueChange={(value) => updateFilter('type', value === 'all' ? '' : value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
                       <SelectItem value="Full-time">Full-time</SelectItem>
                       <SelectItem value="Part-time">Part-time</SelectItem>
                       <SelectItem value="Contract">Contract</SelectItem>
