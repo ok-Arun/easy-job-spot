@@ -1,23 +1,25 @@
 package com.easyjobspot.backend.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", indexes = {
-        @Index(name = "idx_user_email", columnList = "email")
-})
-@Data
+@Table(
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email")
+        }
+)
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,31 +38,31 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    /**
+     * Security role (authorization)
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Application> applications = new ArrayList<>();
-
+    /**
+     * Business type (job seeker / job provider)
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private UserType userType;
 
-
-    public enum UserType {
-        JOB_SEEKER,
-        JOB_PROVIDER
-    }
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public enum Role {
         USER,
         ADMIN
     }
 
+    public enum UserType {
+        JOB_SEEKER,
+        JOB_PROVIDER
+    }
 }

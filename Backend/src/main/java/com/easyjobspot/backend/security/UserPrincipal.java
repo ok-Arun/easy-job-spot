@@ -1,38 +1,52 @@
 package com.easyjobspot.backend.security;
 
 import com.easyjobspot.backend.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-@Data
-@AllArgsConstructor
 public class UserPrincipal implements UserDetails {
 
-    private UUID id;
-    private String name;
-    private String email;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private final UUID id;
+    private final String email;
+    private final String password;
+    private final User.Role role;
+
+    public UserPrincipal(UUID id, String email, String password, User.Role role) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public static UserPrincipal create(User user) {
-        Collection<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-        );
-
         return new UserPrincipal(
                 user.getId(),
-                user.getName(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                user.getRole()
         );
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // ✅ CRITICAL FIX
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_" + role.name())
+        );
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

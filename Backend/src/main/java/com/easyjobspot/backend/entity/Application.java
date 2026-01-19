@@ -3,25 +3,26 @@ package com.easyjobspot.backend.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "applications",
+@Table(
+        name = "applications",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_job", columnNames = {"user_id", "job_id"})
-        },
-        indexes = {
-                @Index(name = "idx_application_user", columnList = "user_id"),
-                @Index(name = "idx_application_job", columnList = "job_id"),
-                @Index(name = "idx_application_status", columnList = "status")
+                @UniqueConstraint(
+                        name = "uk_user_job",
+                        columnNames = {"user_id", "job_id"}
+                )
         }
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -45,10 +46,11 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    @Builder.Default
-    private Status status = Status.APPLIED;
+    private Status status;
 
     public enum Status {
-        APPLIED, REVIEWED, REJECTED
+        APPLIED,
+        REVIEWED,
+        REJECTED
     }
 }
