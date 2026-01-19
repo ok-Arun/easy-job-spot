@@ -1,0 +1,12 @@
+# Backend
+Backend/target/
+Backend/.idea/
+Backend/*.iml
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+
+# Common
+.env
