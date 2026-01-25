@@ -21,6 +21,7 @@ public class JobController {
     private final JobService jobService;
 
     // ================= GET ALL JOBS =================
+    // PUBLIC — ACTIVE JOBS ONLY
     @GetMapping
     public ResponseEntity<ApiResponse<Page<JobDTO>>> getAllJobs(
             @RequestParam(defaultValue = "0") int page,
@@ -38,6 +39,7 @@ public class JobController {
     }
 
     // ================= GET JOB BY ID =================
+    // PUBLIC — ACTIVE ONLY
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<JobDTO>> getJobById(@PathVariable UUID id) {
 
@@ -49,6 +51,7 @@ public class JobController {
     }
 
     // ================= CREATE JOB =================
+    // PROVIDER / ADMIN
     @PostMapping
     public ResponseEntity<ApiResponse<JobDTO>> createJob(
             @Valid @RequestBody JobCreateRequest request
@@ -57,7 +60,10 @@ public class JobController {
         JobDTO job = jobService.createJob(request);
 
         return ResponseEntity.ok(
-                ApiResponse.success("Job created successfully", job)
+                ApiResponse.success(
+                        "Job submitted successfully and is pending admin approval",
+                        job
+                )
         );
     }
 

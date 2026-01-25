@@ -6,6 +6,7 @@ import com.easyjobspot.backend.dto.response.JobDTO;
 import com.easyjobspot.backend.entity.Job;
 import com.easyjobspot.backend.entity.Job.JobStatus;
 import com.easyjobspot.backend.entity.User;
+import com.easyjobspot.backend.enums.AuditAction;
 import com.easyjobspot.backend.exception.BadRequestException;
 import com.easyjobspot.backend.exception.ResourceNotFoundException;
 import com.easyjobspot.backend.mapper.JobMapper;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,6 +34,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobMapper jobMapper;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
     // ====================================================
     // PUBLIC JOB LISTING — ACTIVE ONLY
@@ -120,11 +123,6 @@ public class JobService {
             throw new BadRequestException("This job is already posted by you.");
         }
 
-        JobStatus status =
-                user.getRole().name().equals("ADMIN")
-                        ? JobStatus.ACTIVE
-                        : JobStatus.PENDING_APPROVAL;
-
         Job job = Job.builder()
                 .title(request.getTitle().trim())
                 .company(request.getCompany().trim())
@@ -132,9 +130,8 @@ public class JobService {
                 .location(request.getLocation().trim())
                 .jobType(jobType)
                 .description(request.getDescription())
+                .deadline(request.getDeadline())
                 .createdBy(user.getId())
-                .createdAt(LocalDateTime.now())
-                .status(status)
                 .build();
 
         return jobMapper.toDTO(jobRepository.save(job));
@@ -161,7 +158,7 @@ public class JobService {
     }
 
     // ====================================================
-    // ADMIN — APPROVE
+    // ADMIN — APPROVE JOB
     // ====================================================
     @Transactional
     public void approveJob(UUID jobId) {
@@ -178,15 +175,25 @@ public class JobService {
                 );
 
         job.approve();
-
         jobRepository.save(job);
+
+        auditLogService.log(
+                admin.getId(),
+                AuditAction.JOB_APPROVED,
+                job.getId(),
+                "Job approved by admin"
+        );
     }
 
     // ====================================================
-    // ADMIN — REJECT
+    // ADMIN — REJECT JOB
     // ====================================================
     @Transactional
-    public void rejectJob(UUID jobId) {
+    public void rejectJob(UUID jobId, String reason) {
+
+        if (reason == null || reason.trim().isEmpty()) {
+            throw new BadRequestException("Rejection reason is required");
+        }
 
         User admin = getCurrentUser();
 
@@ -199,9 +206,62 @@ public class JobService {
                         new ResourceNotFoundException("Job not found")
                 );
 
-        job.reject();
-
+        job.reject(reason.trim());
         jobRepository.save(job);
+
+        auditLogService.log(
+                admin.getId(),
+                AuditAction.JOB_REJECTED,
+                job.getId(),
+                reason.trim()
+        );
+    }
+
+    // ====================================================
+    // ADMIN — CLOSE JOB
+    // ====================================================
+    @Transactional
+    public void closeJob(UUID jobId) {
+
+        User admin = getCurrentUser();
+
+        if (!admin.getRole().name().equals("ADMIN")) {
+            throw new AccessDeniedException("Only admin allowed");
+        }
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Job not found")
+                );
+
+        job.close();
+        jobRepository.save(job);
+
+        auditLogService.log(
+                admin.getId(),
+                AuditAction.JOB_CLOSED,
+                job.getId(),
+                "Job closed by admin"
+        );
+    }
+
+    // ====================================================
+    // SCHEDULER — AUTO EXPIRE JOBS
+    // ====================================================
+    @Transactional
+    public void expireJobs() {
+
+        List<Job> jobs =
+                jobRepository.findByStatusAndDeadlineBefore(
+                        JobStatus.ACTIVE,
+                        LocalDateTime.now()
+                );
+
+        for (Job job : jobs) {
+            job.expire();
+        }
+
+        jobRepository.saveAll(jobs);
     }
 
     // ====================================================

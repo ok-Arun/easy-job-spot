@@ -43,6 +43,10 @@ public class Job {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    /**
+     * Job application deadline
+     * Used by scheduler to expire job automatically
+     */
     private LocalDateTime deadline;
 
     /**
@@ -57,6 +61,21 @@ public class Job {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private JobStatus status;
+
+    /**
+     * Admin rejection reason (only when REJECTED)
+     */
+    @Column(length = 1000)
+    private String rejectionReason;
+
+    // ====================================================
+    // LIFECYCLE
+    // ====================================================
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.status = JobStatus.PENDING_APPROVAL;
+    }
 
     // ====================================================
     // SAFE UPDATE (NO STATUS CHANGE)
@@ -86,13 +105,15 @@ public class Job {
             throw new IllegalStateException("Only pending jobs can be approved");
         }
         this.status = JobStatus.ACTIVE;
+        this.rejectionReason = null;
     }
 
-    public void reject() {
+    public void reject(String reason) {
         if (this.status != JobStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Only pending jobs can be rejected");
         }
         this.status = JobStatus.REJECTED;
+        this.rejectionReason = reason;
     }
 
     public void close() {

@@ -19,22 +19,34 @@ public class ApplicationController {
         this.applicationService = applicationService;
     }
 
+    // ====================================================
+    // APPLY TO JOB — JOB SEEKER ONLY
+    // ====================================================
     @PostMapping("/{jobId}")
     public ResponseEntity<ApiResponse<ApplicationResponse>> applyToJob(
             @PathVariable UUID jobId
     ) {
+
         ApplicationResponse response = applicationService.applyToJob(jobId);
+
         return ResponseEntity.ok(
                 ApiResponse.success("Job applied successfully", response)
         );
     }
 
+    // ====================================================
+    // VIEW MY APPLICATIONS — JOB SEEKER ONLY
+    // ====================================================
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<List<ApplicationResponse>>> getMyApplications() {
+
+        List<ApplicationResponse> applications =
+                applicationService.getMyApplications();
+
         return ResponseEntity.ok(
                 ApiResponse.success(
                         "Applications fetched successfully",
-                        applicationService.getMyApplications()
+                        applications
                 )
         );
     }

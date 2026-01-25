@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -44,11 +46,19 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     );
 
     // ====================================================
-    // ADMIN — PENDING JOBS
+    // ADMIN — JOB MODERATION
     // ====================================================
     Page<Job> findByStatusOrderByCreatedAtDesc(
             JobStatus status,
             Pageable pageable
+    );
+
+    // ====================================================
+    // SCHEDULER — AUTO EXPIRY
+    // ====================================================
+    List<Job> findByStatusAndDeadlineBefore(
+            JobStatus status,
+            LocalDateTime deadline
     );
 
     // ====================================================

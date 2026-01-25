@@ -1,6 +1,9 @@
 package com.easyjobspot.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 
 public class JobCreateRequest {
 
@@ -21,6 +24,13 @@ public class JobCreateRequest {
 
     @NotBlank(message = "Job description is required")
     private String description;
+
+    /**
+     * Job application deadline
+     * Used for automatic expiry
+     */
+    @NotNull(message = "Job deadline is required")
+    private LocalDateTime deadline;
 
     public JobCreateRequest() {
     }
@@ -47,5 +57,9 @@ public class JobCreateRequest {
 
     public String getDescription() {
         return description;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 }

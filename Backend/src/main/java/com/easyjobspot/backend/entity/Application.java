@@ -20,22 +20,63 @@ public class Application {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "job_id")
+    @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private ApplicationStatus status;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
+    private String rejectionReason;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime appliedAt;
 
-    public Application() {
+    // ====================================================
+    // LIFECYCLE
+    // ====================================================
+    @PrePersist
+    public void prePersist() {
+        this.appliedAt = LocalDateTime.now();
+        this.status = ApplicationStatus.APPLIED;
     }
+
+    // ====================================================
+    // DOMAIN TRANSITIONS
+    // ====================================================
+
+    public void shortlist() {
+        if (this.status != ApplicationStatus.APPLIED) {
+            throw new IllegalStateException("Only applied applications can be shortlisted");
+        }
+        this.status = ApplicationStatus.SHORTLISTED;
+        this.rejectionReason = null;
+    }
+
+    public void hire() {
+        if (this.status != ApplicationStatus.SHORTLISTED) {
+            throw new IllegalStateException("Only shortlisted applications can be hired");
+        }
+        this.status = ApplicationStatus.HIRED;
+        this.rejectionReason = null;
+    }
+
+    public void reject(String reason) {
+        if (this.status == ApplicationStatus.HIRED) {
+            throw new IllegalStateException("Hired candidate cannot be rejected");
+        }
+        this.status = ApplicationStatus.REJECTED;
+        this.rejectionReason = reason;
+    }
+
+    // ====================================================
+    // GETTERS
+    // ====================================================
 
     public UUID getId() {
         return id;
@@ -53,9 +94,17 @@ public class Application {
         return status;
     }
 
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
     public LocalDateTime getAppliedAt() {
         return appliedAt;
     }
+
+    // ====================================================
+    // SETTERS (RESTRICTED)
+    // ====================================================
 
     public void setUser(User user) {
         this.user = user;
@@ -63,13 +112,5 @@ public class Application {
 
     public void setJob(Job job) {
         this.job = job;
-    }
-
-    public void setStatus(ApplicationStatus status) {
-        this.status = status;
-    }
-
-    public void setAppliedAt(LocalDateTime appliedAt) {
-        this.appliedAt = appliedAt;
     }
 }
