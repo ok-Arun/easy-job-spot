@@ -1,13 +1,16 @@
 package com.easyjobspot.backend.mapper;
 
-import com.easyjobspot.backend.dto.JobDTO;
-import com.easyjobspot.backend.dto.JobRequest;
+import com.easyjobspot.backend.dto.request.JobCreateRequest;
+import com.easyjobspot.backend.dto.request.JobUpdateRequest;
+import com.easyjobspot.backend.dto.response.JobDTO;
 import com.easyjobspot.backend.entity.Job;
+import com.easyjobspot.backend.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JobMapper {
 
+    // ENTITY → DTO
     public JobDTO toDTO(Job job) {
         if (job == null) {
             return null;
@@ -19,13 +22,14 @@ public class JobMapper {
                 .company(job.getCompany())
                 .category(job.getCategory())
                 .location(job.getLocation())
-                .jobType(job.getJobType())
+                .jobType(job.getJobType().name())
                 .description(job.getDescription())
                 .createdAt(job.getCreatedAt())
                 .build();
     }
 
-    public Job toEntity(JobRequest request) {
+    // CREATE REQUEST → ENTITY
+    public Job toEntity(JobCreateRequest request) {
         if (request == null) {
             return null;
         }
@@ -35,21 +39,35 @@ public class JobMapper {
                 .company(request.getCompany())
                 .category(request.getCategory())
                 .location(request.getLocation())
-                .jobType(request.getJobType())
+                .jobType(parseJobType(request.getJobType()))
                 .description(request.getDescription())
                 .build();
     }
 
-    public void updateEntity(JobRequest request, Job job) {
+    // UPDATE REQUEST → ENTITY
+    public void updateEntity(JobUpdateRequest request, Job job) {
         if (request == null || job == null) {
             return;
         }
 
-        job.setTitle(request.getTitle());
-        job.setCompany(request.getCompany());
-        job.setCategory(request.getCategory());
-        job.setLocation(request.getLocation());
-        job.setJobType(request.getJobType());
-        job.setDescription(request.getDescription());
+        job.update(
+                request.getTitle(),
+                request.getCompany(),
+                request.getCategory(),
+                request.getLocation(),
+                parseJobType(request.getJobType()),
+                request.getDescription()
+        );
+    }
+
+    // 🔒 SAFE ENUM PARSER
+    private Job.JobType parseJobType(String value) {
+        try {
+            return Job.JobType.valueOf(value.trim().toUpperCase());
+        } catch (Exception ex) {
+            throw new BadRequestException(
+                    "Invalid jobType. Allowed values: FULL_TIME, PART_TIME, INTERNSHIP, CONTRACT"
+            );
+        }
     }
 }

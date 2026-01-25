@@ -1,12 +1,7 @@
 package com.easyjobspot.backend.entity;
 
+import com.easyjobspot.backend.enums.ApplicationStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,42 +10,66 @@ import java.util.UUID;
 @Table(
         name = "applications",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_user_job",
-                        columnNames = {"user_id", "job_id"}
-                )
+                @UniqueConstraint(columnNames = {"user_id", "job_id"})
         }
 )
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Application {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "job_id", nullable = false)
+    @JoinColumn(name = "job_id")
     private Job job;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ApplicationStatus status;
+
+    @Column(nullable = false)
     private LocalDateTime appliedAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Status status;
+    public Application() {
+    }
 
-    public enum Status {
-        APPLIED,
-        REVIEWED,
-        REJECTED
+    public UUID getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.status = status;
+    }
+
+    public void setAppliedAt(LocalDateTime appliedAt) {
+        this.appliedAt = appliedAt;
     }
 }

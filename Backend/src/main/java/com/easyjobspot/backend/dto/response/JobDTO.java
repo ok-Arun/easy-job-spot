@@ -1,19 +1,16 @@
-package com.easyjobspot.backend.dto;
+package com.easyjobspot.backend.dto.response;
 
-import lombok.AllArgsConstructor;
+import com.easyjobspot.backend.entity.Job;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// Job Response DTO
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Builder
 public class JobDTO {
+
     private UUID id;
     private String title;
     private String company;

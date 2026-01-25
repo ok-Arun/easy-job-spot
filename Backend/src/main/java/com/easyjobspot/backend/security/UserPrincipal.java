@@ -11,47 +11,42 @@ import java.util.UUID;
 
 public class UserPrincipal implements UserDetails {
 
-    private final UUID id;
-    private final String email;
-    private final String password;
-    private final User.Role role;
+    private final User user;
 
-    public UserPrincipal(UUID id, String email, String password, User.Role role) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.role = role;
+    private UserPrincipal(User user) {
+        this.user = user;
     }
 
+    // Factory method (your code already expects this)
     public static UserPrincipal create(User user) {
-        return new UserPrincipal(
-                user.getId(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getRole()
-        );
+        return new UserPrincipal(user);
     }
 
+    // Needed everywhere in controllers/services
     public UUID getId() {
-        return id;
+        return user.getId();
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // ✅ CRITICAL FIX
+        // IMPORTANT: ROLE_ prefix
         return List.of(
-                new SimpleGrantedAuthority("ROLE_" + role.name())
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
         );
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return user.getEmail();
     }
 
     @Override

@@ -1,26 +1,35 @@
 package com.easyjobspot.backend.mapper;
 
-import com.easyjobspot.backend.dto.ApplicationDTO;
+import com.easyjobspot.backend.dto.response.AdminApplicationResponse;
+import com.easyjobspot.backend.dto.response.ApplicationResponse;
 import com.easyjobspot.backend.entity.Application;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class ApplicationMapper {
 
-    private final JobMapper jobMapper;
+    public static ApplicationResponse toResponse(Application application) {
 
-    public ApplicationDTO toDTO(Application application) {
-        if (application == null) {
-            return null;
-        }
+        ApplicationResponse response = new ApplicationResponse();
 
-        return ApplicationDTO.builder()
-                .id(application.getId())
-                .job(jobMapper.toDTO(application.getJob()))
+        response.setId(application.getId());
+        response.setStatus(application.getStatus()); // ✅ enum, not String
+        response.setAppliedAt(application.getAppliedAt());
+        response.setJobId(application.getJob().getId());
+        response.setJobTitle(application.getJob().getTitle());
+        response.setCompany(application.getJob().getCompany());
+        response.setLocation(application.getJob().getLocation());
+        response.setCategory(application.getJob().getCategory());
+
+        return response;
+    }
+
+    // ================= ADMIN VIEW =================
+    public static AdminApplicationResponse toAdminResponse(Application application) {
+
+        return AdminApplicationResponse.builder()
+                .applicantName(application.getUser().getName())
+                .applicantEmail(application.getUser().getEmail())
                 .appliedAt(application.getAppliedAt())
-                .status(application.getStatus())
+                .status(application.getStatus().name())
                 .build();
     }
 }

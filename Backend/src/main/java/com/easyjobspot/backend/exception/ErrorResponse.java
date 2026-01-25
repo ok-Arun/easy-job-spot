@@ -1,24 +1,21 @@
-package com.easyjobspot.backend.dto;
+package com.easyjobspot.backend.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
+
     private LocalDateTime timestamp;
     private int status;
     private String error;
     private String message;
     private String path;
+
+    // only present for validation errors
     private Map<String, String> validationErrors;
 }

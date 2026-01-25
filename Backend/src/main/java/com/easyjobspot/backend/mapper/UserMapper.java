@@ -1,6 +1,6 @@
 package com.easyjobspot.backend.mapper;
 
-import com.easyjobspot.backend.dto.UserDTO;
+import com.easyjobspot.backend.dto.response.UserDTO;
 import com.easyjobspot.backend.entity.User;
 import org.springframework.stereotype.Component;
 

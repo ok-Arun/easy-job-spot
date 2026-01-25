@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +12,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "jobs")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,15 +33,97 @@ public class Job {
     @Column(nullable = false, length = 200)
     private String location;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String jobType;
+    private JobType jobType;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime deadline;
+
+    /**
+     * UUID of job creator (JOB_PROVIDER or ADMIN)
+     */
+    @Column(nullable = false, updatable = false)
+    private UUID createdBy;
+
+    /**
+     * Job moderation status
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private JobStatus status;
+
+    // ====================================================
+    // SAFE UPDATE (NO STATUS CHANGE)
+    // ====================================================
+    public void update(
+            String title,
+            String company,
+            String category,
+            String location,
+            JobType jobType,
+            String description
+    ) {
+        this.title = title;
+        this.company = company;
+        this.category = category;
+        this.location = location;
+        this.jobType = jobType;
+        this.description = description;
+    }
+
+    // ====================================================
+    // DOMAIN STATE TRANSITIONS
+    // ====================================================
+
+    public void approve() {
+        if (this.status != JobStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException("Only pending jobs can be approved");
+        }
+        this.status = JobStatus.ACTIVE;
+    }
+
+    public void reject() {
+        if (this.status != JobStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException("Only pending jobs can be rejected");
+        }
+        this.status = JobStatus.REJECTED;
+    }
+
+    public void close() {
+        if (this.status != JobStatus.ACTIVE) {
+            throw new IllegalStateException("Only active jobs can be closed");
+        }
+        this.status = JobStatus.CLOSED;
+    }
+
+    public void expire() {
+        if (this.status != JobStatus.ACTIVE) {
+            throw new IllegalStateException("Only active jobs can be expired");
+        }
+        this.status = JobStatus.EXPIRED;
+    }
+
+    // ====================================================
+    // ENUMS
+    // ====================================================
+    public enum JobType {
+        FULL_TIME,
+        PART_TIME,
+        INTERNSHIP,
+        CONTRACT
+    }
+
+    public enum JobStatus {
+        PENDING_APPROVAL,
+        ACTIVE,
+        REJECTED,
+        CLOSED,
+        EXPIRED
+    }
 }
