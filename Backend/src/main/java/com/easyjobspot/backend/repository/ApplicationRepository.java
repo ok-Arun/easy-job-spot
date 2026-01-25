@@ -7,6 +7,7 @@ import com.easyjobspot.backend.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,13 +45,10 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Optional<Application> findById(UUID id);
 
     // ====================================================
-    // DASHBOARD — GLOBAL COUNTS
+    // DASHBOARD — PHASE 10
     // ====================================================
     long countByStatus(ApplicationStatus status);
 
-    // ====================================================
-    // DASHBOARD — PER JOB APPLICATION COUNTS
-    // ====================================================
     @Query("""
         SELECT a.job.id, a.job.title, COUNT(a)
         FROM Application a
@@ -58,8 +56,23 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     """)
     List<Object[]> countApplicationsPerJob();
 
-    // ====================================================
-    // EXISTING / FUTURE USE
-    // ====================================================
     long countByJobIdAndStatus(UUID jobId, ApplicationStatus status);
+
+    // ====================================================
+    // DASHBOARD — PHASE 11 (TIME-BASED)
+    // ====================================================
+
+    /**
+     * Applications received after a given date
+     */
+    long countByAppliedAtAfter(LocalDateTime date);
+
+    /**
+     * Applications by status after a given date
+     * Used for hiring funnel analytics
+     */
+    long countByStatusAndAppliedAtAfter(
+            ApplicationStatus status,
+            LocalDateTime date
+    );
 }

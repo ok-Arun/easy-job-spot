@@ -72,7 +72,24 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     );
 
     // ====================================================
-    // DASHBOARD — AGGREGATES
+    // DASHBOARD — PHASE 10
     // ====================================================
     long countByStatus(Job.JobStatus status);
+
+    // ====================================================
+    // DASHBOARD — PHASE 11 (TIME-BASED)
+    // ====================================================
+
+    /**
+     * Jobs created after a given date (trend analysis)
+     */
+    long countByCreatedAtAfter(LocalDateTime date);
+
+    /**
+     * Jobs approved (ACTIVE) after a given date
+     */
+    long countByStatusAndCreatedAtAfter(
+            Job.JobStatus status,
+            LocalDateTime date
+    );
 }
