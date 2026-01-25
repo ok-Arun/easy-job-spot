@@ -44,7 +44,22 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Optional<Application> findById(UUID id);
 
     // ====================================================
-    // OPTIONAL (FOR DASHBOARD / FUTURE)
+    // DASHBOARD — GLOBAL COUNTS
+    // ====================================================
+    long countByStatus(ApplicationStatus status);
+
+    // ====================================================
+    // DASHBOARD — PER JOB APPLICATION COUNTS
+    // ====================================================
+    @Query("""
+        SELECT a.job.id, a.job.title, COUNT(a)
+        FROM Application a
+        GROUP BY a.job.id, a.job.title
+    """)
+    List<Object[]> countApplicationsPerJob();
+
+    // ====================================================
+    // EXISTING / FUTURE USE
     // ====================================================
     long countByJobIdAndStatus(UUID jobId, ApplicationStatus status);
 }
