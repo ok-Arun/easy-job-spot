@@ -1,8 +1,8 @@
 package com.easyjobspot.backend.security;
 
+import com.easyjobspot.backend.config.JwtProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -12,32 +12,42 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final JwtProperties jwtProperties;
+    private final SecretKey secretKey;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
+    public JwtTokenProvider(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
 
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        if (jwtProperties.getSecret() == null || jwtProperties.getSecret().isBlank()) {
+            throw new IllegalStateException("JWT secret is missing in application.yml");
+        }
+
+        if (jwtProperties.getSecret().length() < 32) {
+            throw new IllegalStateException("JWT secret must be at least 32 characters");
+        }
+
+        this.secretKey = Keys.hmacShaKeyFor(
+                jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8)
+        );
     }
 
     public String generateToken(String email, String role) {
+
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpiration);
+        Date expiry = new Date(now.getTime() + jwtProperties.getExpiration());
 
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
                 .issuedAt(now)
                 .expiration(expiry)
-                .signWith(getSigningKey())
+                .signWith(secretKey)
                 .compact();
     }
 
     public String getEmailFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -47,11 +57,11 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(getSigningKey())
+                    .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             return false;
         }
     }

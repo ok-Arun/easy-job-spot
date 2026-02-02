@@ -1,6 +1,7 @@
 package com.easyjobspot.backend.security;
 
-import com.easyjobspot.backend.entity.User;
+
+import com.easyjobspot.backend.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

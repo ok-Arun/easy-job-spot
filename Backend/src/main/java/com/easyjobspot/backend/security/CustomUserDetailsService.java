@@ -1,7 +1,8 @@
 package com.easyjobspot.backend.security;
 
-import com.easyjobspot.backend.entity.User;
-import com.easyjobspot.backend.repository.UserRepository;
+
+import com.easyjobspot.backend.user.entity.User;
+import com.easyjobspot.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

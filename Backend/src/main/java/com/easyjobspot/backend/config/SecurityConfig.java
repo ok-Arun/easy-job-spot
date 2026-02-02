@@ -1,5 +1,6 @@
 package com.easyjobspot.backend.config;
 
+import com.easyjobspot.backend.security.JwtAuthenticationEntryPoint;
 import com.easyjobspot.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,39 +16,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
 @RequiredArgsConstructor
+@Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // Disable CSRF (JWT based API)
                 .csrf(csrf -> csrf.disable())
-
-                // Stateless session
+                .cors(cors -> {})
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // Authorization rules (authentication only)
                 .authorizeHttpRequests(auth -> auth
-
-                        // Public auth APIs
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        // Public job browsing APIs
                         .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
-
-                        // All other endpoints require JWT
                         .anyRequest().authenticated()
                 )
-
-                // JWT filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
@@ -56,15 +49,17 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config
-    ) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
+    // ✅ Password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    // ✅ REQUIRED in Spring Security 6+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
