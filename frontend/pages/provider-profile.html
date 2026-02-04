@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provider Profile</title>
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Company Profile</h2>
+
+    <form id="providerForm">
+        <input type="text" id="companyName" placeholder="Company Name *" required>
+        <input type="email" id="companyEmail" placeholder="Company Email *" required>
+        <input type="text" id="companyPhone" placeholder="Company Phone *" required>
+        <input type="text" id="address" placeholder="Company Address *" required>
+
+        <textarea id="description" placeholder="Company Description *" required></textarea>
+
+        <input type="url" id="website" placeholder="Company Website (optional)">
+
+        <button type="submit">Save Profile</button>
+    </form>
+
+    <p id="message"></p>
+</div>
+
+<script src="provider-profile.js"></script>
+</body>
+</html>

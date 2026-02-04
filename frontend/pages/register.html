@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | EasyJobSpot</title>
+
+    <link rel="stylesheet" href="../css/auth.css">
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+</head>
+<body class="jobseeker-theme">
+
+<header class="auth-header">
+    <div class="brand" onclick="goHome()">EasyJobSpot</div>
+    <div class="header-actions">
+        <a href="../index.html">Home</a>
+    </div>
+</header>
+
+<div class="auth-container">
+    <h2>Create Account</h2>
+    <p class="subtitle">Choose how you want to join EasyJobSpot</p>
+
+    <div class="role-selector">
+        <div class="role-card active" id="jobSeekerCard"
+             onclick="selectRole('JOB_SEEKER')">
+            <i class="fa-solid fa-user"></i>
+            <h4>Job Seeker</h4>
+            <p>Find and apply for jobs</p>
+        </div>
+
+        <div class="role-card" id="providerCard"
+             onclick="selectRole('JOB_PROVIDER')">
+            <i class="fa-solid fa-building"></i>
+            <h4>Job Provider</h4>
+            <p>Post jobs & hire talent</p>
+        </div>
+    </div>
+
+    <div class="form-box">
+        <div id="messageBox" class="message hidden"></div>
+
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="email" id="email" placeholder="Email Address">
+
+        <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Password">
+            <span class="toggle-password" onclick="togglePassword()">
+                <i id="eyeIcon" class="fa-solid fa-eye"></i>
+            </span>
+        </div>
+
+        <input type="hidden" id="userType" value="JOB_SEEKER">
+
+        <button class="primary-btn" onclick="register()">Create Account</button>
+
+        <p class="switch">
+            Already have an account?
+            <a href="./login.html">Login</a>
+        </p>
+    </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/register-ui.js"></script>
+<script src="../js/register.js"></script>
+
+<script>
+function goHome() {
+    window.location.href = "index.html";
+}
+</script>
+</body>
+</html>

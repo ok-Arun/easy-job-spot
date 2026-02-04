@@ -1,0 +1,12 @@
+# IntelliJ / IDE
+.idea/
+*.iml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.idea/
+
+# OS
+.DS_Store
+Thumbs.db
