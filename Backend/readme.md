@@ -1,10 +1,3 @@
-Understood.
-**Plain English. Plain text. One complete README. No markdown. No breaks. No explanations.**
-
-Here it is.
-
----
-
 EasyJobSpot – Spring Boot Backend
 
 EasyJobSpot is a role-based job portal backend built using Spring Boot.
@@ -243,17 +236,3 @@ RUNNING THE BACKEND
 mvn clean install
 mvn spring-boot:run
 
----
-
-WHY THIS BACKEND IS INTERVIEW-STRONG
-
-Real role-based access control
-Ownership validation at service level
-JWT with custom filters
-Admin-controlled approval workflows
-Clean separation of responsibilities
-Production-style backend design
-
----
-
-If you want **one last pass only for wording polish** or **remove even more explanation**, say exactly that and I’ll do only that.
