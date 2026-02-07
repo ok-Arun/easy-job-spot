@@ -214,6 +214,43 @@ public Job getOwnedJob(UUID jobId) {
 
 ---
 
+### 🔹 Application Moderation (Hiring Decisions)
+
+**APIs**
+
+* <code>GET /api/provider/jobs/{jobId}/applications</code>
+* <code>PUT /api/provider/applications/{applicationId}/shortlist</code>
+* <code>PUT /api/provider/applications/{applicationId}/reject</code>
+* <code>PUT /api/provider/applications/{applicationId}/hire</code>
+
+**Rules**
+
+* Applications are moderated **only by the job-owning provider**
+* Provider can:
+  * SHORTLIST
+  * REJECT
+  * HIRE
+* Job seekers cannot modify application status
+* Admin has read-only oversight (no hiring decisions)
+
+**Valid State Transitions**
+
+* APPLIED → SHORTLISTED
+* APPLIED → REJECTED
+* SHORTLISTED → REJECTED
+* SHORTLISTED → HIRED
+
+**Service Logic Reference**
+
+```java
+public void updateApplicationStatus(UUID applicationId, ApplicationStatus status) {
+    JobApplication application = getApplication(applicationId);
+    assertJobOwnership(application.getJobId());
+    validateTransition(application.getStatus(), status);
+    application.updateStatus(status);
+}
+```
+
 ---
 
 ## 🔴 ADMIN (System Authority)
@@ -257,6 +294,7 @@ public void approveJob(UUID jobId) {
 **Rules**
 
 * Unapproved providers are blocked system-wide
+* Admins can view applications but cannot shortlist, reject, or hire candidates
 
 ---
 
@@ -326,6 +364,11 @@ mvn spring-boot:run
 | PUT    | <span style="color:purple"><code>/api/provider/jobs/{id}/close</code></span>  |
 | PUT    | <span style="color:purple"><code>/api/provider/jobs/{id}/reopen</code></span> |
 | GET    | <span style="color:purple"><code>/api/provider/dashboard/stats</code></span>  |
+| GET    | <code>/api/provider/jobs/{jobId}/applications</code>                          |
+| PUT    | <code>/api/provider/applications/{applicationId}/shortlist</code>             |
+| PUT    | <code>/api/provider/applications/{applicationId}/reject</code>                |
+| PUT    | <code>/api/provider/applications/{applicationId}/hire</code>                  |
+
 
 ---
 
