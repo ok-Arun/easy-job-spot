@@ -8,6 +8,29 @@
         return;
     }
 
+// ===== FETCH WRAPPER WITH AUTO LOGOUT =====
+async function secureFetch(url, options = {}) {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(url, {
+        ...options,
+        headers: {
+            ...(options.headers || {}),
+            Authorization: "Bearer " + token
+        }
+    });
+
+    // token expired or invalid
+    if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/pages/login.html";
+        return;
+    }
+
+    return res;
+}
+
+
     // ===== INSERT LOGOUT BUTTON =====
     document.addEventListener("DOMContentLoaded", () => {
 

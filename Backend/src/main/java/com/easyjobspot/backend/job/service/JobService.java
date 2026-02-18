@@ -341,10 +341,10 @@ public class JobService {
     }
 
     // ====================================================
-    // PROVIDER — GET OWN JOBS
+    // PROVIDER — GET OWN JOBS (WITH APPLICATION COUNT)
     // ====================================================
     @Transactional(readOnly = true)
-    public Page<JobDTO> getJobsByCurrentProvider(
+    public Page<com.easyjobspot.backend.job.dto.response.ProviderJobListItemDTO> getJobsByCurrentProvider(
             int page,
             int size,
             String status
@@ -357,30 +357,53 @@ public class JobService {
             throw new AccessDeniedException("Only providers can access their jobs");
         }
 
-        Pageable pageable =
-                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Job.JobStatus jobStatus = null;
 
-        Page<Job> jobs;
-
-        if (status == null || status.isBlank()) {
-            jobs = jobRepository.findByCreatedBy(user.getId(), pageable);
-        } else {
-            Job.JobStatus jobStatus;
+        if (status != null && !status.isBlank()) {
             try {
                 jobStatus = Job.JobStatus.valueOf(status.toUpperCase());
             } catch (Exception e) {
                 throw new BadRequestException("Invalid job status");
             }
-
-            jobs = jobRepository.findByCreatedByAndStatus(
-                    user.getId(),
-                    jobStatus,
-                    pageable
-            );
         }
 
-        return jobs.map(jobMapper::toDTO);
+        // ⭐ fetch jobs with application count
+        List<Object[]> rows =
+                jobRepository.fetchProviderJobsWithApplicationCount(
+                        user.getId(),
+                        jobStatus
+                );
+
+        // ⭐ map to DTO
+        List<com.easyjobspot.backend.job.dto.response.ProviderJobListItemDTO> list =
+                rows.stream()
+                        .map(r -> new com.easyjobspot.backend.job.dto.response.ProviderJobListItemDTO(
+                                (UUID) r[0],
+                                (String) r[1],
+                                (String) r[2],
+                                (String) r[3],
+                                (String) r[4],
+                                (Job.JobType) r[5],
+                                (Job.JobStatus) r[6],
+                                (LocalDateTime) r[7],
+                                (Long) r[8]
+                        ))
+                        .toList();
+
+        // ⭐ manual pagination (since query returns List)
+        int start = Math.min(page * size, list.size());
+        int end = Math.min(start + size, list.size());
+
+        List<com.easyjobspot.backend.job.dto.response.ProviderJobListItemDTO> pageContent =
+                list.subList(start, end);
+
+        return new PageImpl<>(
+                pageContent,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")),
+                list.size()
+        );
     }
+
 
 
     // ====================================================

@@ -367,6 +367,52 @@ body {
     color: #155724;
 }
 
+/* ================= CTA ================= */
+
+.cta {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.cta h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.cta p {
+    opacity: 0.9;
+    margin-bottom: 25px;
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn-primary {
+    background: #f97316;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background: white;
+    color: #2563eb;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 768px) {

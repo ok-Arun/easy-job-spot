@@ -15,9 +15,7 @@ import java.util.UUID;
 @Repository
 public interface JobRepository extends JpaRepository<Job, UUID> {
 
-    // ====================================================
-    // PUBLIC — ONLY ACTIVE JOBS
-    // ====================================================
+    // ================= PUBLIC — ONLY ACTIVE JOBS =================
     Page<Job> findByStatus(Job.JobStatus status, Pageable pageable);
 
     Page<Job> findByStatusAndCategory(
@@ -26,9 +24,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // ====================================================
-    // SEARCH — ACTIVE JOBS ONLY
-    // ====================================================
+    // ================= SEARCH — ACTIVE JOBS ONLY =================
     @Query("""
         SELECT j FROM Job j
         WHERE j.status = :status
@@ -44,9 +40,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // ====================================================
-    // NEW — FILTER BY TITLE + LOCATION (ACTIVE ONLY)
-    // ====================================================
+    // ================= FILTER BY TITLE + LOCATION =================
     @Query("""
         SELECT j FROM Job j
         WHERE j.status = :status
@@ -60,25 +54,19 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // ====================================================
-    // ADMIN — JOB MODERATION
-    // ====================================================
+    // ================= ADMIN — MODERATION =================
     Page<Job> findByStatusOrderByCreatedAtDesc(
             Job.JobStatus status,
             Pageable pageable
     );
 
-    // ====================================================
-    // SCHEDULER — AUTO EXPIRY
-    // ====================================================
+    // ================= SCHEDULER — AUTO EXPIRY =================
     List<Job> findByStatusAndDeadlineBefore(
             Job.JobStatus status,
             LocalDateTime deadline
     );
 
-    // ====================================================
-    // DUPLICATE CHECK (SAME PROVIDER ONLY)
-    // ====================================================
+    // ================= DUPLICATE CHECK =================
     boolean existsByTitleIgnoreCaseAndCompanyIgnoreCaseAndLocationIgnoreCaseAndJobTypeAndCreatedBy(
             String title,
             String company,
@@ -87,15 +75,10 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             UUID createdBy
     );
 
-    // ====================================================
-    // DASHBOARD — PHASE 10 (GLOBAL)
-    // ====================================================
+    // ================= DASHBOARD — GLOBAL =================
     long countByStatus(Job.JobStatus status);
 
-    // ====================================================
-    // DASHBOARD — PHASE 11 (TIME-BASED)
-    // ====================================================
-
+    // ================= DASHBOARD — TIME BASED =================
     long countByCreatedAtAfter(LocalDateTime date);
 
     long countByStatusAndCreatedAtAfter(
@@ -103,10 +86,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             LocalDateTime date
     );
 
-    // ====================================================
-    // DASHBOARD — PHASE 12 (PROVIDER-SCOPED)
-    // ====================================================
-
+    // ================= DASHBOARD — PROVIDER =================
     long countByCreatedBy(UUID createdBy);
 
     long countByStatusAndCreatedBy(
@@ -114,18 +94,41 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             UUID createdBy
     );
 
-    // ====================================================
-    // PROVIDER — JOB LISTING (OWN JOBS)
-    // ====================================================
-
-    Page<Job> findByCreatedBy(
-            UUID createdBy,
-            Pageable pageable
-    );
+    // ================= PROVIDER — BASIC JOB LIST =================
+    Page<Job> findByCreatedBy(UUID createdBy, Pageable pageable);
 
     Page<Job> findByCreatedByAndStatus(
             UUID createdBy,
             Job.JobStatus status,
             Pageable pageable
+    );
+
+
+    // =========================================================
+    // ⭐ CRITICAL FIX — JOBS WITH APPLICATION COUNT
+    // =========================================================
+    @Query("""
+        SELECT
+            j.id,
+            j.title,
+            j.company,
+            j.category,
+            j.location,
+            j.jobType,
+            j.status,
+            j.createdAt,
+            COUNT(a.id)
+        FROM Job j
+        LEFT JOIN Application a ON a.job = j
+        WHERE j.createdBy = :providerId
+        AND (:status IS NULL OR j.status = :status)
+        GROUP BY
+            j.id, j.title, j.company, j.category,
+            j.location, j.jobType, j.status, j.createdAt
+        ORDER BY j.createdAt DESC
+    """)
+    List<Object[]> fetchProviderJobsWithApplicationCount(
+            @Param("providerId") UUID providerId,
+            @Param("status") Job.JobStatus status
     );
 }

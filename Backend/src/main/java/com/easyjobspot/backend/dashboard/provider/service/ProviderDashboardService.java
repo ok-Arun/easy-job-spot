@@ -25,20 +25,13 @@ public class ProviderDashboardService {
 
     public ProviderDashboardStatsResponse getDashboardStats() {
 
-        // ====================================================
-        // SAFE AUTH CONTEXT EXTRACTION
-        // ====================================================
-        Object principalObj = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+        // ================= AUTH CONTEXT =================
+        UserPrincipal principal = (UserPrincipal)
+                SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal();
 
-        if (!(principalObj instanceof UserPrincipal principal)) {
-            throw new AccessDeniedException("Invalid authentication context");
-        }
-
-        // ====================================================
-        // ROLE VALIDATION (DEFENSE-IN-DEPTH)
-        // ====================================================
+        // ================= ROLE VALIDATION =================
         if (principal.getUser().getUserType() != User.UserType.JOB_PROVIDER) {
             throw new AccessDeniedException(
                     "Only job providers can access dashboard statistics"
@@ -47,9 +40,7 @@ public class ProviderDashboardService {
 
         UUID providerId = principal.getId();
 
-        // ====================================================
-        // JOB STATISTICS
-        // ====================================================
+        // ================= JOB STATS =================
         long totalJobs = jobRepository.countByCreatedBy(providerId);
         long activeJobs = jobRepository.countByStatusAndCreatedBy(
                 Job.JobStatus.ACTIVE, providerId
@@ -57,36 +48,21 @@ public class ProviderDashboardService {
         long pendingJobs = jobRepository.countByStatusAndCreatedBy(
                 Job.JobStatus.PENDING_APPROVAL, providerId
         );
-        long closedJobs = jobRepository.countByStatusAndCreatedBy(
-                Job.JobStatus.CLOSED, providerId
-        );
-        long expiredJobs = jobRepository.countByStatusAndCreatedBy(
-                Job.JobStatus.EXPIRED, providerId
-        );
 
         ProviderDashboardStatsResponse.JobStats jobStats =
                 new ProviderDashboardStatsResponse.JobStats(
                         totalJobs,
                         activeJobs,
-                        pendingJobs,
-                        closedJobs,
-                        expiredJobs
+                        pendingJobs
                 );
 
-        // ====================================================
-        // APPLICATION STATISTICS
-        // ====================================================
+        // ================= APPLICATION STATS =================
         long totalApplications =
                 applicationRepository.countAllByProvider(providerId);
 
         long shortlisted =
                 applicationRepository.countByStatusAndProvider(
                         ApplicationStatus.SHORTLISTED, providerId
-                );
-
-        long rejected =
-                applicationRepository.countByStatusAndProvider(
-                        ApplicationStatus.REJECTED, providerId
                 );
 
         long hired =
@@ -98,31 +74,25 @@ public class ProviderDashboardService {
                 new ProviderDashboardStatsResponse.ApplicationStats(
                         totalApplications,
                         shortlisted,
-                        rejected,
                         hired
                 );
 
-        // ====================================================
-        // PER-JOB APPLICATION BREAKDOWN
-        // ====================================================
+        // ================= PER-JOB STATS =================
         List<ProviderJobStatsResponse> perJobStats =
                 applicationRepository.fetchPerJobApplicationStats(providerId)
                         .stream()
                         .map(row -> new ProviderJobStatsResponse(
                                 (UUID) row[0],
                                 (String) row[1],
-                                (Job.JobStatus) row[2],   // ✅ status
+                                (Job.JobStatus) row[2],
                                 (Long) row[3],
                                 (Long) row[4],
                                 (Long) row[5],
                                 (Long) row[6]
                         ))
-
                         .toList();
 
-        // ====================================================
-        // FINAL RESPONSE
-        // ====================================================
+        // ================= FINAL RESPONSE =================
         return new ProviderDashboardStatsResponse(
                 jobStats,
                 applicationStats,

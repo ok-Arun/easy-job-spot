@@ -4,6 +4,7 @@ import com.easyjobspot.backend.common.dto.ApiResponse;
 import com.easyjobspot.backend.job.dto.JobDTO;
 import com.easyjobspot.backend.job.dto.request.JobCreateRequest;
 import com.easyjobspot.backend.job.dto.request.JobUpdateRequest;
+import com.easyjobspot.backend.job.dto.response.ProviderJobListItemDTO;
 import com.easyjobspot.backend.job.service.JobService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,16 @@ public class ProviderJobController {
     private final JobService jobService;
 
     // ====================================================
-    // GET ALL JOBS BY CURRENT PROVIDER (ALL STATUSES)
+    // GET ALL JOBS BY CURRENT PROVIDER (WITH APPLICATION COUNT)
     // ====================================================
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<JobDTO>>> getMyJobs(
+    public ResponseEntity<ApiResponse<Page<ProviderJobListItemDTO>>> getMyJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String status
     ) {
 
-        Page<JobDTO> jobs =
+        Page<ProviderJobListItemDTO> jobs =
                 jobService.getJobsByCurrentProvider(page, size, status);
 
         return ResponseEntity.ok(

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadJobs();
 });
 
+
 // ================= FILTER =================
 function applyFilter(button, status) {
     document.querySelectorAll(".filter-btn")
@@ -15,6 +16,7 @@ function applyFilter(button, status) {
     button.classList.add("active");
     loadJobs(status);
 }
+
 
 // ================= LOAD JOBS =================
 async function loadJobs(status = "") {
@@ -31,9 +33,7 @@ async function loadJobs(status = "") {
             headers: { "Authorization": "Bearer " + getToken() }
         });
 
-        if (!res.ok) {
-            throw new Error("Failed to load jobs");
-        }
+        if (!res.ok) throw new Error("Failed to load jobs");
 
         const json = await res.json();
         const jobs = json.data?.content || [];
@@ -41,7 +41,7 @@ async function loadJobs(status = "") {
         state.classList.add("hidden");
         container.classList.remove("hidden");
 
-        if (!jobs || jobs.length === 0) {
+        if (!jobs.length) {
             container.innerHTML =
                 `<div class="empty-state-box">No jobs found.</div>`;
             return;
@@ -54,6 +54,7 @@ async function loadJobs(status = "") {
         showError(state, container, "Failed to load jobs.");
     }
 }
+
 
 // ================= CARD =================
 function renderJobCard(job) {
@@ -108,6 +109,7 @@ function renderJobCard(job) {
     `;
 }
 
+
 // ================= STATUS META =================
 function getStatusMeta(status) {
     switch (status) {
@@ -124,17 +126,30 @@ function getStatusMeta(status) {
     }
 }
 
-// ================= ACTIONS =================
+
+// ================= ACTIONS (MODAL BASED) =================
 async function closeJob(id) {
     if (!id) return;
-    if (!confirm("Close this job?")) return;
-    await jobAction(`${JOBS_URL}/${id}/close`);
+
+    openConfirmModal(
+        "Close Job",
+        "Are you sure you want to close this job?",
+        async () => {
+            await jobAction(`${JOBS_URL}/${id}/close`);
+        }
+    );
 }
 
 async function reopenJob(id) {
     if (!id) return;
-    if (!confirm("Reopen this job?")) return;
-    await jobAction(`${JOBS_URL}/${id}/reopen`);
+
+    openConfirmModal(
+        "Reopen Job",
+        "Are you sure you want to reopen this job?",
+        async () => {
+            await jobAction(`${JOBS_URL}/${id}/reopen`);
+        }
+    );
 }
 
 async function jobAction(url) {
@@ -145,24 +160,44 @@ async function jobAction(url) {
     loadJobs();
 }
 
+
+// ================= CONFIRM MODAL =================
+function openConfirmModal(title, message, onConfirm) {
+    const modal = document.getElementById("confirmModal");
+    const titleEl = document.getElementById("confirmTitle");
+    const msgEl = document.getElementById("confirmMessage");
+    const okBtn = document.getElementById("confirmOk");
+    const cancelBtn = document.getElementById("confirmCancel");
+
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+
+    modal.classList.remove("hidden");
+
+    const close = () => modal.classList.add("hidden");
+
+    cancelBtn.onclick = close;
+
+    okBtn.onclick = async () => {
+        okBtn.disabled = true;
+        await onConfirm();
+        okBtn.disabled = false;
+        close();
+    };
+}
+
+
 // ================= NAVIGATION =================
 function editJob(id) {
-    if (!id) {
-        alert("Invalid job ID");
-        return;
-    }
-    window.location.href =
-        `/pages/provider-post-job.html?jobId=${id}`;
+    if (!id) return alert("Invalid job ID");
+    window.location.href = `/pages/provider-post-job.html?jobId=${id}`;
 }
 
 function viewApplicants(id) {
-    if (!id) {
-        alert("Invalid job ID");
-        return;
-    }
-    window.location.href =
-        `/pages/provider-job-applications.html?jobId=${id}`;
+    if (!id) return alert("Invalid job ID");
+    window.location.href = `/pages/provider-job-applications.html?jobId=${id}`;
 }
+
 
 // ================= LOGOUT =================
 function setupLogout() {
@@ -174,6 +209,7 @@ function setupLogout() {
         window.location.href = "/pages/login.html";
     };
 }
+
 
 // ================= UI STATES =================
 function showLoading(state, container) {
@@ -187,11 +223,11 @@ function showLoading(state, container) {
 }
 
 function showError(state, container, message) {
-    state.innerHTML =
-        `<div class="error-box">${message}</div>`;
+    state.innerHTML = `<div class="error-box">${message}</div>`;
     state.classList.remove("hidden");
     container.classList.add("hidden");
 }
+
 
 // ================= HELPERS =================
 function formatDate(d) {
