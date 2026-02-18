@@ -40,8 +40,15 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 🔹 Railway health check endpoints
+                        .requestMatchers("/", "/health").permitAll()
+
+                        // 🔹 Public APIs
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()
+
+                        // 🔹 Everything else secured
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
