@@ -1,60 +1,58 @@
 # 🧠 EasyJobSpot — Spring Boot Backend
 
----
-
-## 1. Project Overview
-
-**EasyJobSpot Backend** is a role-driven job portal backend designed with **strict business rules**, **clear ownership boundaries**, and **audit-safe workflows**.
-
-This backend intentionally enforces centralized authority and prevents self-approval or role abuse.
-
-This backend enforces:
-
-* Approval-based job publishing
-* Role-isolated capabilities
-* Profile-gated actions
-* Admin-controlled ecosystem integrity
-
-Every API exists for a **business reason**, not convenience.
+Robust, role-governed backend for a real-world job marketplace.
+Designed around **strict authorization boundaries, approval workflows, and audit-safe business logic** — prioritizing correctness, control, and long-term scalability over convenience.
 
 ---
 
-## 2. Tech Stack
+# 1. Project Overview
+
+**EasyJobSpot Backend** enforces a controlled ecosystem where:
+
+* Job visibility requires **admin approval**
+* Privileged actions require **role + profile validation**
+* Ownership is **strictly enforced at service layer**
+* Administrative authority is **centralized and auditable**
+
+Every exposed API exists to support a **clear business workflow**, not developer shortcutting.
+
+---
+
+# 2. Tech Stack
 
 * **Java 17**
 * **Spring Boot**
-* **Spring Security (JWT)**
-* **Spring Data JPA**
+* **Spring Security (JWT, stateless)**
+* **Spring Data JPA / Hibernate**
 * **PostgreSQL**
-* **Hibernate**
 * **Lombok**
 * **Maven**
 
 ---
 
-## 3. Backend Design (High-Level)
+# 3. Architecture Design
 
-**Layered & Responsibility-Driven Architecture**
+### Layered Responsibility Model
 
 ```
 Controller → Service → Repository → Database
            ↓
-         DTOs
+          DTOs
 ```
 
-**Key Design Decisions**
+### Core Principles
 
-* Controllers are thin — zero business logic
-* Services own validation, rules, and workflows
-* DTOs isolate persistence from API contracts
-* Authorization is enforced at **security + service layer**
-* Admin actions are explicitly separated (no role overloading)
+* Controllers contain **zero business logic**
+* Services enforce **validation, ownership, and workflow rules**
+* DTOs isolate **API contracts from persistence**
+* Authorization enforced at **security layer + service layer**
+* Admin capabilities **fully separated** from provider/user logic
 
-This design prevents logic leaks and privilege escalation.
+Result: **no privilege leakage, no hidden authority, no logic ambiguity.**
 
 ---
 
-## 4. Security Design
+# 4. Security Model
 
 * **JWT-based stateless authentication**
 * **Role-based authorization**
@@ -62,329 +60,272 @@ This design prevents logic leaks and privilege escalation.
   * `USER`
   * `PROVIDER`
   * `ADMIN`
-* Profile completion enforced **before privileged actions**
-* Admin-only APIs isolated under `/api/admin/**`
-* Providers cannot self-approve jobs or bypass moderation
-
-Authorization is applied defensively, not annotation-only.
-
----
-
-# 5. User Roles & Features
-
-*(feature → API → rule → code reference where it adds value)*
+* **Profile completion required** before privileged actions
+* **Provider approval mandatory** before job publishing
+* **Admin APIs isolated** under `/api/admin/**`
+* **Defense-in-depth validation** beyond annotations
 
 ---
 
-## 🔵 USER (Job Seeker)
+# 5. Role Capabilities & APIs
 
 ---
 
-### 🔹 Authentication
+## 🔵 USER — Job Seeker
 
-**APIs**
+### Authentication
 
-* <span style="color:blue"><code>POST /api/auth/register</code></span>
-* <span style="color:blue"><code>POST /api/auth/login</code></span>
+* `POST /api/auth/register`
+* `POST /api/auth/login`
 
 **Rules**
 
-* Registration creates a basic USER role
-* JWT is mandatory for all protected APIs
+* Registration assigns **USER role**
+* JWT required for protected endpoints
 
 ---
 
-### 🔹 Profile Management
+### Profile
 
-**APIs**
-
-* <span style="color:blue"><code>GET /api/profile/status</code></span>
-* <span style="color:blue"><code>PUT /api/profile/job-seeker</code></span>
+* `GET /api/profile/status`
+* `PUT /api/profile/job-seeker`
 
 **Rules**
 
-* Profile must be completed before applying for jobs
-* Updates are idempotent
+* Profile completion required before **job application**
+* Updates are **idempotent**
 
-**Service Logic Reference**
+---
 
-```java
-public void updateJobSeekerProfile(ProfileUpdateRequest request) {
-    User user = getCurrentUser();
-    user.completeProfile(request);
-    userRepository.save(user);
+### Browse Jobs
+
+* `GET /api/jobs`
+* `GET /api/jobs/{id}`
+
+**Rules**
+
+* Only **APPROVED + ACTIVE** jobs returned
+* Filtering enforced at **query level**
+
+---
+
+### Applications
+
+* `POST /api/applications/{jobId}`
+* `GET /api/applications/my`
+
+**Rules**
+
+* Profile must be complete
+* Duplicate applications blocked
+* Closed or inactive jobs rejected
+
+---
+
+## 🟣 PROVIDER — Job Poster
+
+### Provider Profile
+
+* `PUT /api/profile/provider`
+
+**Rules**
+
+* Requires **admin approval** before posting jobs
+
+---
+
+### Job Management
+
+* `GET /api/provider/jobs`
+* `POST /api/provider/jobs`
+* `PUT /api/provider/jobs/{id}`
+* `PUT /api/provider/jobs/{id}/close`
+* `PUT /api/provider/jobs/{id}/reopen`
+
+**Rules**
+
+* New jobs start in **PENDING**
+* Providers **cannot self-approve**
+* Ownership strictly validated
+
+---
+
+### Hiring Workflow
+
+* `GET /api/provider/jobs/{jobId}/applications`
+* `PUT /api/provider/applications/{applicationId}/shortlist`
+* `PUT /api/provider/applications/{applicationId}/reject`
+* `PUT /api/provider/applications/{applicationId}/hire`
+
+**Valid Transitions**
+
+```
+APPLIED → SHORTLISTED → HIRED
+APPLIED → REJECTED
+SHORTLISTED → REJECTED
+```
+
+Admin has **read-only oversight** (no hiring control).
+
+---
+
+## 🔴 ADMIN — System Authority
+
+### Job Moderation
+
+* `GET /api/admin/jobs/pending`
+* `PUT /api/admin/jobs/{jobId}/approve`
+* `PUT /api/admin/jobs/{jobId}/reject`
+* `PUT /api/admin/jobs/{jobId}/close`
+
+**Rules**
+
+* Only admin controls **job visibility**
+* Approval requires **explicit admin action**
+
+---
+
+### Provider Approval
+
+* `GET /api/admin/providers/pending`
+* `PUT /api/admin/providers/{id}/approve`
+* `PUT /api/admin/providers/{id}/reject`
+
+Unapproved providers are **blocked system-wide**.
+
+---
+
+### Platform Insights
+
+* `GET /api/admin/jobs/{jobId}/applications`
+* `GET /api/admin/dashboard/stats`
+* `GET /api/admin/dashboard/trends`
+
+---
+
+# 6. Core Business Rules
+
+* No **role escalation** without admin
+* No **job visibility** without approval
+* No **application** without completed profile
+* No **provider self-governance**
+* Closed jobs are **globally inactive**
+* All privileged actions are **auditable**
+
+---
+
+# 7. Request / Response Examples
+
+### Login
+
+**Request**
+
+```json
+POST /api/auth/login
+{
+  "email": "user@example.com",
+  "password": "••••••••"
+}
+```
+
+**Response**
+
+```json
+{
+  "token": "jwt-token",
+  "role": "USER"
 }
 ```
 
 ---
 
-### 🔹 Browse Jobs (Public)
+### Create Job (Provider)
 
-**APIs**
-
-* <span style="color:blue"><code>GET /api/jobs</code></span>
-* <span style="color:blue"><code>GET /api/jobs/{id}</code></span>
-
-**Rules**
-
-* Only APPROVED and ACTIVE jobs are visible
-* Closed or pending jobs are filtered at query level
-
----
-
-### 🔹 Apply for Job
-
-**APIs**
-
-* <span style="color:blue"><code>POST /api/applications/{jobId}</code></span>
-* <span style="color:blue"><code>GET /api/applications/my</code></span>
-
-**Rules**
-
-* Profile must be completed
-* No duplicate applications
-* Cannot apply to CLOSED jobs
-
-**Service Logic Reference**
-
-```java
-public void apply(UUID jobId) {
-    validateProfileCompletion();
-    validateJobIsActive(jobId);
-    preventDuplicateApplication(jobId);
-    saveApplication(jobId);
+```json
+POST /api/provider/jobs
+{
+  "title": "Backend Developer",
+  "description": "Spring Boot experience required",
+  "location": "Remote"
 }
 ```
 
----
+**Result:** Job created in **PENDING** state.
 
 ---
 
-## 🟣 PROVIDER (Job Poster)
+### Apply to Job
+
+```json
+POST /api/applications/{jobId}
+```
+
+**Checks performed**
+
+* Profile completion
+* Job active
+* No duplicate application
 
 ---
 
-### 🔹 Provider Profile
+# 8. Error Handling Standard
 
-**API**
+All errors follow a consistent structure:
 
-* <span style="color:purple"><code>PUT /api/profile/provider</code></span>
-
-**Rules**
-
-* Provider must be approved by admin before posting jobs
-
-**Service Logic Reference**
-
-```java
-public void updateProviderProfile(ProviderProfileRequest request) {
-    Provider provider = getCurrentProvider();
-    provider.updateProfile(request);
-    providerRepository.save(provider);
+```json
+{
+  "timestamp": "2026-01-01T10:00:00Z",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Profile incomplete",
+  "path": "/api/applications/123"
 }
 ```
 
----
-
-### 🔹 Job Management
-
-**APIs**
-
-* <span style="color:purple"><code>GET /api/provider/jobs</code></span>
-* <span style="color:purple"><code>POST /api/provider/jobs</code></span>
-* <span style="color:purple"><code>PUT /api/provider/jobs/{id}</code></span>
-* <span style="color:purple"><code>PUT /api/provider/jobs/{id}/close</code></span>
-* <span style="color:purple"><code>PUT /api/provider/jobs/{id}/reopen</code></span>
-
-**Rules**
-
-* Jobs are created in PENDING state
-* Providers cannot approve or publish jobs
-* Ownership is strictly enforced
-
-**Service Logic Reference (Ownership Enforcement)**
-
-```java
-public Job getOwnedJob(UUID jobId) {
-    Job job = getJobOrThrow(jobId);
-    assertOwner(job.getProviderId());
-    return job;
-}
-```
+Ensures **predictable client integration** and debuggability.
 
 ---
 
-### 🔹 Application Moderation (Hiring Decisions)
+# 9. Environment & Configuration
 
-**APIs**
+### Requirements
 
-* <code>GET /api/provider/jobs/{jobId}/applications</code>
-* <code>PUT /api/provider/applications/{applicationId}/shortlist</code>
-* <code>PUT /api/provider/applications/{applicationId}/reject</code>
-* <code>PUT /api/provider/applications/{applicationId}/hire</code>
+* Java **17+**
+* PostgreSQL **running**
+* Maven installed
 
-**Rules**
-
-* Applications are moderated **only by the job-owning provider**
-* Provider can:
-  * SHORTLIST
-  * REJECT
-  * HIRE
-* Job seekers cannot modify application status
-* Admin has read-only oversight (no hiring decisions)
-
-**Valid State Transitions**
-
-* APPLIED → SHORTLISTED
-* APPLIED → REJECTED
-* SHORTLISTED → REJECTED
-* SHORTLISTED → HIRED
-
-**Service Logic Reference**
-
-```java
-public void updateApplicationStatus(UUID applicationId, ApplicationStatus status) {
-    JobApplication application = getApplication(applicationId);
-    assertJobOwnership(application.getJobId());
-    validateTransition(application.getStatus(), status);
-    application.updateStatus(status);
-}
-```
-
----
-
-## 🔴 ADMIN (System Authority)
-
----
-
-### 🔹 Job Moderation
-
-**APIs**
-
-* <span style="color:red"><code>GET /api/admin/jobs/pending</code></span>
-* <span style="color:red"><code>PUT /api/admin/jobs/{jobId}/approve</code></span>
-* <span style="color:red"><code>PUT /api/admin/jobs/{jobId}/reject</code></span>
-* <span style="color:red"><code>PUT /api/admin/jobs/{jobId}/close</code></span>
-
-**Rules**
-
-* Only admin can change job visibility
-* Approval is irreversible without admin action
-
-**Service Logic Reference**
-
-```java
-public void approveJob(UUID jobId) {
-    Job job = getJobOrThrow(jobId);
-    job.approve();
-    jobRepository.save(job);
-}
-```
-
----
-
-### 🔹 Provider Approval
-
-**APIs**
-
-* <span style="color:red"><code>GET /api/admin/providers/pending</code></span>
-* <span style="color:red"><code>PUT /api/admin/providers/{id}/approve</code></span>
-* <span style="color:red"><code>PUT /api/admin/providers/{id}/reject</code></span>
-
-**Rules**
-
-* Unapproved providers are blocked system-wide
-* Admins can view applications but cannot shortlist, reject, or hire candidates
-
----
-
-## 6. Core Business Rules
-
-* **No role escalation without admin**
-* **No job visibility without approval**
-* **No application without profile**
-* **No provider self-governance**
-* **Closed jobs are system-wide inactive**
-* **Every privileged action is auditable**
-
----
-
-
-## 7. How to Run + Why This Backend Is Strong
-
-### ▶ How to Run
+### Run Locally
 
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
----
+Server starts at:
 
-### 💪 Why This Backend Is Strong
-
-* Feature-driven API design with clear ownership
-* Zero role ambiguity — no implicit authority
-* Explicit admin control over irreversible actions
-* Clean service boundaries prevent logic leaks
-* Real-world business workflows, not demo shortcuts
-* Defense-in-depth security mindset
-
-**This backend prioritizes correctness and control over convenience — it’s built to scale teams, not just traffic.**
+```
+http://localhost:8080
+```
 
 ---
 
+# 10. Production Strengths
 
-# 📘 Swagger-Style APIs
----
-
-## 🔵 USER APIs
-
-| Method | Endpoint                                                               |
-| ------ | ---------------------------------------------------------------------- |
-| POST   | <span style="color:blue"><code>/api/auth/register</code></span>        |
-| POST   | <span style="color:blue"><code>/api/auth/login</code></span>           |
-| GET    | <span style="color:blue"><code>/api/profile/status</code></span>       |
-| PUT    | <span style="color:blue"><code>/api/profile/job-seeker</code></span>   |
-| GET    | <span style="color:blue"><code>/api/jobs</code></span>                 |
-| GET    | <span style="color:blue"><code>/api/jobs/{id}</code></span>            |
-| POST   | <span style="color:blue"><code>/api/applications/{jobId}</code></span> |
-| GET    | <span style="color:blue"><code>/api/applications/my</code></span>      |
+* Clear **domain ownership boundaries**
+* Strict **approval-driven workflows**
+* **Defense-in-depth** authorization
+* Audit-friendly administrative control
+* Clean architecture ready for **team scaling**
+* Real business logic — **not demo shortcuts**
 
 ---
 
-## 🟣 PROVIDER APIs
+# 11. License
 
-| Method | Endpoint                                                                      |
-| ------ | ----------------------------------------------------------------------------- |
-| PUT    | <span style="color:purple"><code>/api/profile/provider</code></span>          |
-| GET    | <span style="color:purple"><code>/api/provider/jobs</code></span>             |
-| POST   | <span style="color:purple"><code>/api/provider/jobs</code></span>             |
-| PUT    | <span style="color:purple"><code>/api/provider/jobs/{id}</code></span>        |
-| PUT    | <span style="color:purple"><code>/api/provider/jobs/{id}/close</code></span>  |
-| PUT    | <span style="color:purple"><code>/api/provider/jobs/{id}/reopen</code></span> |
-| GET    | <span style="color:purple"><code>/api/provider/dashboard/stats</code></span>  |
-| GET    | <code>/api/provider/jobs/{jobId}/applications</code>                          |
-| PUT    | <code>/api/provider/applications/{applicationId}/shortlist</code>             |
-| PUT    | <code>/api/provider/applications/{applicationId}/reject</code>                |
-| PUT    | <code>/api/provider/applications/{applicationId}/hire</code>                  |
-
+MIT License
 
 ---
 
-## 🔴 ADMIN APIs
+# 12. Vision
 
-| Method | Endpoint                                                                         |
-| ------ | -------------------------------------------------------------------------------- |
-| GET    | <span style="color:red"><code>/api/admin/jobs/pending</code></span>              |
-| PUT    | <span style="color:red"><code>/api/admin/jobs/{jobId}/approve</code></span>      |
-| PUT    | <span style="color:red"><code>/api/admin/jobs/{jobId}/reject</code></span>       |
-| PUT    | <span style="color:red"><code>/api/admin/jobs/{jobId}/close</code></span>        |
-| GET    | <span style="color:red"><code>/api/admin/providers/pending</code></span>         |
-| PUT    | <span style="color:red"><code>/api/admin/providers/{id}/approve</code></span>    |
-| PUT    | <span style="color:red"><code>/api/admin/providers/{id}/reject</code></span>     |
-| GET    | <span style="color:red"><code>/api/admin/jobs/{jobId}/applications</code></span> |
-| GET    | <span style="color:red"><code>/api/admin/dashboard/stats</code></span>           |
-| GET    | <span style="color:red"><code>/api/admin/dashboard/trends</code></span>          |
-
-
+EasyJobSpot is engineered as a **controlled, trustworthy hiring platform backend** capable of scaling across teams, regions, and enterprise governance requirements — while maintaining strict correctness and security guarantees.
