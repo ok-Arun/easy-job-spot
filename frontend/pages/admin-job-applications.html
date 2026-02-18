@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Applications | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/admin-all-jobs.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">EasyJobSpot</h2>
+        <nav>
+            <a href="admin-dashboard.html">Dashboard</a>
+            <a href="admin-job-moderation.html">Job Moderation</a>
+            <a href="admin-all-jobs.html" class="active">All Jobs</a>
+            <a href="admin-provider-approval.html">Provider Approvals</a>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+
+        <header class="page-header">
+            <h1>Job Applications</h1>
+        </header>
+
+        <section class="table-section">
+            <table class="jobs-table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Applied At</th>
+                    <th>Rejection Reason</th>
+                </tr>
+                </thead>
+                <tbody id="applicationsTableBody">
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:20px;">
+                        Loading...
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+<script src="../js/admin-job-applications.js"></script>
+</body>
+</html>

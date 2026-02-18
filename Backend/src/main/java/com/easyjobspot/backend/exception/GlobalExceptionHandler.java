@@ -60,6 +60,17 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.failure("REQUIRED_FIELDS_MISSING"));
     }
 
+    // ✅ ADDED: Handle IllegalStateException (State transition errors)
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(
+            IllegalStateException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.failure(ex.getMessage()));
+    }
+
     // ===================== VALIDATION =====================
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

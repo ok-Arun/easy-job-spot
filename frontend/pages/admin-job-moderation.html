@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Moderation | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/admin-job-moderation.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2 class="logo">EasyJobSpot</h2>
+        <nav>
+            <a href="admin-dashboard.html">Dashboard</a>
+            <a href="admin-all-jobs.html" >All Jobs</a>
+            <a href="admin-job-moderation.html" class="active">Job Moderation</a>
+            <a href="admin-all-users.html">All Users</a>
+            <a href="admin-provider-approval.html">Provider Approvals</a>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+
+        <header class="page-header">
+            <h1>Job Moderation Panel</h1>
+        </header>
+
+
+        <section class="summary-section">
+            <div class="summary-card">
+                <h3>Total Pending Jobs</h3>
+                <p id="totalPendingJobs">--</p>
+            </div>
+        </section>
+
+
+        <section class="table-section">
+            <table class="jobs-table">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Posted On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="jobsTableBody">
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+<!-- ================= VIEW MODAL ================= -->
+<div id="viewModal" class="modal hidden">
+    <div class="modal-content large">
+        <h2>Job Details</h2>
+        <div id="jobDetails"></div>
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeViewModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CONFIRM MODAL ================= -->
+<div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+        <h2 id="confirmTitle"></h2>
+        <p id="confirmMessage"></p>
+
+        <textarea id="rejectReason"
+                  class="hidden"
+                  placeholder="Enter rejection reason..."></textarea>
+
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeConfirmModal()">Cancel</button>
+            <button id="confirmActionBtn"></button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/admin-job-moderation.js"></script>
+<script src="../js/admin-global.js"></script>
+
+</body>
+</html>

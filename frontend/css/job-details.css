@@ -1,0 +1,47 @@
+/* Wrapper */
+.job-details-wrapper {
+    max-width: 720px;
+    margin: auto;
+}
+
+/* Back button */
+.back-btn {
+    margin-bottom: 16px;
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Apply button (NO hover effect) */
+.apply-btn {
+    margin-top: 12px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Message box base */
+.message-box {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Success message */
+.message-box.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* Error message */
+.message-box.error {
+    background: #fee2e2;
+    color: #991b1b;
+}

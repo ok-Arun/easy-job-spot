@@ -1,0 +1,99 @@
+/* ===============================
+   GLOBAL RESET & BASE
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f5f7fb;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+/* ===============================
+   NAVBAR
+================================ */
+.provider-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e293b;
+    padding: 14px 28px;
+}
+
+.nav-logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.nav-links li a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    padding-bottom: 4px;
+}
+
+.nav-links li.active a {
+    color: #ffffff;
+    border-bottom: 2px solid #38bdf8;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn {
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.logout-btn {
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #dc2626;
+}
+
+/* ===============================
+   UTILITIES
+================================ */
+.hidden {
+    display: none;
+}

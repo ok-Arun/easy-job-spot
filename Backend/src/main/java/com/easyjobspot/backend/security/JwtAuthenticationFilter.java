@@ -27,7 +27,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().startsWith("/api/auth/");
+
+        String path = request.getServletPath();
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        return path.startsWith("/api/auth/")
+                || path.startsWith("/error")
+                || path.startsWith("/swagger")
+                || path.startsWith("/v3/api-docs");
     }
 
     @Override
@@ -47,14 +57,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = bearerToken.substring(7);
 
         if (!jwtTokenProvider.validateToken(token)) {
+            SecurityContextHolder.clearContext(); // IMPORTANT FIX
             filterChain.doFilter(request, response);
             return;
         }
 
         String email = jwtTokenProvider.getEmailFromToken(token);
 
-        UserDetails userDetails =
-                userDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(

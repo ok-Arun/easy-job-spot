@@ -11,8 +11,6 @@ body {
     color: #111827;
 }
 
-/* ================= UTIL ================= */
-
 .hidden {
     display: none !important;
 }
@@ -23,81 +21,79 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 40px;
+    height: 60px;            /* fixed clean height */
+    padding: 0 40px;         /* remove vertical padding */
     background: #ffffff;
     border-bottom: 1px solid #e5e7eb;
 }
 
+/* Logo */
 .logo {
     font-size: 20px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
 }
 
-/* Logged OUT actions */
+/* Logged Out Links */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
 
 .nav-actions a {
-    margin-left: 16px;
     text-decoration: none;
     color: #111827;
     font-weight: 500;
+    font-size: 14px;
 }
 
-.btn-primary {
-    background: #22c55e;
-    color: #ffffff !important;
-    padding: 8px 14px;
-    border-radius: 6px;
-}
-
-/* ================= LOGGED IN NAV ================= */
-
+/* Logged In Section */
 .user-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    height: 100%;
     position: relative;
 }
 
-.nav-username {
-    font-weight: 500;
-    line-height: 1;          
-    display: flex;           
-    align-items: center;    
-}
-
-
-/* Profile */
-
-.profile-icon {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
-
+/* Wrap username + icon */
+.profile-box {
     display: flex;
     align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-    font-size: 23px;
-    color: #111827;
-    line-height: 1;
-
-
+    gap: 10px;
+    height: 100%;
 }
 
+/* Username */
+.nav-username {
+    font-size: 18px;       /* balanced size */
+    font-weight: 500;
+    line-height: 1;
+    color: #111827;
+}
 
+/* Profile Icon */
+.profile-icon {
+    font-size: 20px;       /* smaller than text */
+    cursor: pointer;
+    color: #111827;
+    display: flex;
+    align-items: center;
+}
 
 /* ================= DROPDOWN ================= */
 
 .profile-menu {
     position: absolute;
-    top: 48px;
+    top: 42px;
     right: 0;
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    width: 160px;
+    width: 170px;
     overflow: hidden;
     z-index: 100;
 }
@@ -183,12 +179,6 @@ body {
     cursor: pointer;
 }
 
-.popular {
-    margin-top: 12px;
-    font-size: 14px;
-    opacity: 0.9;
-}
-
 /* ================= SECTIONS ================= */
 
 .section {
@@ -197,6 +187,8 @@ body {
 
 .section.light {
     background: #f3f4f6;
+    padding-top: 80px;
+    padding-bottom: 80px;
 }
 
 .section h2 {
@@ -207,6 +199,30 @@ body {
 .subtitle {
     color: #6b7280;
     margin-bottom: 30px;
+}
+
+/* ================= SECTION HEADER ================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+.link {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.link:hover {
+    text-decoration: underline;
 }
 
 /* ================= CATEGORIES ================= */
@@ -224,22 +240,16 @@ body {
     text-align: center;
     font-weight: 500;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* ================= JOBS ================= */
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
 
-.link {
-    text-decoration: none;
-    color: #2563eb;
-    font-weight: 500;
-}
+/* ================= GLOBAL CARD SYSTEM ================= */
 
 .jobs-grid {
     display: grid;
@@ -248,42 +258,113 @@ body {
 }
 
 .job-card {
-    background: white;
+    background: #ffffff;
+    border-radius: 14px;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.job-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.10);
 }
 
 .job-card h4 {
-    margin: 0 0 8px;
+    margin: 0;
+    font-size: 18px;
+    color: #0f172a;
 }
 
 .job-meta {
     font-size: 13px;
+    color: #64748b;
+}
+
+.job-card p {
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.45;
+}
+
+/* Slightly larger cards for homepage */
+.section.light .job-card {
+    padding: 24px;
+}
+
+/* ================= APPLY BUTTON ================= */
+
+.apply-btn {
+    align-self: flex-start;
+    margin-top: 6px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.apply-btn:hover {
+    background: #1d4ed8;
+}
+
+.apply-btn:active {
+    transform: scale(0.96);
+}
+
+.apply-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* ================= APPLICATION CARD MODIFIER ================= */
+
+.application-card {
+    align-items: flex-start;
+}
+
+.application-card p {
+    font-size: 13px;
     color: #6b7280;
-    margin-bottom: 8px;
 }
 
-/* ================= CTA ================= */
+/* ================= STATUS BADGE ================= */
 
-.cta {
-    background: #111827;
-    color: white;
-    padding: 70px 40px;
-    text-align: center;
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
 }
 
-.cta-actions {
-    margin-top: 20px;
+.status-applied {
+    background-color: #fff3cd;
+    color: #856404;
 }
 
-.btn-secondary {
-    margin-left: 12px;
-    padding: 10px 16px;
-    border-radius: 6px;
-    border: 1px solid white;
-    color: white;
-    text-decoration: none;
+.status-shortlisted {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-accepted {
+    background-color: #d4edda;
+    color: #155724;
 }
 
 /* ================= RESPONSIVE ================= */

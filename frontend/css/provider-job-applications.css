@@ -1,0 +1,84 @@
+/* ===============================
+   PROVIDER APPLICATIONS PAGE
+================================ */
+
+.provider-applications {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.provider-applications h2 {
+    margin-bottom: 24px;
+}
+
+/* TABLE */
+
+.provider-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.provider-table thead {
+    background: #f1f5f9;
+}
+
+.provider-table th,
+.provider-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.provider-table tbody tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+.provider-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* STATUS BADGE */
+
+.application-status {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-applied {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.status-shortlisted {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-hired {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* ACTION BUTTONS */
+
+.application-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.application-actions button {
+    padding: 6px 10px;
+    font-size: 12px;
+}

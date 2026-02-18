@@ -1,6 +1,5 @@
 package com.easyjobspot.backend.jobapplication.repository;
 
-
 import com.easyjobspot.backend.job.entity.Job;
 import com.easyjobspot.backend.jobapplication.entity.Application;
 import com.easyjobspot.backend.jobapplication.enums.ApplicationStatus;
@@ -46,7 +45,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Optional<Application> findById(UUID id);
 
     // ====================================================
-    // DASHBOARD — PHASE 10 (GLOBAL)
+    // DASHBOARD — GLOBAL
     // ====================================================
     long countByStatus(ApplicationStatus status);
 
@@ -60,30 +59,19 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     long countByJobIdAndStatus(UUID jobId, ApplicationStatus status);
 
     // ====================================================
-    // DASHBOARD — PHASE 11 (TIME-BASED)
+    // DASHBOARD — TIME BASED
     // ====================================================
-
-    /**
-     * Applications received after a given date
-     */
     long countByAppliedAtAfter(LocalDateTime date);
 
-    /**
-     * Applications by status after a given date
-     * Used for hiring funnel analytics
-     */
     long countByStatusAndAppliedAtAfter(
             ApplicationStatus status,
             LocalDateTime date
     );
 
     // ====================================================
-    // DASHBOARD — PHASE 12 (PROVIDER-SCOPED)
+    // DASHBOARD — PROVIDER SCOPED
     // ====================================================
 
-    /**
-     * Total applications received for jobs owned by a provider
-     */
     @Query("""
         SELECT COUNT(a)
         FROM Application a
@@ -92,9 +80,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     """)
     long countAllByProvider(UUID providerId);
 
-    /**
-     * Applications by status for jobs owned by a provider
-     */
     @Query("""
         SELECT COUNT(a)
         FROM Application a
@@ -107,13 +92,14 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             UUID providerId
     );
 
-    /**
-     * Per-job application breakdown for a provider (includes zero-application jobs)
-     */
+    // ====================================================
+    // PROVIDER DASHBOARD — PER JOB BREAKDOWN (FIXED)
+    // ====================================================
     @Query("""
         SELECT
             j.id,
             j.title,
+            j.status,
             COUNT(a.id),
             SUM(CASE WHEN a.status = 'SHORTLISTED' THEN 1 ELSE 0 END),
             SUM(CASE WHEN a.status = 'REJECTED' THEN 1 ELSE 0 END),
@@ -121,7 +107,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
         FROM Job j
         LEFT JOIN Application a ON a.job = j
         WHERE j.createdBy = :providerId
-        GROUP BY j.id, j.title
+        GROUP BY j.id, j.title, j.status
         ORDER BY j.createdAt DESC
     """)
     List<Object[]> fetchPerJobApplicationStats(UUID providerId);

@@ -1,0 +1,226 @@
+/* ================= PAGE HEADER ================= */
+
+.page-header {
+    padding: 25px 40px;
+    background: #1e293b;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+
+/* ================= FILTER SECTION ================= */
+
+.filter-section {
+    padding: 30px 40px 0 40px;
+}
+
+.filter-section select,
+.filter-section button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    margin-right: 10px;
+}
+
+.primary-btn {
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.primary-btn:hover {
+    opacity: 0.85;
+}
+
+
+/* ================= TABLE SECTION ================= */
+
+.table-section {
+    padding: 30px 40px 40px 40px;
+}
+
+.table-wrapper {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;           /* THIS makes round corners visible */
+}
+
+
+/* ================= TABLE ================= */
+
+.jobs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.jobs-table th,
+.jobs-table td {
+    padding: 16px;
+    text-align: left;
+}
+
+.jobs-table thead {
+    background: #334155;
+}
+
+.jobs-table tbody tr {
+    border-bottom: 1px solid #334155;
+    transition: background 0.2s ease;
+}
+
+.jobs-table tbody tr:last-child {
+    border-bottom: none;        /* clean bottom */
+}
+
+.jobs-table tbody tr:hover {
+    background: #243247;
+}
+
+
+/* ================= STATUS BADGES ================= */
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-badge.ACTIVE {
+    background: #1e3a2f;
+    color: #4ade80;
+}
+
+.status-badge.REJECTED,
+.status-badge.REMOVED_BY_ADMIN {
+    background: #3a1e1e;
+    color: #f87171;
+}
+
+.status-badge.CLOSED {
+    background: #2a2a2a;
+    color: #9ca3af;
+}
+
+
+/* ================= BUTTONS ================= */
+
+.view-btn,
+.close-btn,
+.remove-btn,
+.restore-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    margin-right: 6px;
+    transition: 0.2s ease;
+}
+
+.view-btn { background: #3b82f6; color: white; }
+.close-btn { background: #f59e0b; }
+.remove-btn { background: #dc2626; color: white; }
+.restore-btn { background: #16a34a; color: white; }
+
+.view-btn:hover,
+.close-btn:hover,
+.remove-btn:hover,
+.restore-btn:hover {
+    opacity: 0.85;
+}
+
+
+/* ================= MODAL ================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+}
+
+.hidden { display: none; }
+
+.modal-content {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 14px;
+    width: 420px;
+    max-width: 95%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.secondary-btn {
+    background: #475569;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 900px) {
+
+    .jobs-table thead {
+        display: none;
+    }
+
+    .jobs-table,
+    .jobs-table tbody,
+    .jobs-table tr,
+    .jobs-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .jobs-table tr {
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .jobs-table td {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+        padding: 0;
+        border: none;
+        font-size: 14px;
+    }
+
+    .jobs-table td::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .view-btn,
+    .close-btn,
+    .remove-btn,
+    .restore-btn {
+        width: 100%;
+        margin-bottom: 6px;
+    }
+}

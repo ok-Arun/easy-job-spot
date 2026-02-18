@@ -45,6 +45,22 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     );
 
     // ====================================================
+    // NEW — FILTER BY TITLE + LOCATION (ACTIVE ONLY)
+    // ====================================================
+    @Query("""
+        SELECT j FROM Job j
+        WHERE j.status = :status
+        AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
+        AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
+    """)
+    Page<Job> filterByTitleAndLocation(
+            @Param("status") Job.JobStatus status,
+            @Param("title") String title,
+            @Param("location") String location,
+            Pageable pageable
+    );
+
+    // ====================================================
     // ADMIN — JOB MODERATION
     // ====================================================
     Page<Job> findByStatusOrderByCreatedAtDesc(
@@ -80,14 +96,8 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     // DASHBOARD — PHASE 11 (TIME-BASED)
     // ====================================================
 
-    /**
-     * Jobs created after a given date (trend analysis)
-     */
     long countByCreatedAtAfter(LocalDateTime date);
 
-    /**
-     * Jobs approved (ACTIVE) after a given date
-     */
     long countByStatusAndCreatedAtAfter(
             Job.JobStatus status,
             LocalDateTime date
@@ -97,16 +107,25 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     // DASHBOARD — PHASE 12 (PROVIDER-SCOPED)
     // ====================================================
 
-    /**
-     * Total jobs created by a specific provider
-     */
     long countByCreatedBy(UUID createdBy);
 
-    /**
-     * Jobs by status for a specific provider
-     */
     long countByStatusAndCreatedBy(
             Job.JobStatus status,
             UUID createdBy
+    );
+
+    // ====================================================
+    // PROVIDER — JOB LISTING (OWN JOBS)
+    // ====================================================
+
+    Page<Job> findByCreatedBy(
+            UUID createdBy,
+            Pageable pageable
+    );
+
+    Page<Job> findByCreatedByAndStatus(
+            UUID createdBy,
+            Job.JobStatus status,
+            Pageable pageable
     );
 }

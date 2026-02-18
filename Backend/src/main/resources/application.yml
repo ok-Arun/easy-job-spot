@@ -37,10 +37,10 @@ jwt:
 
 # CORS configuration (frontend later)
 cors:
-  allowed-origins: http://localhost:8080
+  allowed-origins: http://localhost:5500
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
-  allowed-headers: Authorization,Content-Type
   allow-credentials: true
+
 
 logging:
   level:

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Jobs | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Sidebar Layout CSS -->
+    <link rel="stylesheet" href="../css/sidebar.css">
+
+    <!-- Page Specific CSS -->
+    <link rel="stylesheet" href="../css/admin-all-jobs.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+        <h2 class="logo">EasyJobSpot</h2>
+        <nav>
+            <a href="admin-dashboard.html">Dashboard</a>
+            <a href="admin-all-jobs.html" class="active">All Jobs</a>
+            <a href="admin-job-moderation.html">Job Moderation</a>
+            <a href="admin-all-users.html">All Users</a>
+            <a href="admin-provider-approval.html">Provider Approvals</a>
+        </nav>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+
+        <!-- PAGE HEADER -->
+        <header class="page-header">
+            <h1>All Jobs</h1>
+        </header>
+
+        <!-- FILTER -->
+        <section class="filter-section">
+            <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="ACTIVE">Active</option>
+                <option value="CLOSED">Closed</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="PENDING_APPROVAL">Pending</option>
+                <option value="EXPIRED">Expired</option>
+                <option value="REMOVED_BY_ADMIN">Removed</option>
+            </select>
+
+            <button id="filterBtn" class="primary-btn">Filter</button>
+        </section>
+
+        <!-- TABLE -->
+        <section class="table-section">
+            <div class="table-wrapper">
+                <table class="jobs-table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Posted On</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="allJobsTableBody">
+                    <!-- Dynamic content will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="actionModal" class="modal hidden">
+    <div class="modal-content">
+        <h2 id="actionTitle"></h2>
+        <p id="actionMessage"></p>
+
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeActionModal()">Cancel</button>
+            <button id="confirmActionBtn"></button>
+        </div>
+    </div>
+</div>
+
+
+<script src="../js/admin-all-jobs.js"></script>
+<script src="../js/admin-global.js"></script>
+
+
+
+</body>
+</html>

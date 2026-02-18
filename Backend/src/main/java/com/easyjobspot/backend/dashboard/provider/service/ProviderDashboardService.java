@@ -1,6 +1,5 @@
 package com.easyjobspot.backend.dashboard.provider.service;
 
-
 import com.easyjobspot.backend.dashboard.provider.dto.ProviderDashboardStatsResponse;
 import com.easyjobspot.backend.dashboard.provider.dto.ProviderJobStatsResponse;
 import com.easyjobspot.backend.job.entity.Job;
@@ -27,15 +26,18 @@ public class ProviderDashboardService {
     public ProviderDashboardStatsResponse getDashboardStats() {
 
         // ====================================================
-        // AUTH CONTEXT — SINGLE SOURCE OF TRUTH
+        // SAFE AUTH CONTEXT EXTRACTION
         // ====================================================
-        UserPrincipal principal = (UserPrincipal)
-                SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getPrincipal();
+        Object principalObj = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (!(principalObj instanceof UserPrincipal principal)) {
+            throw new AccessDeniedException("Invalid authentication context");
+        }
 
         // ====================================================
-        // ROLE / TYPE VALIDATION (EXPLICIT & SAFE)
+        // ROLE VALIDATION (DEFENSE-IN-DEPTH)
         // ====================================================
         if (principal.getUser().getUserType() != User.UserType.JOB_PROVIDER) {
             throw new AccessDeniedException(
@@ -46,7 +48,7 @@ public class ProviderDashboardService {
         UUID providerId = principal.getId();
 
         // ====================================================
-        // JOB STATISTICS (PROVIDER-SCOPED)
+        // JOB STATISTICS
         // ====================================================
         long totalJobs = jobRepository.countByCreatedBy(providerId);
         long activeJobs = jobRepository.countByStatusAndCreatedBy(
@@ -72,7 +74,7 @@ public class ProviderDashboardService {
                 );
 
         // ====================================================
-        // APPLICATION STATISTICS (PROVIDER-SCOPED)
+        // APPLICATION STATISTICS
         // ====================================================
         long totalApplications =
                 applicationRepository.countAllByProvider(providerId);
@@ -101,7 +103,7 @@ public class ProviderDashboardService {
                 );
 
         // ====================================================
-        // PER-JOB BREAKDOWN (LEFT JOIN AGGREGATION)
+        // PER-JOB APPLICATION BREAKDOWN
         // ====================================================
         List<ProviderJobStatsResponse> perJobStats =
                 applicationRepository.fetchPerJobApplicationStats(providerId)
@@ -109,15 +111,17 @@ public class ProviderDashboardService {
                         .map(row -> new ProviderJobStatsResponse(
                                 (UUID) row[0],
                                 (String) row[1],
-                                (Long) row[2],
+                                (Job.JobStatus) row[2],   // ✅ status
                                 (Long) row[3],
                                 (Long) row[4],
-                                (Long) row[5]
+                                (Long) row[5],
+                                (Long) row[6]
                         ))
+
                         .toList();
 
         // ====================================================
-        // FINAL RESPONSE ASSEMBLY
+        // FINAL RESPONSE
         // ====================================================
         return new ProviderDashboardStatsResponse(
                 jobStats,

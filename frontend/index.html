@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <title>EasyJobSpot</title>
 
-    <!-- Main Styles -->
-    <link rel="stylesheet" href="css/styles.css?v=8">
+    <link rel="stylesheet" href="css/styles.css?v=9">
 
-    <!-- Font Awesome -->
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -19,21 +17,21 @@
 <header class="navbar">
     <div class="logo">EasyJobSpot</div>
 
-    <!-- Logged OUT -->
+    <!-- Logged Out -->
     <div id="auth-actions" class="nav-actions">
         <a href="pages/login.html">Login</a>
         <a href="pages/register.html" class="btn-primary">Register</a>
     </div>
 
-    <!-- Logged IN -->
+    <!-- Logged In -->
     <div id="user-actions" class="user-actions hidden">
-        <span id="navUserName" class="nav-username"></span>
-
         <div class="profile-box">
+            <span id="navUserName" class="nav-username"></span>
             <i id="profileIcon" class="fa-solid fa-user profile-icon"></i>
 
             <div id="profileMenu" class="profile-menu hidden">
                 <a href="pages/job-seeker-profile.html">Edit Profile</a>
+                <a href="pages/my-applications.html">My Applications</a>
                 <button id="logoutBtn">Logout</button>
             </div>
         </div>
@@ -56,13 +54,9 @@
         </p>
 
         <div class="search-box">
-            <input type="text" placeholder="Job title, keywords, or company">
-            <input type="text" placeholder="Remote, City, or Country">
-            <button>Search Jobs</button>
-        </div>
-
-        <div class="popular">
-            Popular: Data Entry · Typing Jobs · Form Filling · Virtual Assistant
+            <input id="searchTitle" type="text" placeholder="Job title, keywords, or company">
+            <input id="searchLocation" type="text" placeholder="Remote, City, or Country">
+            <button id="searchBtn">Search Jobs</button>
         </div>
     </div>
 </section>
@@ -73,14 +67,19 @@
     <p class="subtitle">Find the perfect online job that matches your skills</p>
 
     <div class="categories">
-        <div class="category-card">Data Entry</div>
-        <div class="category-card">Typing Jobs</div>
-        <div class="category-card">Captcha Typing</div>
-        <div class="category-card">Form Filling</div>
-        <div class="category-card">SMS Sending</div>
-        <div class="category-card">Virtual Assistant</div>
-        <div class="category-card">Customer Support</div>
+        <div class="category-card">Software Development</div>
+        <div class="category-card">IT Support / Helpdesk</div>
+        <div class="category-card">Data Entry / Back Office</div>
+        <div class="category-card">BPO / Telecaller / Voice</div>
+        <div class="category-card">Finance & Accounting</div>
+        <div class="category-card">Digital Marketing</div>
         <div class="category-card">Content Writing</div>
+        <div class="category-card">Customer Support</div>
+        <div class="category-card">Sales & Business Development</div>
+        <div class="category-card">HR & Recruitment</div>
+        <div class="category-card">Graphic Design</div>
+        <div class="category-card">Virtual Assistant</div>
+        <div class="category-card">Other</div>
     </div>
 </section>
 
@@ -95,7 +94,7 @@
 </section>
 
 <!-- ================= CTA ================= -->
-<section class="cta">
+<section class="cta" id="ctaSection">
     <h2>Ready to Start Earning Online?</h2>
     <p>Join thousands of people who found their jobs through EasyJobSpot</p>
 
@@ -105,7 +104,6 @@
     </div>
 </section>
 
-<!-- ================= SCRIPTS ================= -->
 <script src="js/config.js"></script>
 <script src="js/auth-util.js"></script>
 <script src="js/navbar.js"></script>

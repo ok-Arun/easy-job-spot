@@ -13,6 +13,18 @@ public class AdminDashboardStatsResponse {
     private ApplicationStats applications;
     private List<JobApplicationCountDTO> perJobApplications;
 
+    private UserStats users;
+
+    @Getter
+    @Builder
+    public static class UserStats {
+        private long total;
+        private long jobSeekers;
+        private long providers;
+        private long admins;
+        private long pendingProviders;
+    }
+
     @Getter
     @Builder
     public static class JobStats {

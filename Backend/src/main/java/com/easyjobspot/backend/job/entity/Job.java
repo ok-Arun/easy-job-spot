@@ -40,37 +40,45 @@ public class Job {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // ================= EXTRA FIELDS =================
+
+    @Column(length = 30)
+    private String workMode;
+
+    @Column(length = 30)
+    private String employmentLevel;
+
+    private Double salaryMin;
+    private Double salaryMax;
+
+    private Integer experienceMin;
+    private Integer experienceMax;
+
+    private Integer vacancyCount;
+
+    @Column(length = 30)
+    private String applicationType;
+
+    @Column(length = 500)
+    private String applicationUrl;
+
+    // ===============================================
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    /**
-     * Job application deadline
-     * Used by scheduler to expire job automatically
-     */
     private LocalDateTime deadline;
 
-    /**
-     * UUID of job creator (JOB_PROVIDER or ADMIN)
-     */
     @Column(nullable = false, updatable = false)
     private UUID createdBy;
 
-    /**
-     * Job moderation status
-     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private JobStatus status;
 
-    /**
-     * Admin rejection reason (only when REJECTED)
-     */
     @Column(length = 1000)
     private String rejectionReason;
 
-    // ====================================================
-    // LIFECYCLE
-    // ====================================================
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -78,7 +86,7 @@ public class Job {
     }
 
     // ====================================================
-    // SAFE UPDATE (NO STATUS CHANGE)
+    // SAFE UPDATE
     // ====================================================
     public void update(
             String title,
@@ -97,7 +105,7 @@ public class Job {
     }
 
     // ====================================================
-    // DOMAIN STATE TRANSITIONS
+    // DOMAIN TRANSITIONS
     // ====================================================
 
     public void approve() {
@@ -130,9 +138,35 @@ public class Job {
         this.status = JobStatus.EXPIRED;
     }
 
+    public void activate() {
+        if (this.status != JobStatus.CLOSED) {
+            throw new IllegalStateException("Only closed jobs can be activated");
+        }
+        this.status = JobStatus.ACTIVE;
+    }
+
+    // ====================================================
+    // ADMIN ENFORCEMENT TRANSITIONS
+    // ====================================================
+
+    public void removeByAdmin() {
+        if (this.status == JobStatus.REMOVED_BY_ADMIN) {
+            throw new IllegalStateException("Job already removed by admin");
+        }
+        this.status = JobStatus.REMOVED_BY_ADMIN;
+    }
+
+    public void restoreByAdmin() {
+        if (this.status != JobStatus.REMOVED_BY_ADMIN) {
+            throw new IllegalStateException("Only removed jobs can be restored");
+        }
+        this.status = JobStatus.ACTIVE;
+    }
+
     // ====================================================
     // ENUMS
     // ====================================================
+
     public enum JobType {
         FULL_TIME,
         PART_TIME,
@@ -145,6 +179,7 @@ public class Job {
         ACTIVE,
         REJECTED,
         CLOSED,
-        EXPIRED
+        EXPIRED,
+        REMOVED_BY_ADMIN
     }
 }

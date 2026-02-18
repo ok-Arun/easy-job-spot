@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Jobs | Job Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/provider-common.css">
+    <link rel="stylesheet" href="../css/provider-jobs.css">
+</head>
+<body>
+
+<header>
+    <nav class="provider-nav">
+        <div class="nav-logo">Job Portal</div>
+        <ul class="nav-links">
+            <li><a href="provider-dashboard.html">Dashboard</a></li>
+            <li><a href="provider-post-job.html">Post Job</a></li>
+            <li class="active"><a href="provider-jobs.html">My Jobs</a></li>
+            <li><button id="logoutBtn" class="logout-btn">Logout</button></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+
+    <h1 class="page-title">My Posted Jobs</h1>
+
+    <!-- FILTERS -->
+    <div class="job-filters">
+        <button class="filter-btn active" onclick="applyFilter(this, '')">All</button>
+        <button class="filter-btn" onclick="applyFilter(this, 'ACTIVE')">Active</button>
+        <button class="filter-btn" onclick="applyFilter(this, 'PENDING_APPROVAL')">Pending</button>
+        <button class="filter-btn" onclick="applyFilter(this, 'CLOSED')">Closed</button>
+    </div>
+
+    <section id="stateContainer" class="state loading">
+        Loading jobs...
+    </section>
+
+    <section id="jobsContainer" class="job-list hidden"></section>
+
+</main>
+
+<script src="../js/config.js"></script>
+<script src="../js/auth-util.js"></script>
+<script src="../js/provider-jobs.js"></script>
+</body>
+</html>

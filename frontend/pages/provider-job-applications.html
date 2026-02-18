@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Applications | Provider</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/provider-common.css">
+    <link rel="stylesheet" href="../css/provider-job-applications.css">
+
+</head>
+<body>
+
+<header>
+    <nav class="provider-nav">
+        <div class="nav-logo">Job Portal</div>
+        <ul class="nav-links">
+            <li><a href="provider-dashboard.html">Dashboard</a></li>
+            <li><a href="provider-post-job.html">Post Job</a></li>
+            <li><a href="provider-jobs.html">My Jobs</a></li>
+            <li><button id="logoutBtn" class="logout-btn">Logout</button></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container provider-applications">
+
+    <div class="page-header">
+        <h2 id="jobTitle">Applications</h2>
+        <button onclick="window.history.back()" class="btn btn-secondary btn-sm">
+            ← Back
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="provider-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Applied At</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="applicationsTableBody">
+            <!-- Injected by JS -->
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<script src="../js/config.js"></script>
+<script src="../js/auth-util.js"></script>
+<script src="../js/provider-job-applications.js"></script>
+
+</body>
+</html>

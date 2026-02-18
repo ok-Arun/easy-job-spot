@@ -1,6 +1,5 @@
 package com.easyjobspot.backend.jobapplication.entity;
 
-
 import com.easyjobspot.backend.job.entity.Job;
 import com.easyjobspot.backend.jobapplication.enums.ApplicationStatus;
 import com.easyjobspot.backend.user.entity.User;
@@ -43,6 +42,7 @@ public class Application {
     // ====================================================
     // LIFECYCLE
     // ====================================================
+
     @PrePersist
     public void prePersist() {
         this.appliedAt = LocalDateTime.now();
@@ -55,24 +55,36 @@ public class Application {
 
     public void shortlist() {
         if (this.status != ApplicationStatus.APPLIED) {
-            throw new IllegalStateException("Only applied applications can be shortlisted");
+            throw new IllegalStateException(
+                    "Only APPLIED applications can be shortlisted"
+            );
         }
+
         this.status = ApplicationStatus.SHORTLISTED;
         this.rejectionReason = null;
     }
 
     public void hire() {
         if (this.status != ApplicationStatus.SHORTLISTED) {
-            throw new IllegalStateException("Only shortlisted applications can be hired");
+            throw new IllegalStateException(
+                    "Only SHORTLISTED applications can be hired"
+            );
         }
+
         this.status = ApplicationStatus.HIRED;
         this.rejectionReason = null;
     }
 
     public void reject(String reason) {
-        if (this.status == ApplicationStatus.HIRED) {
-            throw new IllegalStateException("Hired candidate cannot be rejected");
+
+        if (this.status == ApplicationStatus.HIRED ||
+                this.status == ApplicationStatus.REJECTED) {
+
+            throw new IllegalStateException(
+                    "Application already finalized and cannot be rejected"
+            );
         }
+
         this.status = ApplicationStatus.REJECTED;
         this.rejectionReason = reason;
     }

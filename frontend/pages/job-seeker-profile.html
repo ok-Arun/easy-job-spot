@@ -7,37 +7,69 @@
 </head>
 <body>
 
-<div class="container">
-    <h2>Job Seeker Profile</h2>
+<div class="profile-wrapper">
+    <div class="profile-card">
 
+        <!-- Header with Back -->
+        <div class="profile-header">
+            <button type="button" class="back-btn" onclick="goBack()">
+                ← Back
+            </button>
+            <h2>Job Seeker Profile</h2>
+        </div>
 
-  
+        <form id="jobSeekerForm">
 
-    <form id="jobSeekerForm">
+            <!-- ================= PERSONAL INFO ================= -->
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-grid">
+                    <input type="text" id="firstName" placeholder="First Name *" required>
+                    <input type="text" id="lastName" placeholder="Last Name *" required>
+                    <input type="text" id="phone" placeholder="Phone Number *" required>
+                    <input type="text" id="location" placeholder="Current Location *" required>
+                </div>
+            </div>
 
-        <input type="text" id="firstName" placeholder="First Name *" required>
-        <input type="text" id="lastName" placeholder="Last Name *" required>
-        <input type="text" id="phone" placeholder="Phone Number *" required>
-        <input type="text" id="location" placeholder="Current Location *" required>
-        <textarea id="skills" placeholder="Skills (comma separated) *" required></textarea>
+            <!-- ================= PROFESSIONAL INFO ================= -->
+            <div class="form-section">
+                <h3>Professional Details</h3>
+                <div class="form-grid">
+                    <textarea id="skills" placeholder="Skills (comma separated) *" required></textarea>
+                    <input type="text" id="education" placeholder="Education *" required>
+                    <input type="text" id="experience" placeholder="Experience *" required>
+                    <input type="text" id="currentJobTitle" placeholder="Current Job Title *" required>
+                    <input type="text" id="preferredJobType" placeholder="Preferred Job Type *" required>
+                    <input type="text" id="preferredLocation" placeholder="Preferred Location *" required>
+                    <input type="text" id="noticePeriod" placeholder="Notice Period *" required>
+                </div>
+            </div>
 
-        <input type="text" id="education" placeholder="Education *" required>
-        <input type="text" id="experience" placeholder="Experience *" required>
-        <input type="text" id="currentJobTitle" placeholder="Current Job Title *" required>
-        <input type="text" id="preferredJobType" placeholder="Preferred Job Type *" required>
-        <input type="text" id="preferredLocation" placeholder="Preferred Location *" required>
-        <input type="text" id="noticePeriod" placeholder="Notice Period *" required>
-        <input type="url" id="resumeUrl" placeholder="Resume URL *" required>
-        <input type="url" id="linkedinUrl" placeholder="LinkedIn Profile URL *" required>
-        <input type="url" id="portfolioUrl" placeholder="Portfolio URL *" required>
+            <!-- ================= LINKS ================= -->
+            <div class="form-section">
+                <h3>Professional Links</h3>
+                <div class="form-grid">
+                    <input type="url" id="resumeUrl" placeholder="Resume URL *" required>
+                    <input type="url" id="linkedinUrl" placeholder="LinkedIn Profile URL *" required>
+                    <input type="url" id="portfolioUrl" placeholder="Portfolio URL *" required>
+                </div>
+            </div>
 
-	  <div id="message" class="message-bar"></div>
+            <div id="message" class="message-bar"></div>
 
-        <button type="submit">Save Profile</button>
-    </form>
+            <button type="submit" class="save-btn">Save Profile</button>
+
+        </form>
+    </div>
 </div>
 
-<script src="../js/job-seeker-profile.js"></script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
 <script src="../js/config.js"></script>
+<script src="../js/job-seeker-profile.js"></script>
 </body>
 </html>

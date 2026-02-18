@@ -1,6 +1,5 @@
 package com.easyjobspot.backend.job.controller;
 
-
 import com.easyjobspot.backend.common.dto.ApiResponse;
 import com.easyjobspot.backend.job.dto.JobDTO;
 import com.easyjobspot.backend.job.service.JobService;
@@ -21,6 +20,23 @@ public class AdminJobController {
     private final JobService jobService;
 
     // ====================================================
+    // VIEW ALL JOBS (ADMIN — ALL STATUSES + FILTER)
+    // ====================================================
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<JobDTO>>> getAllJobs(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<JobDTO> jobs = jobService.getAllJobsForAdmin(status, page, size);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("All jobs fetched successfully", jobs)
+        );
+    }
+
+    // ====================================================
     // VIEW ALL PENDING JOBS
     // ====================================================
     @GetMapping("/pending")
@@ -37,7 +53,22 @@ public class AdminJobController {
     }
 
     // ====================================================
-    // APPROVE JOB
+    // VIEW SINGLE JOB DETAILS
+    // ====================================================
+    @GetMapping("/{jobId}")
+    public ResponseEntity<ApiResponse<JobDTO>> getJobById(
+            @PathVariable UUID jobId
+    ) {
+
+        JobDTO job = jobService.getJobByIdForAdmin(jobId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Job fetched successfully", job)
+        );
+    }
+
+    // ====================================================
+    // APPROVE
     // ====================================================
     @PutMapping("/{jobId}/approve")
     public ResponseEntity<ApiResponse<Void>> approveJob(
@@ -52,7 +83,7 @@ public class AdminJobController {
     }
 
     // ====================================================
-    // REJECT JOB
+    // REJECT
     // ====================================================
     @PutMapping("/{jobId}/reject")
     public ResponseEntity<ApiResponse<Void>> rejectJob(
@@ -68,7 +99,7 @@ public class AdminJobController {
     }
 
     // ====================================================
-    // CLOSE JOB (MANUAL STOP HIRING)
+    // CLOSE
     // ====================================================
     @PutMapping("/{jobId}/close")
     public ResponseEntity<ApiResponse<Void>> closeJob(
@@ -79,6 +110,36 @@ public class AdminJobController {
 
         return ResponseEntity.ok(
                 ApiResponse.success("Job closed successfully", null)
+        );
+    }
+
+    // ====================================================
+    // REMOVE
+    // ====================================================
+    @PutMapping("/{jobId}/remove")
+    public ResponseEntity<ApiResponse<Void>> removeJob(
+            @PathVariable UUID jobId
+    ) {
+
+        jobService.removeJobByAdmin(jobId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Job removed by admin successfully", null)
+        );
+    }
+
+    // ====================================================
+    // RESTORE
+    // ====================================================
+    @PutMapping("/{jobId}/restore")
+    public ResponseEntity<ApiResponse<Void>> restoreJob(
+            @PathVariable UUID jobId
+    ) {
+
+        jobService.restoreJobByAdmin(jobId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Job restored by admin successfully", null)
         );
     }
 }

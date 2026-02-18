@@ -49,27 +49,13 @@ public class ProfileService {
 
         String userType = user.getUserType().name();
 
+        // SYSTEM_ADMIN always completed
         if (userType.equals("SYSTEM_ADMIN")) {
             return new ProfileStatusResponse(userType, true);
         }
 
-        if (userType.equals("JOB_SEEKER")) {
-            boolean completed = jobRepo.findByUserId(userId)
-                    .map(JobSeekerProfile::isProfileCompleted)
-                    .orElse(false);
-
-            return new ProfileStatusResponse(userType, completed);
-        }
-
-        if (userType.equals("JOB_PROVIDER")) {
-            boolean completed = providerRepo.findByUserId(userId)
-                    .map(ProviderProfile::isProfileCompleted)
-                    .orElse(false);
-
-            return new ProfileStatusResponse(userType, completed);
-        }
-
-        return new ProfileStatusResponse(userType, false);
+        // ✅ Single source of truth
+        return new ProfileStatusResponse(userType, user.isProfileCompleted());
     }
 
     // ================= JOB SEEKER =================
@@ -77,11 +63,8 @@ public class ProfileService {
     @Transactional
     public Object saveJobSeekerProfile(UUID userId, JobSeekerProfileRequest req) {
 
-        User user = userRepository.findById(userId).orElse(null);
-
-        if (user == null) {
-            return new ProfileResponse(false, "USER_NOT_FOUND");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("USER_NOT_FOUND"));
 
         if (!user.getUserType().name().equals("JOB_SEEKER")) {
             return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
@@ -126,7 +109,6 @@ public class ProfileService {
         profile.setExperience(req.getExperience());
         profile.setEducation(req.getEducation());
         profile.setResumeUrl(req.getResumeUrl());
-
         profile.setCurrentJobTitle(req.getCurrentJobTitle());
         profile.setPreferredJobType(req.getPreferredJobType());
         profile.setPreferredLocation(req.getPreferredLocation());
@@ -135,8 +117,11 @@ public class ProfileService {
         profile.setPortfolioUrl(req.getPortfolioUrl());
 
         profile.setProfileCompleted(true);
-
         jobRepo.save(profile);
+
+        // ✅ update users table completion flag
+        user.setProfileCompleted(true);
+        userRepository.save(user);
 
         return new ProfileResponse(true, "JOB_SEEKER_PROFILE_SAVED");
     }
@@ -146,11 +131,8 @@ public class ProfileService {
     @Transactional
     public Object saveProviderProfile(UUID userId, ProviderProfileRequest req) {
 
-        User user = userRepository.findById(userId).orElse(null);
-
-        if (user == null) {
-            return new ProfileResponse(false, "USER_NOT_FOUND");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("USER_NOT_FOUND"));
 
         if (!user.getUserType().name().equals("JOB_PROVIDER")) {
             return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
@@ -179,9 +161,8 @@ public class ProfileService {
                     return p;
                 });
 
-        // ✅ correct approval fetch
+        // provider must be approved first
         if (profile.getApprovedAt() == null) {
-
             ProviderApproval approval =
                     providerApprovalRepository.findByProviderId(userId)
                             .orElseThrow(() ->
@@ -201,6 +182,10 @@ public class ProfileService {
         profile.setProfileCompleted(true);
 
         providerRepo.save(profile);
+
+        // ✅ update users table completion flag
+        user.setProfileCompleted(true);
+        userRepository.save(user);
 
         return new ProfileResponse(true, "PROVIDER_PROFILE_SAVED");
     }

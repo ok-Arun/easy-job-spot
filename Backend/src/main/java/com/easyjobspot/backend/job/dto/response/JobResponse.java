@@ -1,3 +1,4 @@
+/*
 package com.easyjobspot.backend.job.dto.response;
 
 import java.time.LocalDateTime;
@@ -66,3 +67,4 @@ public class JobResponse {
         return createdAt;
     }
 }
+*/

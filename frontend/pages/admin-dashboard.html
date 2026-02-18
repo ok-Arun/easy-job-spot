@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | EasyJobSpot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="sidebar">
+        <h2 class="logo">EasyJobSpot</h2>
+        <nav>
+            <a href="admin-dashboard.html" class="active">Dashboard</a>
+            <a href="admin-all-jobs.html">All Jobs</a>
+            <a href="admin-job-moderation.html">Job Moderation</a>
+            <a href="admin-all-users.html">All Users</a>
+            <a href="admin-provider-approval.html">Provider Approvals</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- HEADER WITH LOGOUT -->
+        <header class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+
+        </header>
+
+        <!-- USER OVERVIEW -->
+        <h2 class="section-title">User Overview</h2>
+
+        <section class="stats-grid user-stats">
+
+            <div class="card total-accent"
+                 onclick="window.location.href='admin-all-users.html'">
+                <h3>Total Users</h3>
+                <p id="totalUsers">--</p>
+            </div>
+
+            <div class="card"
+                 onclick="window.location.href='admin-all-users.html?userType=JOB_SEEKER'">
+                <h3>Job Seekers</h3>
+                <p id="jobSeekers">--</p>
+            </div>
+
+            <div class="card"
+                 onclick="window.location.href='admin-all-users.html?userType=JOB_PROVIDER'">
+                <h3>Providers</h3>
+                <p id="providers">--</p>
+            </div>
+
+            <div class="card"
+                 onclick="window.location.href='admin-all-users.html?userType=SYSTEM_ADMIN'">
+                <h3>Admins</h3>
+                <p id="admins">--</p>
+            </div>
+
+            <div class="card pending-accent-job"
+                 onclick="window.location.href='admin-provider-approval.html?status=PENDING'">
+                <h3>Pending Providers</h3>
+                <p id="pendingProviders">--</p>
+            </div>
+
+        </section>
+
+        <!-- JOB OVERVIEW -->
+        <h2 class="section-title">Job & Application Overview</h2>
+
+        <section class="stats-grid">
+
+            <div class="card total-accent"
+                 onclick="window.location.href='admin-all-jobs.html'">
+                <h3>Total Jobs</h3>
+                <p id="totalJobs">--</p>
+            </div>
+
+            <div class="card active-accent"
+                 onclick="window.location.href='admin-all-jobs.html?status=ACTIVE'">
+                <h3>Active Jobs</h3>
+                <p id="activeJobs">--</p>
+            </div>
+
+            <div class="card pending-accent-job"
+                 onclick="window.location.href='admin-job-moderation.html?status=PENDING_APPROVAL'">
+                <h3>Pending Jobs</h3>
+                <p id="pendingJobs">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Applications</h3>
+                <p id="totalApplications">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Shortlisted</h3>
+                <p id="shortlisted">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Rejected</h3>
+                <p id="rejected">--</p>
+            </div>
+
+            <div class="card">
+                <h3>Hired</h3>
+                <p id="hired">--</p>
+            </div>
+
+        </section>
+
+        <!-- CHARTS -->
+        <section class="charts-section">
+
+            <div class="chart-container">
+                <h3>Jobs Trend</h3>
+                <canvas id="jobsTrendChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Applications Trend</h3>
+                <canvas id="applicationsTrendChart"></canvas>
+            </div>
+
+            <div class="chart-container funnel">
+                <h3>Hiring Funnel</h3>
+                <canvas id="hiringFunnelChart"></canvas>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script src="../js/admin-dashboard.js"></script>
+<script src="../js/admin-global.js"></script>
+
+
+
+</body>
+</html>

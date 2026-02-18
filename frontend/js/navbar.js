@@ -1,46 +1,111 @@
 // navbar.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token");
-    const userName = localStorage.getItem("userName");
+    const token = getToken();
+    const rawUserName = getUserName();
 
-    const authButtons = document.getElementById("authButtons");
-    const userMenu = document.getElementById("userMenu");
-    const userNameEl = document.getElementById("userName");
+    const authActions = document.getElementById("auth-actions");
+    const userActions = document.getElementById("user-actions");
+    const userNameEl = document.getElementById("navUserName");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const ctaSection = document.getElementById("ctaSection");
 
-    // Not logged in
+    const logo = document.querySelector(".logo");
+    const profileIcon = document.getElementById("profileIcon");
+    const profileMenu = document.getElementById("profileMenu");
+
+    /* ================= LOGO REDIRECT ================= */
+    if (logo) {
+        logo.addEventListener("click", () => {
+            window.location.href = "/index.html";
+        });
+    }
+
+    /* ================= NOT LOGGED IN ================= */
     if (!token) {
-        if (authButtons) authButtons.style.display = "flex";
-        if (userMenu) userMenu.style.display = "none";
+        if (authActions) authActions.classList.remove("hidden");
+        if (userActions) userActions.classList.add("hidden");
+        if (ctaSection) ctaSection.style.display = "block";
         return;
     }
 
-    // Logged in
-    if (authButtons) authButtons.style.display = "none";
-    if (userMenu) userMenu.style.display = "flex";
-    if (userNameEl) userNameEl.innerText = userName || "User";
+    /* ================= LOGGED IN ================= */
+    if (authActions) authActions.classList.add("hidden");
+    if (userActions) userActions.classList.remove("hidden");
+
+    if (userNameEl) {
+        userNameEl.innerText = formatName(rawUserName) || "User";
+    }
+
+    if (ctaSection) ctaSection.style.display = "none";
+
+    /* ================= DROPDOWN TOGGLE ================= */
+    if (profileIcon && profileMenu) {
+        profileIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", () => {
+            profileMenu.classList.add("hidden");
+        });
+    }
+
+    /* ================= LOGOUT ================= */
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+
+    /* ================= EDIT PROFILE ================= */
+    if (editProfileBtn) editProfileBtn.addEventListener("click", editProfile);
 });
 
-function logout() {
-    // Clear only what we use
-    localStorage.removeItem("token");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userType");
 
-    // Redirect to login page (based on your structure)
-    window.location.href = "pages/login.html";
+/* ================= NAME FORMATTER ================= */
+
+function formatName(name) {
+    if (!name) return "";
+
+    return name
+        .trim()
+        .toLowerCase()
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
 }
 
+
+/* ================= LOGOUT FUNCTION ================= */
+
+function logout() {
+    clearAuthSession();
+    window.location.replace("/pages/login.html");
+}
+
+
+/* ================= ROLE-BASED PROFILE REDIRECT ================= */
+
 function editProfile() {
-    const userType = localStorage.getItem("userType");
+    const userType = getUserType();
 
     if (!userType) {
-        window.location.href = "pages/login.html";
+        window.location.replace("/pages/login.html");
         return;
     }
 
-    window.location.href =
-        userType === "JOB_SEEKER"
-            ? "pages/job-seeker-profile.html"
-            : "pages/provider-profile.html";
+    switch (userType) {
+        case "JOB_SEEKER":
+            window.location.href = "/pages/job-seeker-profile.html";
+            break;
+
+        case "JOB_PROVIDER":
+            window.location.href = "/pages/provider-profile.html";
+            break;
+
+        case "SYSTEM_ADMIN":
+            window.location.href = "/pages/admin-dashboard.html";
+            break;
+
+        default:
+            logout();
+    }
 }

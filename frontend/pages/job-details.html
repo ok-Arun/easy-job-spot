@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Details | EasyJobSpot</title>
+
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/job-details.css">
+
+    <!-- Font Awesome -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="logo">EasyJobSpot</div>
+
+    <div id="auth-actions" class="nav-actions hidden">
+        <a href="login.html">Login</a>
+        <a href="register.html" class="btn-primary">Register</a>
+    </div>
+
+    <div id="user-actions" class="user-actions hidden">
+        <span id="navUserName" class="nav-username"></span>
+
+        <div class="profile-box">
+            <i id="profileIcon" class="fa-solid fa-user profile-icon"></i>
+
+            <div id="profileMenu" class="profile-menu hidden">
+                <a href="javascript:void(0)" id="editProfileBtn">Edit Profile</a>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ================= JOB DETAILS ================= -->
+<section class="section">
+    <div class="job-details-wrapper">
+
+        <button class="back-btn" onclick="goBack()">← Back to Jobs</button>
+
+        <div id="jobContainer" class="job-card">
+            Loading job details...
+        </div>
+
+    </div>
+</section>
+
+<script src="../js/config.js"></script>
+<script src="../js/auth-util.js"></script>
+<script src="../js/navbar.js"></script>
+<script src="../js/job-details.js"></script>
+
+</body>
+</html>

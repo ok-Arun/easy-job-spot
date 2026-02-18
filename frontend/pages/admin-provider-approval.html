@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provider Approvals | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="../css/admin-provider-approval.css">
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <aside class="sidebar">
+        <h2 class="logo">EasyJobSpot</h2>
+        <nav>
+            <a href="admin-dashboard.html">Dashboard</a>
+            <a href="admin-all-jobs.html" >All Jobs</a>
+            <a href="admin-job-moderation.html">Job Moderation</a>
+            <a href="admin-all-users.html">All Users</a>
+            <a href="admin-provider-approval.html" class="active">Provider Approvals</a>
+
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="page-header">
+            <h1>Provider Approval Panel</h1>
+        </header>
+
+        <section class="summary-section">
+            <div class="summary-card">
+                <h3>Total Pending Providers</h3>
+                <p id="totalPending">--</p>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <table class="providers-table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="providersTableBody"></tbody>
+            </table>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h2 id="confirmTitle"></h2>
+        <p id="confirmMessage"></p>
+
+        <div class="modal-actions">
+            <button class="secondary-btn" onclick="closeConfirmModal()">Cancel</button>
+            <button id="confirmActionBtn"></button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/admin-provider-approval.js"></script>
+<script src="../js/admin-global.js"></script>
+
+</body>
+</html>

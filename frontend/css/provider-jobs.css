@@ -1,0 +1,117 @@
+/* FILTERS */
+.job-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.filter-btn.active {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+}
+
+/* JOB LIST */
+.job-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 22px;
+}
+
+/* JOB CARD */
+.job-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 230px;
+}
+
+/* HEADER */
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.job-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.job-meta {
+    font-size: 15px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* STATUS BADGE */
+.job-status {
+    padding: 4px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.badge-closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* INFO */
+.job-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    font-size: 18px;
+    color: #334155;
+    margin-bottom: 18px;
+}
+
+/* ACTIONS */
+.job-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.job-actions .btn {
+    padding: 7px 14px;
+    font-size: 15px;
+}
+
+/* CARD BORDER BY STATUS */
+.job-active {
+    border-left: 5px solid #22c55e;
+}
+
+.job-pending {
+    border-left: 5px solid #eab308;
+}
+
+.job-closed {
+    border-left: 5px solid #ef4444;
+}

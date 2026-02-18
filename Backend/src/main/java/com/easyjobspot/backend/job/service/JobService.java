@@ -43,18 +43,53 @@ public class JobService {
     // PUBLIC JOB LISTING
     // ====================================================
     @Transactional(readOnly = true)
-    public Page<JobDTO> getAllJobs(int page, int size, String sortBy, String search, String category) {
+    public Page<JobDTO> getAllJobs(
+            int page,
+            int size,
+            String sortBy,
+            String search,
+            String category,
+            String title,      // ⭐ NEW
+            String location    // ⭐ NEW
+    ) {
 
         Pageable pageable =
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
 
         Page<Job> jobs;
 
-        if (search != null && !search.trim().isEmpty()) {
-            jobs = jobRepository.searchByStatus(Job.JobStatus.ACTIVE, search.trim(), pageable);
-        } else if (category != null && !category.trim().isEmpty()) {
-            jobs = jobRepository.findByStatusAndCategory(Job.JobStatus.ACTIVE, category.trim(), pageable);
-        } else {
+        // 1️⃣ NEW — TITLE / LOCATION FILTER (highest priority)
+        if ((title != null && !title.trim().isEmpty())
+                || (location != null && !location.trim().isEmpty())) {
+
+            jobs = jobRepository.filterByTitleAndLocation(
+                    Job.JobStatus.ACTIVE,
+                    (title != null && !title.isBlank()) ? title.trim() : null,
+                    (location != null && !location.isBlank()) ? location.trim() : null,
+                    pageable
+            );
+        }
+
+        // 2️⃣ EXISTING — KEYWORD SEARCH
+        else if (search != null && !search.trim().isEmpty()) {
+            jobs = jobRepository.searchByStatus(
+                    Job.JobStatus.ACTIVE,
+                    search.trim(),
+                    pageable
+            );
+        }
+
+        // 3️⃣ EXISTING — CATEGORY FILTER
+        else if (category != null && !category.trim().isEmpty()) {
+            jobs = jobRepository.findByStatusAndCategory(
+                    Job.JobStatus.ACTIVE,
+                    category.trim(),
+                    pageable
+            );
+        }
+
+        // 4️⃣ EXISTING — ALL ACTIVE JOBS
+        else {
             jobs = jobRepository.findByStatus(Job.JobStatus.ACTIVE, pageable);
         }
 
@@ -62,7 +97,7 @@ public class JobService {
     }
 
     // ====================================================
-    // GET JOB BY ID
+    // GET JOB BY ID (PUBLIC)
     // ====================================================
     @Transactional(readOnly = true)
     public JobDTO getJobById(UUID id) {
@@ -78,15 +113,15 @@ public class JobService {
     }
 
     // ====================================================
-    // CREATE JOB
+    // CREATE JOB (PROVIDER / ADMIN)
     // ====================================================
     @Transactional
     public JobDTO createJob(JobCreateRequest request) {
 
         User user = getCurrentUser();
 
-        if (!user.getRole().name().equals("ADMIN")
-                && user.getUserType() != User.UserType.JOB_PROVIDER) {
+        if (user.getUserType() != User.UserType.JOB_PROVIDER
+                && !user.getRole().name().equals("ADMIN")) {
             throw new AccessDeniedException("Only job providers can post jobs");
         }
 
@@ -126,6 +161,15 @@ public class JobService {
                 .location(request.getLocation().trim())
                 .jobType(jobType)
                 .description(request.getDescription())
+                .workMode(request.getWorkMode())
+                .employmentLevel(request.getEmploymentLevel())
+                .salaryMin(request.getSalaryMin())
+                .salaryMax(request.getSalaryMax())
+                .experienceMin(request.getExperienceMin())
+                .experienceMax(request.getExperienceMax())
+                .vacancyCount(request.getVacancyCount())
+                .applicationType(request.getApplicationType())
+                .applicationUrl(request.getApplicationUrl())
                 .deadline(request.getDeadline())
                 .createdBy(user.getId())
                 .build();
@@ -134,7 +178,7 @@ public class JobService {
     }
 
     // ====================================================
-    // UPDATE JOB
+    // UPDATE JOB (ADMIN OR OWNER)
     // ====================================================
     @Transactional
     public JobDTO updateJob(UUID id, JobUpdateRequest request) {
@@ -162,23 +206,213 @@ public class JobService {
     }
 
     // ====================================================
-    // DELETE JOB
+    // ADMIN — REMOVE JOB (SOFT REMOVE)
     // ====================================================
     @Transactional
-    public void deleteJob(UUID id) {
+    public void removeJobByAdmin(UUID jobId) {
+
+        User admin = getCurrentUser();
+
+        if (!admin.getRole().name().equals("ADMIN")) {
+            throw new AccessDeniedException("Only admin allowed");
+        }
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        job.removeByAdmin();
+        jobRepository.save(job);
+
+        auditLogService.log(
+                admin.getId(),
+                AuditAction.JOB_REMOVED_BY_ADMIN,
+                job.getId(),
+                "Job removed by admin"
+        );
+    }
+
+
+    // ====================================================
+    // ADMIN — RESTORE JOB
+    // ====================================================
+    @Transactional
+    public void restoreJobByAdmin(UUID jobId) {
+
+        User admin = getCurrentUser();
+
+        if (!admin.getRole().name().equals("ADMIN")) {
+            throw new AccessDeniedException("Only admin allowed");
+        }
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        job.restoreByAdmin();
+        jobRepository.save(job);
+
+        auditLogService.log(
+                admin.getId(),
+                AuditAction.JOB_RESTORED_BY_ADMIN,
+                job.getId(),
+                "Job restored by admin"
+        );
+    }
+
+
+
+    // ====================================================
+    // CLOSE JOB (ADMIN OR PROVIDER OWNER)
+    // ====================================================
+    @Transactional
+    public void closeJob(UUID jobId) {
+
+        User user = getCurrentUser();
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+        boolean isOwner = job.getCreatedBy().equals(user.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("Not allowed to close this job");
+        }
+
+        job.close();
+        jobRepository.save(job);
+
+        auditLogService.log(
+                user.getId(),
+                AuditAction.JOB_CLOSED,
+                job.getId(),
+                "Job closed"
+        );
+    }
+
+    // ====================================================
+// ADMIN — GET JOB BY ID (ANY STATUS)
+// ====================================================
+    @Transactional(readOnly = true)
+    public JobDTO getJobByIdForAdmin(UUID id) {
+
+        User admin = getCurrentUser();
+
+        if (!admin.getRole().name().equals("ADMIN")) {
+            throw new AccessDeniedException("Only admin allowed");
+        }
 
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
 
+        return jobMapper.toDTO(job);
+    }
+
+    // ====================================================
+    // REOPEN JOB (ADMIN OR PROVIDER OWNER)
+    // ====================================================
+    @Transactional
+    public void reopenJob(UUID jobId) {
+
         User user = getCurrentUser();
 
-        if (!user.getRole().name().equals("ADMIN")
-                && !job.getCreatedBy().equals(user.getId())) {
-            throw new AccessDeniedException("Not allowed");
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
+
+        boolean isAdmin = user.getRole().name().equals("ADMIN");
+        boolean isOwner = job.getCreatedBy().equals(user.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("Not allowed to reopen this job");
         }
 
-        jobRepository.delete(job);
+        if (job.getStatus() != Job.JobStatus.CLOSED) {
+            throw new BadRequestException("Only CLOSED jobs can be reopened");
+        }
+
+        job.activate();
+        jobRepository.save(job);
+
+        auditLogService.log(
+                user.getId(),
+                AuditAction.JOB_APPROVED,
+                job.getId(),
+                "Job reopened (activated)"
+        );
     }
+
+    // ====================================================
+    // PROVIDER — GET OWN JOBS
+    // ====================================================
+    @Transactional(readOnly = true)
+    public Page<JobDTO> getJobsByCurrentProvider(
+            int page,
+            int size,
+            String status
+    ) {
+
+        User user = getCurrentUser();
+
+        if (user.getUserType() != User.UserType.JOB_PROVIDER
+                && !user.getRole().name().equals("ADMIN")) {
+            throw new AccessDeniedException("Only providers can access their jobs");
+        }
+
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Job> jobs;
+
+        if (status == null || status.isBlank()) {
+            jobs = jobRepository.findByCreatedBy(user.getId(), pageable);
+        } else {
+            Job.JobStatus jobStatus;
+            try {
+                jobStatus = Job.JobStatus.valueOf(status.toUpperCase());
+            } catch (Exception e) {
+                throw new BadRequestException("Invalid job status");
+            }
+
+            jobs = jobRepository.findByCreatedByAndStatus(
+                    user.getId(),
+                    jobStatus,
+                    pageable
+            );
+        }
+
+        return jobs.map(jobMapper::toDTO);
+    }
+
+
+    // ====================================================
+    // ADMIN — VIEW ALL JOBS (OPTIONAL STATUS FILTER)
+    // ====================================================
+    @Transactional(readOnly = true)
+    public Page<JobDTO> getAllJobsForAdmin(String status, int page, int size) {
+
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<Job> jobs;
+
+        if (status == null || status.isBlank()) {
+            jobs = jobRepository.findAll(pageable);
+        } else {
+
+            Job.JobStatus jobStatus;
+
+            try {
+                jobStatus = Job.JobStatus.valueOf(status.toUpperCase());
+            } catch (Exception e) {
+                throw new BadRequestException("Invalid job status");
+            }
+
+            jobs = jobRepository.findByStatus(jobStatus, pageable);
+        }
+
+        return jobs.map(jobMapper::toDTO);
+    }
+
+
 
     // ====================================================
     // ADMIN — VIEW PENDING JOBS
@@ -253,32 +487,6 @@ public class JobService {
                 AuditAction.JOB_REJECTED,
                 job.getId(),
                 reason.trim()
-        );
-    }
-
-    // ====================================================
-    // ADMIN — CLOSE JOB
-    // ====================================================
-    @Transactional
-    public void closeJob(UUID jobId) {
-
-        User admin = getCurrentUser();
-
-        if (!admin.getRole().name().equals("ADMIN")) {
-            throw new AccessDeniedException("Only admin allowed");
-        }
-
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job not found"));
-
-        job.close();
-        jobRepository.save(job);
-
-        auditLogService.log(
-                admin.getId(),
-                AuditAction.JOB_CLOSED,
-                job.getId(),
-                "Job closed"
         );
     }
 

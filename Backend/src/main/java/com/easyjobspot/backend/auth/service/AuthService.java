@@ -110,6 +110,7 @@ public class AuthService {
                 message,
                 token,
                 "Bearer",
+                user.getName(),
                 user.getEmail(),
                 user.getRole().name(),
                 user.getUserType().name()

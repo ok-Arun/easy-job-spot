@@ -1,12 +1,14 @@
 package com.easyjobspot.backend.dashboard.admin.service;
 
-
 import com.easyjobspot.backend.dashboard.admin.dto.AdminDashboardStatsResponse;
 import com.easyjobspot.backend.dashboard.admin.dto.JobApplicationCountDTO;
+import com.easyjobspot.backend.dashboard.admin.dto.AdminJobApplicationView;
 import com.easyjobspot.backend.job.entity.Job;
 import com.easyjobspot.backend.job.repository.JobRepository;
 import com.easyjobspot.backend.jobapplication.enums.ApplicationStatus;
 import com.easyjobspot.backend.jobapplication.repository.ApplicationRepository;
+import com.easyjobspot.backend.user.entity.User;
+import com.easyjobspot.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ public class AdminDashboardService {
 
     private final JobRepository jobRepository;
     private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
 
     public AdminDashboardStatsResponse getDashboardStats() {
 
@@ -32,6 +35,33 @@ public class AdminDashboardService {
         long shortlisted = applicationRepository.countByStatus(ApplicationStatus.SHORTLISTED);
         long rejected = applicationRepository.countByStatus(ApplicationStatus.REJECTED);
         long hired = applicationRepository.countByStatus(ApplicationStatus.HIRED);
+
+        // ================= USER STATS =================
+        long totalUsers = userRepository.count();
+
+        long jobSeekers =
+                userRepository.countByUserType(User.UserType.JOB_SEEKER);
+
+        long providers =
+                userRepository.countByUserType(User.UserType.JOB_PROVIDER);
+
+        long admins =
+                userRepository.countByRole(User.Role.ADMIN);
+
+        long pendingProviders =
+                userRepository.countByUserTypeAndProviderStatus(
+                        User.UserType.JOB_PROVIDER,
+                        User.ProviderStatus.PENDING
+                );
+
+        AdminDashboardStatsResponse.UserStats userStats =
+                AdminDashboardStatsResponse.UserStats.builder()
+                        .total(totalUsers)
+                        .jobSeekers(jobSeekers)
+                        .providers(providers)
+                        .admins(admins)
+                        .pendingProviders(pendingProviders)
+                        .build();
 
         // ================= PER JOB COUNTS =================
         List<JobApplicationCountDTO> perJobStats =
@@ -60,7 +90,28 @@ public class AdminDashboardService {
                                 .hired(hired)
                                 .build()
                 )
+                .users(userStats)
                 .perJobApplications(perJobStats)
                 .build();
+    }
+
+    // ====================================================
+    // ADMIN — VIEW APPLICATIONS PER JOB (READ ONLY)
+    // ====================================================
+
+    public List<AdminJobApplicationView> getApplicationsForJob(UUID jobId) {
+
+        return applicationRepository.findApplicationsByJobId(jobId)
+                .stream()
+                .map(app -> AdminJobApplicationView.builder()
+                        .applicationId(app.getId())
+                        .applicantId(app.getUser().getId())
+                        .applicantName(app.getUser().getName())
+                        .applicantEmail(app.getUser().getEmail())
+                        .status(app.getStatus())
+                        .appliedAt(app.getAppliedAt())
+                        .build()
+                )
+                .toList();
     }
 }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provider Dashboard | Job Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/provider-common.css">
+    <link rel="stylesheet" href="../css/provider-dashboard.css">
+</head>
+<body>
+
+<header id="providerNavbar">
+    <nav class="provider-nav">
+        <div class="nav-logo">Job Portal</div>
+
+        <ul class="nav-links">
+            <li class="active">
+                <a href="provider-dashboard.html">Dashboard</a>
+            </li>
+            <li>
+                <a href="provider-post-job.html">Post Job</a>
+            </li>
+            <li>
+                <a href="provider-jobs.html">My Jobs</a>
+            </li>
+            <li>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container provider-dashboard">
+
+    <h1 class="page-title">Provider Dashboard</h1>
+
+    <section id="stateContainer" class="state hidden"></section>
+
+    <div id="dashboardContent">
+
+        <!-- STATS -->
+        <section class="dashboard-stats">
+            <div class="stat-card">
+                <span>Total Jobs</span>
+                <strong id="totalJobs">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Active Jobs</span>
+                <strong id="activeJobs">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Pending Approval</span>
+                <strong id="pendingJobs">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Total Applications</span>
+                <strong id="totalApplications">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Shortlisted</span>
+                <strong id="shortlisted">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Hired</span>
+                <strong id="hired">0</strong>
+            </div>
+        </section>
+
+        <!-- ACTION BUTTONS -->
+        <section class="dashboard-actions">
+            <button id="postJobBtn" class="btn btn-primary">
+                Post New Job
+            </button>
+
+            <button id="viewJobsBtn" class="btn btn-secondary">
+                View My Jobs
+            </button>
+        </section>
+
+        <!-- PERFORMANCE TABLE -->
+        <section class="dashboard-table">
+            <h2>Job Performance</h2>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Total Apps</th>
+                    <th>Shortlisted</th>
+                    <th>Rejected</th>
+                    <th>Hired</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody id="jobStatsBody">
+                <!-- Injected by JS -->
+                </tbody>
+            </table>
+
+            <div id="emptyJobsMessage" class="hidden empty-state-box">
+                No jobs yet.
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<script src="../js/config.js"></script>
+<script src="../js/auth-util.js"></script>
+<script src="../js/provider-dashboard.js"></script>
+
+</body>
+</html>

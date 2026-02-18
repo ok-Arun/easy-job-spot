@@ -25,41 +25,44 @@ public class JobCreateRequest {
     @NotBlank(message = "Job description is required")
     private String description;
 
-    /**
-     * Job application deadline
-     * Used for automatic expiry
-     */
+    // ======== NEW FIELDS ========
+
+    private String workMode;
+    private String employmentLevel;
+
+    private Double salaryMin;
+    private Double salaryMax;
+
+    private Integer experienceMin;
+    private Integer experienceMax;
+
+    private Integer vacancyCount;
+
+    private String applicationType;
+    private String applicationUrl;
+
+    // ============================
+
     @NotNull(message = "Job deadline is required")
     private LocalDateTime deadline;
 
-    public JobCreateRequest() {
-    }
+    public JobCreateRequest() {}
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
+    public String getCompany() { return company; }
+    public String getCategory() { return category; }
+    public String getLocation() { return location; }
+    public String getJobType() { return jobType; }
+    public String getDescription() { return description; }
+    public LocalDateTime getDeadline() { return deadline; }
 
-    public String getCompany() {
-        return company;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public String getJobType() {
-        return jobType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
+    public String getWorkMode() { return workMode; }
+    public String getEmploymentLevel() { return employmentLevel; }
+    public Double getSalaryMin() { return salaryMin; }
+    public Double getSalaryMax() { return salaryMax; }
+    public Integer getExperienceMin() { return experienceMin; }
+    public Integer getExperienceMax() { return experienceMax; }
+    public Integer getVacancyCount() { return vacancyCount; }
+    public String getApplicationType() { return applicationType; }
+    public String getApplicationUrl() { return applicationUrl; }
 }

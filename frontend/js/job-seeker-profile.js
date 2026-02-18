@@ -1,3 +1,4 @@
+const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
 const token = localStorage.getItem("token");
 const message = document.getElementById("message");
 
@@ -64,7 +65,7 @@ document.getElementById("jobSeekerForm").addEventListener("submit", async (e) =>
         localStorage.setItem("profileCompleted", "1");
 
         setTimeout(() => {
-            window.location.href = "index.html";
+            window.location.href = "/index.html";
         }, 1200);
 
     } catch (err) {

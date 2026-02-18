@@ -1,64 +1,67 @@
 // home.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    handleNavbar();
     loadJobs();
+    setupCategoryNavigation();
+    setupSearch();
 });
 
-/* ================= NAVBAR STATE ================= */
+/* ================= SEARCH SUPPORT ================= */
 
-function handleNavbar() {
-    const token = localStorage.getItem("token");
-    const userName = localStorage.getItem("userName");
+function setupSearch() {
+    const titleInput = document.getElementById("searchTitle");
+    const locationInput = document.getElementById("searchLocation");
+    const searchBtn = document.getElementById("searchBtn");
 
-    const authActions = document.getElementById("auth-actions");
-    const userActions = document.getElementById("user-actions");
-    const navUserName = document.getElementById("navUserName");
-    const profileIcon = document.getElementById("profileIcon");
-    const profileMenu = document.getElementById("profileMenu");
-    const logoutBtn = document.getElementById("logoutBtn");
+    if (!searchBtn) return;
 
-    // Defensive checks (important)
-    if (!authActions || !userActions) return;
+    function performSearch() {
+        const title = titleInput.value.trim();
+        const location = locationInput.value.trim();
 
-    /* NOT LOGGED IN */
-    if (!token) {
-        authActions.classList.remove("hidden");
-        userActions.classList.add("hidden");
-        return;
+        // If nothing entered → go to all jobs
+        if (!title && !location) {
+            window.location.href = "pages/jobs.html";
+            return;
+        }
+
+        // Build correct query params for backend
+        let query = [];
+
+        if (title) query.push(`title=${encodeURIComponent(title)}`);
+        if (location) query.push(`location=${encodeURIComponent(location)}`);
+
+        window.location.href = `pages/jobs.html?${query.join("&")}`;
     }
 
-    /* LOGGED IN */
-    authActions.classList.add("hidden");
-    userActions.classList.remove("hidden");
+    searchBtn.addEventListener("click", performSearch);
 
-    if (navUserName) {
-        navUserName.textContent = userName || "User";
-    }
+    // Enter key support
+    titleInput.addEventListener("keypress", e => {
+        if (e.key === "Enter") performSearch();
+    });
 
-    if (profileIcon && profileMenu) {
-        profileIcon.addEventListener("click", (e) => {
-            e.stopPropagation();
-            profileMenu.classList.toggle("hidden");
-        });
-
-        document.addEventListener("click", () => {
-            profileMenu.classList.add("hidden");
-        });
-    }
-
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            clearToken();
-            localStorage.removeItem("userName");
-
-            // index.html is in ROOT
-            window.location.href = "pages/login.html";
-        });
-    }
+    locationInput.addEventListener("keypress", e => {
+        if (e.key === "Enter") performSearch();
+    });
 }
 
-/* ================= JOB LIST ================= */
+/* ================= CATEGORY NAVIGATION ================= */
+
+function setupCategoryNavigation() {
+    const categoryCards = document.querySelectorAll(".category-card");
+
+    categoryCards.forEach(card => {
+        card.style.cursor = "pointer";
+
+        card.addEventListener("click", () => {
+            const category = encodeURIComponent(card.textContent.trim());
+            window.location.href = `pages/jobs.html?category=${category}`;
+        });
+    });
+}
+
+/* ================= LOAD LATEST JOBS ================= */
 
 function loadJobs() {
     fetch(`${APP_CONFIG.API_BASE_URL}/jobs`)
@@ -82,6 +85,7 @@ function loadJobs() {
             jobs.forEach(job => {
                 const div = document.createElement("div");
                 div.className = "job-card";
+                div.style.cursor = "pointer";
 
                 div.innerHTML = `
                     <h4>${job.title}</h4>
@@ -90,6 +94,10 @@ function loadJobs() {
                     </div>
                     <p>${job.description.substring(0, 120)}...</p>
                 `;
+
+                div.addEventListener("click", () => {
+                    window.location.href = `pages/job-details.html?jobId=${job.id}`;
+                });
 
                 container.appendChild(div);
             });
