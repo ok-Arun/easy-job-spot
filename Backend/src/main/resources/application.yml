@@ -23,11 +23,12 @@ spring:
     time-zone: UTC
 
 server:
-  port: ${PORT:8081}
+  port: ${PORT}
   error:
     include-message: always
     include-binding-errors: always
     include-stacktrace: never
+
 
 # JWT configuration
 jwt:
