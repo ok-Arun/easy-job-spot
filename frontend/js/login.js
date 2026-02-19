@@ -43,7 +43,7 @@ async function login() {
             }
         }
 
-        // ===== SAVE TEMP SESSION (profile status unknown yet) =====
+        // ===== SAVE TEMP SESSION =====
         saveAuthSession({
             token: data.token,
             userType: data.userType,
@@ -81,7 +81,7 @@ async function checkProfileStatus() {
         const isProfileComplete = data.profileCompleted === true;
         const userType = data.userType;
 
-        // ===== UPDATE SESSION WITH REAL PROFILE STATUS =====
+        // ===== UPDATE SESSION =====
         saveAuthSession({
             token: getToken(),
             userType: userType,
@@ -101,10 +101,11 @@ async function checkProfileStatus() {
         showMessage("Please complete your profile.", "error");
 
         setTimeout(() => {
-            window.location.href =
+            window.location.replace(
                 userType === "JOB_SEEKER"
                     ? "/pages/job-seeker-profile.html"
-                    : "/pages/provider-profile.html";
+                    : "/pages/provider-profile.html"
+            );
         }, 1500);
 
     } catch (error) {
@@ -125,11 +126,12 @@ function redirectAfterLogin(userType) {
     if (!routes[userType]) {
         console.error("Unknown user type:", userType);
         clearAuthSession();
-        window.location.href = "/pages/login.html";
+        window.location.replace("/pages/login.html");
         return;
     }
 
-    window.location.href = routes[userType];
+    // 🔥 IMPORTANT FIX — use replace instead of href
+    window.location.replace(routes[userType]);
 }
 
 
