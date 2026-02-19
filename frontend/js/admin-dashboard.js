@@ -10,14 +10,15 @@ let hiringChart = null;
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
 
+    // 🔥 FIX — use replace to avoid cached broken page
     if (!token) {
-        window.location.href = "/pages/login.html";
+        window.location.replace("/pages/login.html");
         return;
     }
 
     highlightSidebar();
-    fetchStats();
-    fetchTrends();
+    fetchStats(token);
+    fetchTrends(token);
 });
 
 
@@ -38,10 +39,10 @@ function highlightSidebar() {
 
 
 // ================= FETCH STATS =================
-async function fetchStats() {
+async function fetchStats(token) {
     try {
         const response = await fetch(`${BASE_URL}/stats`, {
-            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            headers: { "Authorization": "Bearer " + token }
         });
 
         const result = await response.json();
@@ -80,10 +81,10 @@ async function fetchStats() {
 
 
 // ================= FETCH TRENDS =================
-async function fetchTrends() {
+async function fetchTrends(token) {
     try {
         const response = await fetch(`${BASE_URL}/trends`, {
-            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+            headers: { "Authorization": "Bearer " + token }
         });
 
         const result = await response.json();
