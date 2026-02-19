@@ -1,5 +1,5 @@
-// ================= CONFIG =================
-const BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
+// ================= RUNTIME CONFIG =================
+let BASE_URL = null;
 
 let jobsChart = null;
 let applicationsChart = null;
@@ -8,9 +8,17 @@ let hiringChart = null;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", () => {
+
+    // ensure config is loaded
+    if (!window.APP_CONFIG) {
+        console.error("APP_CONFIG not loaded");
+        return;
+    }
+
+    BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
+
     const token = localStorage.getItem("token");
 
-    // 🔥 FIX — use replace to avoid cached broken page
     if (!token) {
         window.location.replace("/pages/login.html");
         return;
@@ -42,7 +50,7 @@ function highlightSidebar() {
 async function fetchStats(token) {
     try {
         const response = await fetch(`${BASE_URL}/stats`, {
-            headers: { "Authorization": "Bearer " + token }
+            headers: { Authorization: "Bearer " + token }
         });
 
         const result = await response.json();
@@ -84,7 +92,7 @@ async function fetchStats(token) {
 async function fetchTrends(token) {
     try {
         const response = await fetch(`${BASE_URL}/trends`, {
-            headers: { "Authorization": "Bearer " + token }
+            headers: { Authorization: "Bearer " + token }
         });
 
         const result = await response.json();
