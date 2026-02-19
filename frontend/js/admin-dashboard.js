@@ -1,16 +1,17 @@
-const BASE_URL = const BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
-";
+// ================= CONFIG =================
+const BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
 
 let jobsChart = null;
 let applicationsChart = null;
 let hiringChart = null;
 
-document.addEventListener("DOMContentLoaded", () => {
 
+// ================= INIT =================
+document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-        window.location.href = "/login.html";
+        window.location.href = "/pages/login.html";
         return;
     }
 
@@ -19,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchTrends();
 });
 
-function highlightSidebar() {
 
+// ================= SIDEBAR =================
+function highlightSidebar() {
     const links = document.querySelectorAll(".sidebar a");
     const currentPage = window.location.pathname.split("/").pop().toLowerCase();
 
@@ -28,42 +30,41 @@ function highlightSidebar() {
         link.classList.remove("active");
 
         const linkPage = link.getAttribute("href").toLowerCase();
-
         if (linkPage === currentPage) {
             link.classList.add("active");
         }
     });
 }
 
+
+// ================= FETCH STATS =================
 async function fetchStats() {
     try {
         const response = await fetch(`${BASE_URL}/stats`, {
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token")
-            }
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
         });
 
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-            console.error("Stats API failed");
+            console.error("Stats API failed", result);
             return;
         }
 
         const data = result.data;
 
-        // JOB STATS
+        // JOBS
         document.getElementById("totalJobs").innerText = data.jobs.total;
         document.getElementById("pendingJobs").innerText = data.jobs.pending;
         document.getElementById("activeJobs").innerText = data.jobs.active;
 
-        // APPLICATION STATS
+        // APPLICATIONS
         document.getElementById("totalApplications").innerText = data.applications.total;
         document.getElementById("shortlisted").innerText = data.applications.shortlisted;
         document.getElementById("rejected").innerText = data.applications.rejected;
         document.getElementById("hired").innerText = data.applications.hired;
 
-        // USER STATS
+        // USERS
         if (data.users) {
             document.getElementById("totalUsers").innerText = data.users.total;
             document.getElementById("jobSeekers").innerText = data.users.jobSeekers;
@@ -77,18 +78,18 @@ async function fetchStats() {
     }
 }
 
+
+// ================= FETCH TRENDS =================
 async function fetchTrends() {
     try {
         const response = await fetch(`${BASE_URL}/trends`, {
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token")
-            }
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
         });
 
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-            console.error("Trends API failed");
+            console.error("Trends API failed", result);
             return;
         }
 
@@ -103,8 +104,9 @@ async function fetchTrends() {
     }
 }
 
-function renderJobsTrend(jobs) {
 
+// ================= CHARTS =================
+function renderJobsTrend(jobs) {
     if (jobsChart) jobsChart.destroy();
 
     jobsChart = new Chart(document.getElementById("jobsTrendChart"), {
@@ -113,10 +115,7 @@ function renderJobsTrend(jobs) {
             labels: ["Created (30d)", "Approved (30d)"],
             datasets: [{
                 label: "Jobs",
-                data: [
-                    jobs.created.last30Days,
-                    jobs.approved.last30Days
-                ],
+                data: [jobs.created.last30Days, jobs.approved.last30Days],
                 backgroundColor: ["#3b82f6", "#10b981"],
                 borderRadius: 6,
                 barPercentage: 0.5
@@ -127,7 +126,6 @@ function renderJobsTrend(jobs) {
 }
 
 function renderApplicationsTrend(applications) {
-
     if (applicationsChart) applicationsChart.destroy();
 
     applicationsChart = new Chart(document.getElementById("applicationsTrendChart"), {
@@ -136,9 +134,7 @@ function renderApplicationsTrend(applications) {
             labels: ["Applications (30d)"],
             datasets: [{
                 label: "Applications",
-                data: [
-                    applications.received.last30Days
-                ],
+                data: [applications.received.last30Days],
                 backgroundColor: "#6366f1",
                 borderRadius: 6,
                 barPercentage: 0.4
@@ -149,7 +145,6 @@ function renderApplicationsTrend(applications) {
 }
 
 function renderHiringFunnel(funnel) {
-
     if (hiringChart) hiringChart.destroy();
 
     hiringChart = new Chart(document.getElementById("hiringFunnelChart"), {
@@ -157,18 +152,8 @@ function renderHiringFunnel(funnel) {
         data: {
             labels: ["Applied", "Shortlisted", "Rejected", "Hired"],
             datasets: [{
-                data: [
-                    funnel.applied,
-                    funnel.shortlisted,
-                    funnel.rejected,
-                    funnel.hired
-                ],
-                backgroundColor: [
-                    "#2563eb",
-                    "#14b8a6",
-                    "#dc2626",
-                    "#16a34a"
-                ],
+                data: [funnel.applied, funnel.shortlisted, funnel.rejected, funnel.hired],
+                backgroundColor: ["#2563eb", "#14b8a6", "#dc2626", "#16a34a"],
                 borderWidth: 0
             }]
         },
@@ -177,12 +162,7 @@ function renderHiringFunnel(funnel) {
             maintainAspectRatio: false,
             cutout: "65%",
             plugins: {
-                legend: {
-                    position: "top",
-                    labels: {
-                        color: "#e2e8f0"
-                    }
-                }
+                legend: { position: "top", labels: { color: "#e2e8f0" } }
             }
         }
     });
@@ -193,22 +173,13 @@ function baseBarOptions() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: {
-                labels: {
-                    color: "#e2e8f0"
-                }
-            }
+            legend: { labels: { color: "#e2e8f0" } }
         },
         scales: {
-            x: {
-                ticks: { color: "#94a3b8" },
-                grid: { display: false }
-            },
+            x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
             y: {
                 ticks: { color: "#94a3b8" },
-                grid: {
-                    color: "rgba(148,163,184,0.1)"
-                },
+                grid: { color: "rgba(148,163,184,0.1)" },
                 beginAtZero: true
             }
         }
