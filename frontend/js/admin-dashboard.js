@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:8081/api/admin/dashboard";
+const BASE_URL = const BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
+";
 
 let jobsChart = null;
 let applicationsChart = null;
