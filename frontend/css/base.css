@@ -14,6 +14,7 @@ body {
     line-height: 1.5;
 }
 
+
 /* ===============================
    NAVBAR
 ================================ */
@@ -24,6 +25,7 @@ body {
     background-color: #1e293b;
     padding: 14px 28px;
     position: relative;
+    z-index: 1000;
 }
 
 .nav-left {
@@ -51,6 +53,11 @@ body {
     text-decoration: none;
     font-weight: 500;
     padding-bottom: 4px;
+    transition: color 0.2s ease;
+}
+
+.nav-links li a:hover {
+    color: #ffffff;
 }
 
 .nav-links li.active a {
@@ -58,15 +65,16 @@ body {
     border-bottom: 2px solid #38bdf8;
 }
 
-/* Hamburger Button */
+/* Hamburger */
 .menu-toggle {
     display: none;
-    font-size: 22px;
+    font-size: 24px;
     background: none;
     border: none;
     color: #ffffff;
     cursor: pointer;
 }
+
 
 /* ===============================
    BUTTONS
@@ -109,8 +117,9 @@ body {
     background-color: #dc2626;
 }
 
+
 /* ===============================
-   MOBILE NAV
+   MOBILE NAV (Improved)
 ================================ */
 @media (max-width: 768px) {
 
@@ -120,21 +129,35 @@ body {
 
     .nav-links {
         position: absolute;
-        top: 60px;
+        top: 100%;
         right: 0;
         width: 100%;
         background: #1e293b;
+
         flex-direction: column;
         align-items: flex-start;
-        padding: 20px;
         gap: 18px;
-        display: none;
+        padding: 20px 28px;
+
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
     }
 
     .nav-links.active {
-        display: flex;
+        max-height: 500px; /* enough to show all items */
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links li a,
+    .nav-links li button {
+        width: 100%;
     }
 }
+
 
 /* ===============================
    UTILITIES
