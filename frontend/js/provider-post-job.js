@@ -3,7 +3,15 @@ const POST_JOB_URL = `${API_BASE_URL}/jobs`;
 
 document.addEventListener("DOMContentLoaded", () => {
     requireAuth();
+
     populateDropdowns();
+
+    // 🔥 Force hide on load
+    const urlGroup = document.getElementById("externalUrlGroup");
+    if (urlGroup) {
+        urlGroup.classList.add("hidden");
+    }
+
     setupApplicationTypeToggle();
     setupForm();
 });
@@ -71,23 +79,19 @@ function setupApplicationTypeToggle() {
 
     const typeSelect = document.getElementById("applicationType");
     const urlGroup = document.getElementById("externalUrlGroup");
-    const urlInput = document.getElementById("applicationUrl");
 
     if (!typeSelect || !urlGroup) return;
 
-    function toggle() {
+    typeSelect.addEventListener("change", () => {
+
         if (typeSelect.value === "EXTERNAL") {
             urlGroup.classList.remove("hidden");
         } else {
             urlGroup.classList.add("hidden");
-            if (urlInput) urlInput.value = "";
+            document.getElementById("applicationUrl").value = "";
         }
-    }
 
-    typeSelect.addEventListener("change", toggle);
-
-    // ensure correct state on page load
-    toggle();
+    });
 }
 
 
