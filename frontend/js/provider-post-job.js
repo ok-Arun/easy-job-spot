@@ -65,14 +65,43 @@ function setOptions(selectId, options) {
 }
 
 
+/* ================= APPLICATION TYPE TOGGLE ================= */
+
+function setupApplicationTypeToggle() {
+
+    const typeSelect = document.getElementById("applicationType");
+    const urlGroup = document.getElementById("externalUrlGroup");
+    const urlInput = document.getElementById("applicationUrl");
+
+    if (!typeSelect || !urlGroup) return;
+
+    function toggle() {
+        if (typeSelect.value === "EXTERNAL") {
+            urlGroup.classList.remove("hidden");
+        } else {
+            urlGroup.classList.add("hidden");
+            if (urlInput) urlInput.value = "";
+        }
+    }
+
+    typeSelect.addEventListener("change", toggle);
+
+    // ensure correct state on page load
+    toggle();
+}
+
+
 /* ================= FORM SUBMIT ================= */
 
 function setupForm() {
 
     const form = document.getElementById("postJobForm");
+    if (!form) return;
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        const applicationType = getValue("applicationType");
 
         const payload = {
             title: getValue("title"),
@@ -87,9 +116,9 @@ function setupForm() {
             experienceMin: Number(getValue("expMin")) || null,
             experienceMax: Number(getValue("expMax")) || null,
             vacancyCount: Number(getValue("vacancyCount")) || null,
-            applicationType: getValue("applicationType"),
+            applicationType: applicationType,
             applicationUrl:
-                getValue("applicationType") === "EXTERNAL"
+                applicationType === "EXTERNAL"
                     ? getOptionalValue("applicationUrl")
                     : null,
             deadline: getValue("deadline") + "T23:59:59"
@@ -120,27 +149,7 @@ function setupForm() {
 
         } catch (err) {
             console.error(err);
-            showMessage(err.message, "error");
-        }
-
-    });
-}
-
-
-/* ================= APPLICATION TYPE TOGGLE ================= */
-
-function setupApplicationTypeToggle() {
-
-    const typeSelect = document.getElementById("applicationType");
-    const urlGroup = document.getElementById("externalUrlGroup");
-
-    typeSelect.addEventListener("change", () => {
-
-        if (typeSelect.value === "EXTERNAL") {
-            urlGroup.classList.remove("hidden");
-        } else {
-            urlGroup.classList.add("hidden");
-            document.getElementById("applicationUrl").value = "";
+            showMessage(err.message || "Something went wrong", "error");
         }
 
     });
@@ -150,7 +159,8 @@ function setupApplicationTypeToggle() {
 /* ================= HELPERS ================= */
 
 function getValue(id) {
-    return document.getElementById(id).value.trim();
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : "";
 }
 
 function getOptionalValue(id) {
@@ -160,6 +170,8 @@ function getOptionalValue(id) {
 
 function showMessage(msg, type) {
     const el = document.getElementById("formMessage");
+    if (!el) return;
+
     el.textContent = msg;
     el.className = `form-message ${type}`;
     el.classList.remove("hidden");
