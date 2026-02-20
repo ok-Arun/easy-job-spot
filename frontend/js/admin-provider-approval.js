@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8081/api/admin/providers";
+const BASE_URL = "https://easy-job-spot-production.up.railway.app/api/admin/providers";
 
 let selectedProviderId = null;
 let actionType = null;
