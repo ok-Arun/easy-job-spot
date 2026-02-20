@@ -10,11 +10,10 @@ import com.easyjobspot.backend.providerapproval.entity.ProviderApproval;
 import com.easyjobspot.backend.providerapproval.repository.ProviderApprovalRepository;
 import com.easyjobspot.backend.user.entity.User;
 import com.easyjobspot.backend.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,100 +23,113 @@ public class ProfileService {
     private final JobSeekerProfileRepository jobRepo;
     private final ProviderProfileRepository providerRepo;
     private final ProviderApprovalRepository providerApprovalRepository;
+    private final ObjectMapper objectMapper;
 
     public ProfileService(
             UserRepository userRepository,
             JobSeekerProfileRepository jobRepo,
             ProviderProfileRepository providerRepo,
-            ProviderApprovalRepository providerApprovalRepository
+            ProviderApprovalRepository providerApprovalRepository,
+            ObjectMapper objectMapper
     ) {
         this.userRepository = userRepository;
         this.jobRepo = jobRepo;
         this.providerRepo = providerRepo;
         this.providerApprovalRepository = providerApprovalRepository;
+        this.objectMapper = objectMapper;
     }
 
-    // ================= STATUS =================
+    // ================= COMMON =================
 
-    public ProfileStatusResponse getProfileStatus(UUID userId) {
+    public ProfileResponse userNotFoundResponse() {
+        return new ProfileResponse(false, "USER_NOT_FOUND");
+    }
 
-        User user = userRepository.findById(userId).orElse(null);
-
-        if (user == null) {
-            return new ProfileStatusResponse("UNKNOWN", false);
-        }
-
+    public ProfileStatusResponse getProfileStatus(User user) {
         return new ProfileStatusResponse(
                 user.getUserType().name(),
                 user.isProfileCompleted()
         );
     }
 
-    // ================= GET JOB SEEKER =================
+    // ================= GET PROFILE =================
 
-    public Object getJobSeekerProfile(UUID userId) {
+    public Object getMyProfile(User user) {
 
-        User user = userRepository.findById(userId).orElse(null);
+        switch (user.getUserType()) {
 
-        if (user == null) {
-            return new ProfileResponse(false, "USER_NOT_FOUND");
+            case JOB_SEEKER -> {
+                JobSeekerProfile profile =
+                        jobRepo.findByUserId(user.getId()).orElse(null);
+
+                if (profile == null) {
+                    return new JobSeekerProfileResponse();
+                }
+
+                return new JobSeekerProfileResponse(profile);
+            }
+
+            case JOB_PROVIDER -> {
+                ProviderProfile profile =
+                        providerRepo.findByUserId(user.getId()).orElse(null);
+
+                if (profile == null) {
+                    return new ProviderProfileResponse();
+                }
+
+                return new ProviderProfileResponse(profile);
+            }
+
+            case SYSTEM_ADMIN -> {
+                return new AdminProfileResponse(
+                        user.getEmail(),
+                        user.getUserType().name(),
+                        user.isProfileCompleted()
+                );
+            }
+
+            default -> throw new BadRequestException("INVALID_USER_TYPE");
         }
-
-        if (!user.getUserType().name().equals("JOB_SEEKER")) {
-            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
-        }
-
-        JobSeekerProfile profile =
-                jobRepo.findByUserId(userId).orElse(null);
-
-        if (profile == null) {
-            return new JobSeekerProfileResponse(); // empty DTO
-        }
-
-        return new JobSeekerProfileResponse(profile);
     }
 
-    // ================= GET PROVIDER =================
-
-    public Object getProviderProfile(UUID userId) {
-
-        User user = userRepository.findById(userId).orElse(null);
-
-        if (user == null) {
-            return new ProfileResponse(false, "USER_NOT_FOUND");
-        }
-
-        if (!user.getUserType().name().equals("JOB_PROVIDER")) {
-            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
-        }
-
-        ProviderProfile profile =
-                providerRepo.findByUserId(userId).orElse(null);
-
-        if (profile == null) {
-            return new ProviderProfileResponse(); // empty DTO
-        }
-
-        return new ProviderProfileResponse(profile);
-    }
-
-    // ================= SAVE JOB SEEKER =================
+    // ================= UPDATE PROFILE =================
 
     @Transactional
-    public Object saveJobSeekerProfile(UUID userId, JobSeekerProfileRequest req) {
+    public Object updateMyProfile(User user, Object requestBody) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("USER_NOT_FOUND"));
+        switch (user.getUserType()) {
 
-        if (!user.getUserType().name().equals("JOB_SEEKER")) {
-            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
+            case JOB_SEEKER -> {
+                JobSeekerProfileRequest req =
+                        objectMapper.convertValue(requestBody, JobSeekerProfileRequest.class);
+
+                return saveJobSeeker(user, req);
+            }
+
+            case JOB_PROVIDER -> {
+                ProviderProfileRequest req =
+                        objectMapper.convertValue(requestBody, ProviderProfileRequest.class);
+
+                return saveProvider(user, req);
+            }
+
+            case SYSTEM_ADMIN -> {
+                return new ProfileResponse(false, "ADMIN_PROFILE_EDIT_NOT_AVAILABLE");
+            }
+
+            default -> throw new BadRequestException("INVALID_USER_TYPE");
         }
+    }
+
+    // ================= PRIVATE SAVE METHODS =================
+
+    private ProfileResponse saveJobSeeker(User user, JobSeekerProfileRequest req) {
 
         JobSeekerProfile profile =
-                jobRepo.findByUserId(userId)
+                jobRepo.findByUserId(user.getId())
                         .orElseGet(() -> {
                             JobSeekerProfile p = new JobSeekerProfile();
-                            p.setUserId(userId);
+                            p.setUserId(user.getId());
                             return p;
                         });
 
@@ -145,29 +157,19 @@ public class ProfileService {
         return new ProfileResponse(true, "JOB_SEEKER_PROFILE_SAVED");
     }
 
-    // ================= SAVE PROVIDER =================
-
-    @Transactional
-    public Object saveProviderProfile(UUID userId, ProviderProfileRequest req) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BadRequestException("USER_NOT_FOUND"));
-
-        if (!user.getUserType().name().equals("JOB_PROVIDER")) {
-            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
-        }
+    private ProfileResponse saveProvider(User user, ProviderProfileRequest req) {
 
         ProviderProfile profile =
-                providerRepo.findByUserId(userId)
+                providerRepo.findByUserId(user.getId())
                         .orElseGet(() -> {
                             ProviderProfile p = new ProviderProfile();
-                            p.setUserId(userId);
+                            p.setUserId(user.getId());
                             return p;
                         });
 
         if (profile.getApprovedAt() == null) {
             ProviderApproval approval =
-                    providerApprovalRepository.findByProviderId(userId)
+                    providerApprovalRepository.findByProviderId(user.getId())
                             .orElseThrow(() ->
                                     new BadRequestException("Provider not approved yet")
                             );
