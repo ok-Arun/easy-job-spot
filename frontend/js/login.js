@@ -4,6 +4,7 @@ const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
 
 // ================= LOGIN =================
 async function login() {
+
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
@@ -15,6 +16,7 @@ async function login() {
     }
 
     try {
+
         const response = await fetch(`${API_BASE_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -30,6 +32,7 @@ async function login() {
 
         // ===== PROVIDER APPROVAL CHECK =====
         if (data.userType === "JOB_PROVIDER") {
+
             if (data.providerStatus === "PENDING") {
                 clearAuthSession();
                 showMessage("Your account approval is pending.", "error");
@@ -43,7 +46,7 @@ async function login() {
             }
         }
 
-        // ===== SAVE TEMP SESSION =====
+        // ===== SAVE SESSION =====
         saveAuthSession({
             token: data.token,
             userType: data.userType,
@@ -51,7 +54,7 @@ async function login() {
             profileCompleted: false
         });
 
-        // ===== VERIFY PROFILE STATUS =====
+        // ===== CHECK PROFILE STATUS =====
         await checkProfileStatus();
 
     } catch (err) {
@@ -63,7 +66,17 @@ async function login() {
 
 // ================= PROFILE STATUS =================
 async function checkProfileStatus() {
+
+    const userType = getUserType();
+
+    // ✅ ADMIN → always dashboard (skip profile API call)
+    if (userType === "SYSTEM_ADMIN") {
+        window.location.replace("/pages/admin-dashboard.html");
+        return;
+    }
+
     try {
+
         const response = await fetch(`${API_BASE_URL}/profile/status`, {
             method: "GET",
             headers: {
@@ -77,11 +90,9 @@ async function checkProfileStatus() {
         }
 
         const data = await response.json();
-
         const isProfileComplete = data.profileCompleted === true;
-        const userType = data.userType;
 
-        // ===== UPDATE SESSION =====
+        // Update session
         saveAuthSession({
             token: getToken(),
             userType: userType,
@@ -89,49 +100,36 @@ async function checkProfileStatus() {
             profileCompleted: isProfileComplete
         });
 
-        // ===== PROFILE COMPLETE → REDIRECT =====
-        if (isProfileComplete) {
-            showMessage("Login successful", "success");
+        // ===== SEEKER =====
+        if (userType === "JOB_SEEKER") {
 
-            setTimeout(() => redirectAfterLogin(userType), 500);
+            window.location.replace(
+                isProfileComplete
+                    ? "/index.html"
+                    : "/pages/job-seeker-profile.html"
+            );
             return;
         }
 
-        // ===== PROFILE INCOMPLETE → PROFILE PAGE =====
-        showMessage("Please complete your profile.", "error");
+        // ===== PROVIDER =====
+        if (userType === "JOB_PROVIDER") {
 
-        setTimeout(() => {
             window.location.replace(
-                userType === "JOB_SEEKER"
-                    ? "/pages/job-seeker-profile.html"
+                isProfileComplete
+                    ? "/pages/provider-dashboard.html"
                     : "/pages/provider-profile.html"
             );
-        }, 1500);
+            return;
+        }
+
+        // fallback safety
+        clearAuthSession();
+        window.location.replace("/pages/login.html");
 
     } catch (error) {
         console.error("Profile status error:", error);
         showMessage("Unable to check profile status.", "error");
     }
-}
-
-
-// ================= REDIRECT LOGIC =================
-function redirectAfterLogin(userType) {
-    const routes = {
-        SYSTEM_ADMIN: "/pages/admin-dashboard.html",
-        JOB_PROVIDER: "/pages/provider-dashboard.html",
-        JOB_SEEKER: "/index.html"
-    };
-
-    if (!routes[userType]) {
-        console.error("Unknown user type:", userType);
-        clearAuthSession();
-        window.location.replace("/pages/login.html");
-        return;
-    }
-
-    // 🔥 IMPORTANT FIX — use replace instead of href
-    window.location.replace(routes[userType]);
 }
 
 
@@ -150,6 +148,7 @@ function hideMessage() {
 
 // ================= PASSWORD TOGGLE =================
 function togglePassword() {
+
     const input = document.getElementById("password");
     const icon = document.getElementById("eyeIcon");
 
