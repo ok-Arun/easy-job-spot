@@ -30,7 +30,7 @@ function setActiveNav() {
         if (href === currentPage) {
             link.parentElement.classList.add("active");
 
-            // Set current page name below logo
+            // Show current page below logo
             if (navPageTitle) {
                 navPageTitle.textContent = link.textContent;
             }
