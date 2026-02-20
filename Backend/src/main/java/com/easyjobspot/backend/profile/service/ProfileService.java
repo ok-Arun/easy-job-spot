@@ -47,18 +47,61 @@ public class ProfileService {
             return new ProfileStatusResponse("UNKNOWN", false);
         }
 
-        String userType = user.getUserType().name();
-
-        // SYSTEM_ADMIN always completed
-        if (userType.equals("SYSTEM_ADMIN")) {
-            return new ProfileStatusResponse(userType, true);
-        }
-
-        // ✅ Single source of truth
-        return new ProfileStatusResponse(userType, user.isProfileCompleted());
+        return new ProfileStatusResponse(
+                user.getUserType().name(),
+                user.isProfileCompleted()
+        );
     }
 
-    // ================= JOB SEEKER =================
+    // ================= GET JOB SEEKER =================
+
+    public Object getJobSeekerProfile(UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return new ProfileResponse(false, "USER_NOT_FOUND");
+        }
+
+        if (!user.getUserType().name().equals("JOB_SEEKER")) {
+            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
+        }
+
+        JobSeekerProfile profile =
+                jobRepo.findByUserId(userId).orElse(null);
+
+        if (profile == null) {
+            return new JobSeekerProfileResponse(); // empty DTO
+        }
+
+        return new JobSeekerProfileResponse(profile);
+    }
+
+    // ================= GET PROVIDER =================
+
+    public Object getProviderProfile(UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return new ProfileResponse(false, "USER_NOT_FOUND");
+        }
+
+        if (!user.getUserType().name().equals("JOB_PROVIDER")) {
+            return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
+        }
+
+        ProviderProfile profile =
+                providerRepo.findByUserId(userId).orElse(null);
+
+        if (profile == null) {
+            return new ProviderProfileResponse(); // empty DTO
+        }
+
+        return new ProviderProfileResponse(profile);
+    }
+
+    // ================= SAVE JOB SEEKER =================
 
     @Transactional
     public Object saveJobSeekerProfile(UUID userId, JobSeekerProfileRequest req) {
@@ -70,36 +113,13 @@ public class ProfileService {
             return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
         }
 
-        List<String> missingFields = new ArrayList<>();
-
-        if (isBlank(req.getFirstName())) missingFields.add("firstName");
-        if (isBlank(req.getLastName())) missingFields.add("lastName");
-        if (isBlank(req.getPhone())) missingFields.add("phone");
-        if (isBlank(req.getLocation())) missingFields.add("location");
-        if (isBlank(req.getSkills())) missingFields.add("skills");
-        if (isBlank(req.getExperience())) missingFields.add("experience");
-        if (isBlank(req.getEducation())) missingFields.add("education");
-        if (isBlank(req.getResumeUrl())) missingFields.add("resumeUrl");
-        if (isBlank(req.getCurrentJobTitle())) missingFields.add("currentJobTitle");
-        if (isBlank(req.getPreferredJobType())) missingFields.add("preferredJobType");
-        if (isBlank(req.getPreferredLocation())) missingFields.add("preferredLocation");
-        if (isBlank(req.getNoticePeriod())) missingFields.add("noticePeriod");
-        if (isBlank(req.getLinkedinUrl())) missingFields.add("linkedinUrl");
-        if (isBlank(req.getPortfolioUrl())) missingFields.add("portfolioUrl");
-
-        if (!missingFields.isEmpty()) {
-            return new ProfileValidationResponse(
-                    "REQUIRED_FIELDS_MISSING",
-                    missingFields
-            );
-        }
-
-        JobSeekerProfile profile = jobRepo.findByUserId(userId)
-                .orElseGet(() -> {
-                    JobSeekerProfile p = new JobSeekerProfile();
-                    p.setUserId(userId);
-                    return p;
-                });
+        JobSeekerProfile profile =
+                jobRepo.findByUserId(userId)
+                        .orElseGet(() -> {
+                            JobSeekerProfile p = new JobSeekerProfile();
+                            p.setUserId(userId);
+                            return p;
+                        });
 
         profile.setFirstName(req.getFirstName());
         profile.setLastName(req.getLastName());
@@ -115,18 +135,17 @@ public class ProfileService {
         profile.setNoticePeriod(req.getNoticePeriod());
         profile.setLinkedinUrl(req.getLinkedinUrl());
         profile.setPortfolioUrl(req.getPortfolioUrl());
-
         profile.setProfileCompleted(true);
+
         jobRepo.save(profile);
 
-        // ✅ update users table completion flag
         user.setProfileCompleted(true);
         userRepository.save(user);
 
         return new ProfileResponse(true, "JOB_SEEKER_PROFILE_SAVED");
     }
 
-    // ================= PROVIDER =================
+    // ================= SAVE PROVIDER =================
 
     @Transactional
     public Object saveProviderProfile(UUID userId, ProviderProfileRequest req) {
@@ -138,30 +157,14 @@ public class ProfileService {
             return new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER");
         }
 
-        List<String> missingFields = new ArrayList<>();
+        ProviderProfile profile =
+                providerRepo.findByUserId(userId)
+                        .orElseGet(() -> {
+                            ProviderProfile p = new ProviderProfile();
+                            p.setUserId(userId);
+                            return p;
+                        });
 
-        if (isBlank(req.getCompanyName())) missingFields.add("companyName");
-        if (isBlank(req.getCompanyEmail())) missingFields.add("companyEmail");
-        if (isBlank(req.getCompanyPhone())) missingFields.add("companyPhone");
-        if (isBlank(req.getWebsite())) missingFields.add("website");
-        if (isBlank(req.getAddress())) missingFields.add("address");
-        if (isBlank(req.getDescription())) missingFields.add("description");
-
-        if (!missingFields.isEmpty()) {
-            return new ProfileValidationResponse(
-                    "REQUIRED_FIELDS_MISSING",
-                    missingFields
-            );
-        }
-
-        ProviderProfile profile = providerRepo.findByUserId(userId)
-                .orElseGet(() -> {
-                    ProviderProfile p = new ProviderProfile();
-                    p.setUserId(userId);
-                    return p;
-                });
-
-        // provider must be approved first
         if (profile.getApprovedAt() == null) {
             ProviderApproval approval =
                     providerApprovalRepository.findByProviderId(userId)
@@ -183,16 +186,9 @@ public class ProfileService {
 
         providerRepo.save(profile);
 
-        // ✅ update users table completion flag
         user.setProfileCompleted(true);
         userRepository.save(user);
 
         return new ProfileResponse(true, "PROVIDER_PROFILE_SAVED");
-    }
-
-    // ================= UTILITY =================
-
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
     }
 }
