@@ -106,7 +106,7 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
         showMessage("Profile updated successfully.", "success");
 
         setTimeout(() => {
-            window.location.href = "/provider-dashboard.html";
+            window.location.href = "poages/provider-dashboard.html";
         }, 1000);
 
     } catch (err) {
