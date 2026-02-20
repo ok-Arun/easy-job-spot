@@ -1,14 +1,11 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
     try {
-        // Load navbar HTML
         const response = await fetch("provider-navbar.html");
         const navbarHTML = await response.text();
 
-        // Inject navbar at top
         document.body.insertAdjacentHTML("afterbegin", navbarHTML);
 
-        // Setup features AFTER injection
         setActiveNav();
         setupLogout();
         setupMobileMenu();
@@ -24,12 +21,20 @@ function setActiveNav() {
 
     const links = document.querySelectorAll(".nav-links a");
     const currentPage = window.location.pathname.split("/").pop();
+    const navTitle = document.getElementById("navTitle");
 
     links.forEach(link => {
+
         const href = link.getAttribute("href");
 
         if (href === currentPage) {
             link.parentElement.classList.add("active");
+
+            // Update navbar title to current page name
+            if (navTitle) {
+                navTitle.textContent = link.textContent;
+            }
+
         } else {
             link.parentElement.classList.remove("active");
         }
@@ -49,7 +54,6 @@ function setupMobileMenu() {
         navLinks.classList.toggle("active");
     });
 
-    // Close menu after clicking any link/button
     navLinks.querySelectorAll("a, button").forEach(item => {
         item.addEventListener("click", () => {
             navLinks.classList.remove("active");
