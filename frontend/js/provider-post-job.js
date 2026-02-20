@@ -3,11 +3,11 @@ const POST_JOB_URL = `${API_BASE_URL}/jobs`;
 
 document.addEventListener("DOMContentLoaded", () => {
     requireAuth();
-    setupLogout();
-    populateDropdowns();          // ⭐ added
+    populateDropdowns();
     setupApplicationTypeToggle();
     setupForm();
 });
+
 
 /* ================= DROPDOWNS ================= */
 
@@ -29,11 +29,7 @@ function populateDropdowns() {
         "Other"
     ]);
 
-    setOptions("workMode", [
-        "Remote",
-        "Hybrid",
-        "On-site"
-    ]);
+    setOptions("workMode", ["Remote", "Hybrid", "On-site"]);
 
     setOptions("jobType", [
         "Full-time",
@@ -51,10 +47,7 @@ function populateDropdowns() {
         "Lead / Manager"
     ]);
 
-    setOptions("applicationType", [
-        "INTERNAL",
-        "EXTERNAL"
-    ]);
+    setOptions("applicationType", ["INTERNAL", "EXTERNAL"]);
 }
 
 function setOptions(selectId, options) {
@@ -71,9 +64,11 @@ function setOptions(selectId, options) {
     });
 }
 
+
 /* ================= FORM SUBMIT ================= */
 
 function setupForm() {
+
     const form = document.getElementById("postJobForm");
 
     form.addEventListener("submit", async (e) => {
@@ -81,33 +76,27 @@ function setupForm() {
 
         const payload = {
             title: getValue("title"),
-            company: getUserName(),
             category: getValue("category"),
             location: getValue("location"),
             jobType: getValue("jobType"),
             description: getValue("description"),
-
             workMode: getValue("workMode"),
             employmentLevel: getValue("employmentLevel"),
-
-            salaryMin: Number(getValue("salaryMin")),
-            salaryMax: Number(getValue("salaryMax")),
-
-            experienceMin: Number(getValue("expMin")),
-            experienceMax: Number(getValue("expMax")),
-
-            vacancyCount: Number(getValue("vacancyCount")),
-
+            salaryMin: Number(getValue("salaryMin")) || null,
+            salaryMax: Number(getValue("salaryMax")) || null,
+            experienceMin: Number(getValue("expMin")) || null,
+            experienceMax: Number(getValue("expMax")) || null,
+            vacancyCount: Number(getValue("vacancyCount")) || null,
             applicationType: getValue("applicationType"),
             applicationUrl:
                 getValue("applicationType") === "EXTERNAL"
                     ? getOptionalValue("applicationUrl")
                     : null,
-
             deadline: getValue("deadline") + "T23:59:59"
         };
 
         try {
+
             const response = await fetch(POST_JOB_URL, {
                 method: "POST",
                 headers: {
@@ -126,41 +115,37 @@ function setupForm() {
             showMessage("Job posted successfully!", "success");
 
             setTimeout(() => {
-                window.location.href = "/pages/provider-jobs.html";
+                window.location.href = "provider-jobs.html";
             }, 1200);
 
         } catch (err) {
             console.error(err);
             showMessage(err.message, "error");
         }
+
     });
 }
+
 
 /* ================= APPLICATION TYPE TOGGLE ================= */
 
 function setupApplicationTypeToggle() {
+
     const typeSelect = document.getElementById("applicationType");
     const urlGroup = document.getElementById("externalUrlGroup");
 
     typeSelect.addEventListener("change", () => {
+
         if (typeSelect.value === "EXTERNAL") {
-            urlGroup.style.display = "block";
+            urlGroup.classList.remove("hidden");
         } else {
-            urlGroup.style.display = "none";
+            urlGroup.classList.add("hidden");
             document.getElementById("applicationUrl").value = "";
         }
+
     });
 }
 
-/* ================= LOGOUT ================= */
-
-function setupLogout() {
-    document.getElementById("logoutBtn")
-        .addEventListener("click", () => {
-            clearAuthSession();
-            window.location.href = "/pages/login.html";
-        });
-}
 
 /* ================= HELPERS ================= */
 
@@ -177,4 +162,5 @@ function showMessage(msg, type) {
     const el = document.getElementById("formMessage");
     el.textContent = msg;
     el.className = `form-message ${type}`;
+    el.classList.remove("hidden");
 }
