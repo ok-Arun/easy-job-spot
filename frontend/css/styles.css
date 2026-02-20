@@ -15,11 +15,20 @@ body {
     display: none !important;
 }
 
-/* ================= GLOBAL CONTAINER ================= */
+/* ================= CONTAINER SYSTEM (HYBRID) ================= */
 
+/* Full width sections */
 .section,
-.hero-content,
-.navbar {
+.navbar,
+.hero,
+.cta {
+    width: 100%;
+}
+
+/* Constrained inner content */
+.section > *,
+.navbar > *,
+.hero-content {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
@@ -29,12 +38,18 @@ body {
 
 .navbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 60px;
-    padding: 0 40px;
+    justify-content: center;
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
+    height: 60px;
+}
+
+.navbar > * {
+    width: 100%;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
@@ -55,57 +70,6 @@ body {
     font-size: 14px;
 }
 
-.user-actions {
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.profile-box {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.nav-username {
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.profile-icon {
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.profile-menu {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-    width: 170px;
-    overflow: hidden;
-    z-index: 100;
-}
-
-.profile-menu a,
-.profile-menu button {
-    padding: 12px;
-    display: block;
-    width: 100%;
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.profile-menu a:hover,
-.profile-menu button:hover {
-    background: #f1f5f9;
-}
-
 /* ================= HERO ================= */
 
 .hero {
@@ -117,31 +81,6 @@ body {
 
 .hero-content {
     max-width: 900px;
-    margin: auto;
-}
-
-.badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.15);
-    padding: 8px 16px;
-    border-radius: 999px;
-    margin-bottom: 24px;
-    font-size: 13px;
-}
-
-.hero h1 {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 18px;
-}
-
-.hero h1 span {
-    color: #22c55e;
-}
-
-.hero p {
-    font-size: 17px;
-    opacity: 0.9;
 }
 
 /* ================= SEARCH ================= */
@@ -151,29 +90,6 @@ body {
     gap: 12px;
     margin: 35px auto 0;
     max-width: 750px;
-}
-
-.search-box input {
-    flex: 1;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    font-size: 14px;
-}
-
-.search-box button {
-    padding: 14px 22px;
-    border-radius: 10px;
-    border: none;
-    background: #f97316;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.search-box button:hover {
-    background: #ea580c;
 }
 
 /* ================= SECTIONS ================= */
@@ -244,7 +160,6 @@ body {
     border-radius: 18px;
     padding: 24px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
@@ -263,11 +178,6 @@ body {
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.apply-btn:hover {
-    background: #1d4ed8;
 }
 
 /* ================= CTA ================= */
@@ -279,45 +189,16 @@ body {
     padding: 80px 20px;
 }
 
-.cta-actions {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.btn-primary {
-    background: #f97316;
-    color: white;
-    padding: 14px 24px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.btn-secondary {
-    background: white;
-    color: #2563eb;
-    padding: 14px 24px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
 /* ================= MOBILE ================= */
 
 @media (max-width: 768px) {
 
-    .navbar {
+    .navbar > * {
         padding: 0 16px;
     }
 
     .hero {
         padding: 70px 20px;
-    }
-
-    .hero h1 {
-        font-size: 32px;
     }
 
     .search-box {
@@ -332,15 +213,6 @@ body {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
-    }
-
-    .cta-actions {
-        flex-direction: column;
-    }
-
-    .cta-actions a {
-        width: 100%;
-        text-align: center;
     }
 
     .apply-btn {
