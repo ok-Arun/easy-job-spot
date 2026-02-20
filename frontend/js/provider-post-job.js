@@ -1,5 +1,5 @@
 const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
-const POST_JOB_URL = `${API_BASE_URL}/jobs`;
+const POST_JOB_URL = `${API_BASE_URL}/provider/jobs`; // ✅ FIXED
 
 document.addEventListener("DOMContentLoaded", () => {
     requireAuth();
@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupApplicationTypeToggle();
     setupForm();
 });
-
 
 /* ================= DROPDOWNS ================= */
 
@@ -64,7 +63,6 @@ function setOptions(selectId, options) {
     });
 }
 
-
 /* ================= APPLICATION TYPE TOGGLE ================= */
 
 function setupApplicationTypeToggle() {
@@ -84,13 +82,9 @@ function setupApplicationTypeToggle() {
         }
     }
 
-    // Attach change listener
     typeSelect.addEventListener("change", toggle);
-
-    // Sync UI state on load
     toggle();
 }
-
 
 /* ================= FORM SUBMIT ================= */
 
@@ -106,6 +100,7 @@ function setupForm() {
 
         const payload = {
             title: getValue("title"),
+            company: getValue("company"), // ✅ REQUIRED BY BACKEND
             category: getValue("category"),
             location: getValue("location"),
             jobType: getValue("jobType"),
@@ -145,7 +140,7 @@ function setupForm() {
             showMessage("Job posted successfully!", "success");
 
             setTimeout(() => {
-                window.location.href = "provider-jobs.html";
+                window.location.href = "/pages/provider-jobs.html"; // ✅ safer redirect
             }, 1200);
 
         } catch (err) {
@@ -155,7 +150,6 @@ function setupForm() {
 
     });
 }
-
 
 /* ================= HELPERS ================= */
 
