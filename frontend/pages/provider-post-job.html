@@ -11,18 +11,7 @@
 </head>
 <body>
 
-<header>
-    <nav class="provider-nav">
-        <div class="nav-logo">Job Portal</div>
-
-        <ul class="nav-links">
-            <li><a href="provider-dashboard.html">Dashboard</a></li>
-            <li class="active"><a href="provider-post-job.html">Post Job</a></li>
-            <li><a href="provider-jobs.html">My Jobs</a></li>
-            <li><button id="logoutBtn" class="logout-btn">Logout</button></li>
-        </ul>
-    </nav>
-</header>
+<!-- Navbar injected by provider-layout.js -->
 
 <main class="container post-job-container">
 
@@ -30,19 +19,16 @@
 
     <form id="postJobForm" class="form-card">
 
-        <!-- Title -->
         <div class="form-group full">
             <label>Job Title</label>
             <input type="text" id="title" required>
         </div>
 
-        <!-- Description -->
         <div class="form-group full">
             <label>Description</label>
             <textarea id="description" rows="4" required></textarea>
         </div>
 
-        <!-- Category | Location | Work Mode -->
         <div class="form-row three">
             <div class="form-group">
                 <label>Category</label>
@@ -60,7 +46,6 @@
             </div>
         </div>
 
-        <!-- Job Type | Employment Level | Application Type -->
         <div class="form-row three">
             <div class="form-group">
                 <label>Job Type</label>
@@ -78,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Salary -->
         <div class="form-row three">
             <div class="form-group">
                 <label>Salary Min</label>
@@ -96,7 +80,6 @@
             </div>
         </div>
 
-        <!-- Experience -->
         <div class="form-row three">
             <div class="form-group">
                 <label>Experience Min (years)</label>
@@ -114,7 +97,6 @@
             </div>
         </div>
 
-        <!-- External Application URL (RESTORED) -->
         <div class="form-group full hidden" id="externalUrlGroup">
             <label>External Application URL</label>
             <input type="url" id="applicationUrl">
@@ -132,6 +114,8 @@
 
 <script src="../js/config.js"></script>
 <script src="../js/auth-util.js"></script>
+<script src="../js/provider-layout.js"></script>
 <script src="../js/provider-post-job.js"></script>
+
 </body>
 </html>
