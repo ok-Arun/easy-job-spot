@@ -16,24 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileIcon = document.getElementById("profileIcon");
     const profileMenu = document.getElementById("profileMenu");
 
-    /* ================= MOBILE MENU ================= */
-
-    const menuToggle = document.getElementById("menuToggle");
-    const navLinks = document.getElementById("navLinks");
-
-    if (menuToggle && navLinks) {
-
-        menuToggle.addEventListener("click", () => {
-            navLinks.classList.toggle("active");
-        });
-
-        // Close menu when clicking any link/button (better UX)
-        navLinks.querySelectorAll("a, button").forEach(item => {
-            item.addEventListener("click", () => {
-                navLinks.classList.remove("active");
-            });
-        });
-    }
 
     /* ================= LOGO REDIRECT ================= */
 
@@ -43,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
     /* ================= NOT LOGGED IN ================= */
 
     if (!token) {
@@ -51,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (ctaSection) ctaSection.style.display = "block";
         return;
     }
+
 
     /* ================= LOGGED IN ================= */
 
@@ -62,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (ctaSection) ctaSection.style.display = "none";
+
 
     /* ================= PROFILE DROPDOWN ================= */
 
@@ -76,9 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
     /* ================= LOGOUT ================= */
 
     if (logoutBtn) logoutBtn.addEventListener("click", logout);
+
 
     /* ================= EDIT PROFILE ================= */
 
@@ -111,6 +98,7 @@ function logout() {
 /* ================= ROLE-BASED PROFILE REDIRECT ================= */
 
 function editProfile() {
+
     const userType = getUserType();
 
     if (!userType) {
@@ -119,6 +107,7 @@ function editProfile() {
     }
 
     switch (userType) {
+
         case "JOB_SEEKER":
             window.location.href = "/pages/job-seeker-profile.html";
             break;
