@@ -1,81 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile | Job Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
+const token = localStorage.getItem("token");
+const message = document.getElementById("message");
 
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/provider-common.css">
-    <link rel="stylesheet" href="../css/provider-profile.css">
-</head>
+// ================= TOKEN GUARD =================
+if (!token) {
+    window.location.href = "login.html";
+}
 
-<body>
+// ================= MESSAGE HANDLER =================
+function showMessage(text, type) {
+    message.innerText = text;
+    message.className = `form-message ${type}`;
+    message.style.display = "block";
+}
 
-<!-- Navbar will be injected here by provider-layout.js -->
+// ================= FETCH PROFILE ON LOAD =================
+document.addEventListener("DOMContentLoaded", () => {
+    fetchProfile();
+});
 
-<main class="container provider-profile">
+async function fetchProfile() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/profile/provider`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
 
-    <h1 class="page-title">Company Profile</h1>
+        const data = await res.json();
 
-    <div class="profile-card">
+        if (!res.ok || !data.success) {
+            showMessage(data.message || "Failed to load profile.", "error");
+            return;
+        }
 
-        <div class="profile-header">
-            <h2>Basic Information</h2>
-            <span id="approvalStatus" class="status-badge">Loading...</span>
-        </div>
+        const profile = data.data;
 
-        <form id="providerForm" class="form-grid">
+        document.getElementById("companyName").value = profile.companyName || "";
+        document.getElementById("companyEmail").value = profile.companyEmail || "";
+        document.getElementById("companyPhone").value = profile.companyPhone || "";
+        document.getElementById("address").value = profile.address || "";
+        document.getElementById("description").value = profile.description || "";
+        document.getElementById("website").value = profile.website || "";
 
-            <div class="form-group">
-                <label>Company Name *</label>
-                <input type="text" id="companyName" required>
-            </div>
+        // Approval Status Badge
+        const badge = document.getElementById("approvalStatus");
+        const status = profile.approvalStatus || "PENDING";
 
-            <div class="form-group">
-                <label>Company Email *</label>
-                <input type="email" id="companyEmail" required>
-            </div>
+        badge.innerText = status;
 
-            <div class="form-group">
-                <label>Company Phone *</label>
-                <input type="text" id="companyPhone" required>
-            </div>
+        badge.classList.remove("approved", "pending", "rejected");
 
-            <div class="form-group">
-                <label>Website</label>
-                <input type="url" id="website">
-            </div>
+        if (status.toUpperCase() === "APPROVED") {
+            badge.classList.add("approved");
+        } else if (status.toUpperCase() === "REJECTED") {
+            badge.classList.add("rejected");
+        } else {
+            badge.classList.add("pending");
+        }
 
-            <div class="form-group full-width">
-                <label>Company Address *</label>
-                <input type="text" id="address" required>
-            </div>
+    } catch (err) {
+        showMessage("Server error while loading profile.", "error");
+    }
+}
 
-            <div class="form-group full-width">
-                <label>Company Description *</label>
-                <textarea id="description" rows="5" required></textarea>
-            </div>
+// ================= UPDATE PROFILE =================
+document.getElementById("providerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-            <div class="form-group full-width">
-                <button type="submit" class="btn btn-primary">
-                    Save Profile
-                </button>
-            </div>
+    const payload = {
+        companyName: document.getElementById("companyName").value.trim(),
+        companyEmail: document.getElementById("companyEmail").value.trim(),
+        companyPhone: document.getElementById("companyPhone").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        website: document.getElementById("website").value.trim()
+    };
 
-        </form>
+    // Final frontend validation
+    for (const key in payload) {
+        if (!payload[key]) {
+            showMessage("All fields are mandatory. Please complete your company profile.", "error");
+            return;
+        }
+    }
 
-        <p id="message" class="form-message"></p>
+    try {
+        const res = await fetch(`${API_BASE_URL}/profile/provider`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
 
-    </div>
+        const data = await res.json();
 
-</main>
+        if (!res.ok || !data.success) {
+            showMessage(data.message || "Profile update failed.", "error");
+            return;
+        }
 
-<script src="../js/config.js"></script>
-<script src="../js/auth-util.js"></script>
-<script src="../js/provider-layout.js"></script>
-<script src="../js/navbar.js"></script>
-<script src="../js/provider-profile.js"></script>
+        showMessage("Company profile updated successfully. Redirecting to dashboard…", "success");
 
-</body>
-</html>
+        localStorage.setItem("profileCompleted", "1");
+
+        setTimeout(() => {
+            window.location.href = "/provider-dashboard.html";
+        }, 1200);
+
+    } catch (err) {
+        showMessage("Server error. Please try again.", "error");
+    }
+});
