@@ -16,17 +16,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const profileIcon = document.getElementById("profileIcon");
     const profileMenu = document.getElementById("profileMenu");
 
-    /* ================= MOBILE MENU TOGGLE ================= */
+    /* ================= MOBILE MENU ================= */
+
     const menuToggle = document.getElementById("menuToggle");
     const navLinks = document.getElementById("navLinks");
 
     if (menuToggle && navLinks) {
+
         menuToggle.addEventListener("click", () => {
             navLinks.classList.toggle("active");
+        });
+
+        // Close menu when clicking any link/button (better UX)
+        navLinks.querySelectorAll("a, button").forEach(item => {
+            item.addEventListener("click", () => {
+                navLinks.classList.remove("active");
+            });
         });
     }
 
     /* ================= LOGO REDIRECT ================= */
+
     if (logo) {
         logo.addEventListener("click", () => {
             window.location.href = "/index.html";
@@ -34,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================= NOT LOGGED IN ================= */
+
     if (!token) {
         if (authActions) authActions.classList.remove("hidden");
         if (userActions) userActions.classList.add("hidden");
@@ -42,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================= LOGGED IN ================= */
+
     if (authActions) authActions.classList.add("hidden");
     if (userActions) userActions.classList.remove("hidden");
 
@@ -52,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ctaSection) ctaSection.style.display = "none";
 
     /* ================= PROFILE DROPDOWN ================= */
+
     if (profileIcon && profileMenu) {
         profileIcon.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -64,9 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ================= LOGOUT ================= */
+
     if (logoutBtn) logoutBtn.addEventListener("click", logout);
 
     /* ================= EDIT PROFILE ================= */
+
     if (editProfileBtn) editProfileBtn.addEventListener("click", editProfile);
 });
 
