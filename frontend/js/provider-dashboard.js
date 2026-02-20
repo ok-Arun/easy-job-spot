@@ -23,19 +23,19 @@ async function loadDashboard() {
             }
         });
 
-        // 🔒 PROFILE NOT COMPLETED
+        // 🔒 Profile not completed or not allowed
         if (response.status === 403) {
             showError(`
-                <div style="text-align:center;">
+                <div class="error-box" style="text-align:center;">
                     <p style="margin-bottom:15px;">
                         Please complete your company profile before using the dashboard.
                     </p>
                     <button class="btn btn-primary"
-                        onclick="window.location.href='/pages/provider-profile.html'">
+                        onclick="window.location.href='provider-profile.html'">
                         Complete Profile
                     </button>
                 </div>
-            `);
+            `, true);
             return;
         }
 
@@ -139,18 +139,19 @@ function getStatusMeta(status) {
 
 // ================= ACTION HANDLERS =================
 function setupActions() {
+
     const postBtn = document.getElementById("postJobBtn");
     const viewBtn = document.getElementById("viewJobsBtn");
 
     if (postBtn) {
         postBtn.addEventListener("click", () => {
-            window.location.href = "/pages/provider-post-job.html";
+            window.location.href = "provider-post-job.html";
         });
     }
 
     if (viewBtn) {
         viewBtn.addEventListener("click", () => {
-            window.location.href = "/pages/provider-jobs.html";
+            window.location.href = "provider-jobs.html";
         });
     }
 }
@@ -163,7 +164,7 @@ function attachViewApplicantsHandlers() {
             btn.addEventListener("click", () => {
                 const jobId = btn.dataset.jobId;
                 window.location.href =
-                    `/pages/provider-job-applications.html?jobId=${jobId}`;
+                    `provider-job-applications.html?jobId=${jobId}`;
             });
         });
 }
@@ -176,7 +177,7 @@ function setupLogout() {
 
     logoutBtn.addEventListener("click", () => {
         clearAuthSession();
-        window.location.href = "/pages/login.html";
+        window.location.href = "login.html";
     });
 }
 
@@ -198,12 +199,15 @@ function showLoading() {
     if (content) content.classList.add("hidden");
 }
 
-function showError(message) {
+function showError(message, isHtml = false) {
     const state = document.getElementById("stateContainer");
     const content = document.getElementById("dashboardContent");
 
     if (state) {
-        state.innerHTML = `<div class="error-box">${message}</div>`;
+        state.innerHTML = isHtml
+            ? message
+            : `<div class="error-box">${message}</div>`;
+
         state.className = "state error";
     }
 
