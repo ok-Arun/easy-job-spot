@@ -1,5 +1,5 @@
-// ================= RUNTIME CONFIG =================
-let BASE_URL = null;
+// ================= CONFIG =================
+const BASE_URL = "https://easy-job-spot-production.up.railway.app/api/admin/dashboard";
 
 let jobsChart = null;
 let applicationsChart = null;
@@ -8,14 +8,6 @@ let hiringChart = null;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", () => {
-
-    // ensure config is loaded
-    if (!window.APP_CONFIG) {
-        console.error("APP_CONFIG not loaded");
-        return;
-    }
-
-    BASE_URL = window.APP_CONFIG.API_BASE_URL + "/admin/dashboard";
 
     const token = localStorage.getItem("token");
 
@@ -37,9 +29,7 @@ function highlightSidebar() {
 
     links.forEach(link => {
         link.classList.remove("active");
-
-        const linkPage = link.getAttribute("href").toLowerCase();
-        if (linkPage === currentPage) {
+        if (link.getAttribute("href").toLowerCase() === currentPage) {
             link.classList.add("active");
         }
     });
@@ -53,27 +43,23 @@ async function fetchStats(token) {
             headers: { Authorization: "Bearer " + token }
         });
 
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            console.error("Stats API failed", result);
+        if (!response.ok) {
+            console.error("Stats API failed", response.status);
             return;
         }
 
+        const result = await response.json();
         const data = result.data;
 
-        // JOBS
         document.getElementById("totalJobs").innerText = data.jobs.total;
         document.getElementById("pendingJobs").innerText = data.jobs.pending;
         document.getElementById("activeJobs").innerText = data.jobs.active;
 
-        // APPLICATIONS
         document.getElementById("totalApplications").innerText = data.applications.total;
         document.getElementById("shortlisted").innerText = data.applications.shortlisted;
         document.getElementById("rejected").innerText = data.applications.rejected;
         document.getElementById("hired").innerText = data.applications.hired;
 
-        // USERS
         if (data.users) {
             document.getElementById("totalUsers").innerText = data.users.total;
             document.getElementById("jobSeekers").innerText = data.users.jobSeekers;
@@ -95,13 +81,12 @@ async function fetchTrends(token) {
             headers: { Authorization: "Bearer " + token }
         });
 
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            console.error("Trends API failed", result);
+        if (!response.ok) {
+            console.error("Trends API failed", response.status);
             return;
         }
 
+        const result = await response.json();
         const data = result.data;
 
         renderJobsTrend(data.jobs);
@@ -123,14 +108,10 @@ function renderJobsTrend(jobs) {
         data: {
             labels: ["Created (30d)", "Approved (30d)"],
             datasets: [{
-                label: "Jobs",
                 data: [jobs.created.last30Days, jobs.approved.last30Days],
-                backgroundColor: ["#3b82f6", "#10b981"],
-                borderRadius: 6,
-                barPercentage: 0.5
+                backgroundColor: ["#3b82f6", "#10b981"]
             }]
-        },
-        options: baseBarOptions()
+        }
     });
 }
 
@@ -142,14 +123,10 @@ function renderApplicationsTrend(applications) {
         data: {
             labels: ["Applications (30d)"],
             datasets: [{
-                label: "Applications",
                 data: [applications.received.last30Days],
-                backgroundColor: "#6366f1",
-                borderRadius: 6,
-                barPercentage: 0.4
+                backgroundColor: ["#6366f1"]
             }]
-        },
-        options: baseBarOptions()
+        }
     });
 }
 
@@ -162,35 +139,8 @@ function renderHiringFunnel(funnel) {
             labels: ["Applied", "Shortlisted", "Rejected", "Hired"],
             datasets: [{
                 data: [funnel.applied, funnel.shortlisted, funnel.rejected, funnel.hired],
-                backgroundColor: ["#2563eb", "#14b8a6", "#dc2626", "#16a34a"],
-                borderWidth: 0
+                backgroundColor: ["#2563eb", "#14b8a6", "#dc2626", "#16a34a"]
             }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: "65%",
-            plugins: {
-                legend: { position: "top", labels: { color: "#e2e8f0" } }
-            }
         }
     });
-}
-
-function baseBarOptions() {
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { labels: { color: "#e2e8f0" } }
-        },
-        scales: {
-            x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
-            y: {
-                ticks: { color: "#94a3b8" },
-                grid: { color: "rgba(148,163,184,0.1)" },
-                beginAtZero: true
-            }
-        }
-    };
 }
