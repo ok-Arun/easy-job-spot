@@ -54,7 +54,6 @@ async function loadUsers(page = 0) {
         const pageData = data.users;
         const users = pageData.content || [];
 
-        // ===== stats =====
         document.getElementById("totalUsers").innerText = data.totalUsers;
         document.getElementById("seekers").innerText = data.seekers;
         document.getElementById("providers").innerText = data.providers;
@@ -79,25 +78,38 @@ function renderTable(users) {
         return;
     }
 
-    tbody.innerHTML = users.map(u => `
-        <tr>
-            <td data-label="Name">${u.name}</td>
-            <td data-label="Email">${u.email}</td>
-            <td data-label="Role">
-                <span class="role-badge ${u.userType}">
-                    ${u.userType.replace("_", " ")}
-                </span>
-            </td>
-            <td data-label="Status">
-                <span class="status-active">Active</span>
-            </td>
-            <td data-label="Actions">
-                <button class="delete-btn" onclick="deleteUser('${u.id}')">
-                    Delete
-                </button>
-            </td>
-        </tr>
-    `).join("");
+    tbody.innerHTML = users.map(u => {
+
+        let statusHTML = `<span class="status-active">Active</span>`;
+
+        if (u.userType === "JOB_PROVIDER") {
+            if (u.providerStatus === "PENDING") {
+                statusHTML = `<span class="status-pending">Pending</span>`;
+            } else if (u.providerStatus === "APPROVED") {
+                statusHTML = `<span class="status-active">Approved</span>`;
+            }
+        }
+
+        return `
+            <tr>
+                <td data-label="Name">${u.name}</td>
+                <td data-label="Email">${u.email}</td>
+                <td data-label="Role">
+                    <span class="role-badge ${u.userType}">
+                        ${u.userType.replace("_", " ")}
+                    </span>
+                </td>
+                <td data-label="Status">
+                    ${statusHTML}
+                </td>
+                <td data-label="Actions">
+                    <button class="delete-btn" onclick="deleteUser('${u.id}')">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
 }
 
 /* ================= PAGINATION ================= */
