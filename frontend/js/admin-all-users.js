@@ -1,4 +1,4 @@
-const API = "http://localhost:8081/api/admin/users";
+const API = "https://easy-job-spot-production.up.railway.app/api/admin/users";
 const token = localStorage.getItem("token");
 
 if (!token) location.href = "/login.html";
