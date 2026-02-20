@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Company Profile | Job Portal</title>
+    <title>Edit Profile | Job Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../css/base.css">
@@ -12,32 +12,8 @@
 
 <body>
 
-<!-- ===== NAVBAR (Same as Dashboard) ===== -->
-<header id="providerNavbar">
-    <nav class="provider-nav">
-        <div class="nav-logo">Job Portal</div>
+<!-- Navbar will be injected here by provider-layout.js -->
 
-        <ul class="nav-links">
-            <li>
-                <a href="provider-dashboard.html">Dashboard</a>
-            </li>
-            <li>
-                <a href="provider-post-job.html">Post Job</a>
-            </li>
-            <li>
-                <a href="provider-jobs.html">My Jobs</a>
-            </li>
-            <li class="active">
-                <a href="provider-profile.html">Edit Profile</a>
-            </li>
-            <li>
-                <button id="logoutBtn" class="logout-btn">Logout</button>
-            </li>
-        </ul>
-    </nav>
-</header>
-
-<!-- ===== MAIN ===== -->
 <main class="container provider-profile">
 
     <h1 class="page-title">Company Profile</h1>
@@ -97,6 +73,8 @@
 
 <script src="../js/config.js"></script>
 <script src="../js/auth-util.js"></script>
+<script src="../js/provider-layout.js"></script>
+<script src="../js/navbar.js"></script>
 <script src="../js/provider-profile.js"></script>
 
 </body>
