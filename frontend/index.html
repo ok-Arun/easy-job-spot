@@ -16,26 +16,30 @@
 
 <!-- ================= NAVBAR ================= -->
 <header class="navbar">
-    <div class="logo">EasyJobSpot</div>
+    <div class="navbar-inner">
 
-    <!-- Logged Out -->
-    <div id="auth-actions" class="nav-actions">
-        <a href="pages/login.html">Login</a>
-        <a href="pages/register.html" class="btn-primary">Register</a>
-    </div>
+        <div class="logo">EasyJobSpot</div>
 
-    <!-- Logged In -->
-    <div id="user-actions" class="user-actions hidden">
-        <div class="profile-box">
-            <span id="navUserName" class="nav-username"></span>
-            <i id="profileIcon" class="fa-solid fa-user profile-icon"></i>
+        <!-- Logged Out -->
+        <div id="auth-actions" class="nav-actions">
+            <a href="pages/login.html" class="nav-link">Login</a>
+            <a href="pages/register.html" class="btn-primary">Register</a>
+        </div>
 
-            <div id="profileMenu" class="profile-menu hidden">
-                <a href="pages/job-seeker-profile.html">Edit Profile</a>
-                <a href="pages/my-applications.html">My Applications</a>
-                <button id="logoutBtn">Logout</button>
+        <!-- Logged In -->
+        <div id="user-actions" class="user-actions hidden">
+            <div class="profile-box">
+                <span id="navUserName" class="nav-username"></span>
+                <i id="profileIcon" class="fa-solid fa-user profile-icon"></i>
+
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a href="pages/job-seeker-profile.html">Edit Profile</a>
+                    <a href="pages/my-applications.html">My Applications</a>
+                    <button id="logoutBtn">Logout</button>
+                </div>
             </div>
         </div>
+
     </div>
 </header>
 
