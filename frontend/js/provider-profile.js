@@ -57,7 +57,7 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
         localStorage.setItem("profileCompleted", "1");
 
         setTimeout(() => {
-            window.location.href = "/index.html";
+            window.location.href = "/provider-dashboard.html";
         }, 1200);
 
     } catch (err) {
