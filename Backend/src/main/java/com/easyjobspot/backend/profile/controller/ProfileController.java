@@ -1,6 +1,5 @@
 package com.easyjobspot.backend.profile.controller;
 
-import com.easyjobspot.backend.profile.dto.*;
 import com.easyjobspot.backend.profile.service.ProfileService;
 import com.easyjobspot.backend.user.entity.User;
 import com.easyjobspot.backend.user.repository.UserRepository;
@@ -33,38 +32,40 @@ public class ProfileController {
 
         if (user == null) {
             return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
+                    profileService.userNotFoundResponse()
             );
         }
 
         return ResponseEntity.ok(
-                profileService.getProfileStatus(user.getId())
+                profileService.getProfileStatus(user)
         );
     }
 
-    // ================= JOB SEEKER =================
+    // ================= GET MY PROFILE =================
 
-    @GetMapping("/job-seeker")
-    public ResponseEntity<?> getJobSeeker(Authentication authentication) {
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
 
         String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
+                    profileService.userNotFoundResponse()
             );
         }
 
         return ResponseEntity.ok(
-                profileService.getJobSeekerProfile(user.getId())
+                profileService.getMyProfile(user)
         );
     }
 
-    @PutMapping("/job-seeker")
-    public ResponseEntity<?> updateJobSeeker(
+    // ================= UPDATE MY PROFILE =================
+
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(
             Authentication authentication,
-            @RequestBody JobSeekerProfileRequest request
+            @RequestBody Object requestBody
     ) {
 
         String email = authentication.getName();
@@ -72,80 +73,12 @@ public class ProfileController {
 
         if (user == null) {
             return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
+                    profileService.userNotFoundResponse()
             );
         }
 
         return ResponseEntity.ok(
-                profileService.saveJobSeekerProfile(user.getId(), request)
-        );
-    }
-
-    // ================= PROVIDER =================
-
-    @GetMapping("/provider")
-    public ResponseEntity<?> getProvider(Authentication authentication) {
-
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
-            );
-        }
-
-        return ResponseEntity.ok(
-                profileService.getProviderProfile(user.getId())
-        );
-    }
-
-    @PutMapping("/provider")
-    public ResponseEntity<?> updateProvider(
-            Authentication authentication,
-            @RequestBody ProviderProfileRequest request
-    ) {
-
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
-            );
-        }
-
-        return ResponseEntity.ok(
-                profileService.saveProviderProfile(user.getId(), request)
-        );
-    }
-
-    // ================= ADMIN =================
-
-    @GetMapping("/admin")
-    public ResponseEntity<?> getAdmin(Authentication authentication) {
-
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.ok(
-                    new ProfileResponse(false, "USER_NOT_FOUND")
-            );
-        }
-
-        if (!user.getUserType().name().equals("SYSTEM_ADMIN")) {
-            return ResponseEntity.ok(
-                    new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER")
-            );
-        }
-
-        return ResponseEntity.ok(
-                new AdminProfileResponse(
-                        user.getEmail(),
-                        user.getUserType().name(),
-                        user.isProfileCompleted()
-                )
+                profileService.updateMyProfile(user, requestBody)
         );
     }
 }
