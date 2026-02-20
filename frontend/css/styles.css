@@ -87,6 +87,28 @@ body {
     background: #ea580c;
 }
 
+/* ================= PROFILE MENU LINKS FIX ================= */
+
+.profile-menu a {
+    text-decoration: none;     /* remove underline */
+    color: #0f172a;            /* normal dark text */
+    font-weight: 500;
+}
+
+.profile-menu a:visited {
+    color: #0f172a;            /* prevent purple */
+}
+
+.profile-menu a:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.profile-menu button {
+    text-decoration: none;
+    color: #dc2626;            /* red for logout */
+    font-weight: 500;
+}
 /* ================= PROFILE DROPDOWN FIX ================= */
 
 .profile-box {
