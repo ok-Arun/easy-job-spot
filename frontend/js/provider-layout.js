@@ -21,7 +21,7 @@ function setActiveNav() {
 
     const links = document.querySelectorAll(".nav-links a");
     const currentPage = window.location.pathname.split("/").pop();
-    const navTitle = document.getElementById("navTitle");
+    const navPageTitle = document.getElementById("navPageTitle");
 
     links.forEach(link => {
 
@@ -30,9 +30,9 @@ function setActiveNav() {
         if (href === currentPage) {
             link.parentElement.classList.add("active");
 
-            // Update navbar title to current page name
-            if (navTitle) {
-                navTitle.textContent = link.textContent;
+            // Set current page name below logo
+            if (navPageTitle) {
+                navPageTitle.textContent = link.textContent;
             }
 
         } else {
