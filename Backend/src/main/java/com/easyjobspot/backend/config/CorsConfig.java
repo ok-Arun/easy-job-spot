@@ -16,19 +16,29 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
+        //  Allow all localhost ports + all Vercel deployments
         config.setAllowedOriginPatterns(List.of(
-                "http://localhost:5500",
-                "http://127.0.0.1:5500",
-                "https://easy-job-spot.vercel.app",
-                "https://easy-job-spot-*.vercel.app" 
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app"
         ));
 
+        //  Allow required HTTP methods
         config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
         ));
 
+        //  Allow all headers (including Authorization)
         config.setAllowedHeaders(List.of("*"));
+
+        //  Allow credentials (JWT Authorization header)
         config.setAllowCredentials(true);
+
+        // Cache preflight response for 1 hour
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
