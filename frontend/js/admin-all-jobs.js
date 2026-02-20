@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8081/api/admin/jobs";
+const API_BASE = "https://easy-job-spot-production.up.railway.app/api/admin/jobs";
 const token = localStorage.getItem("token");
 
 document.addEventListener("DOMContentLoaded", () => {
