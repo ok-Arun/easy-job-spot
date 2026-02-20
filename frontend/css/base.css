@@ -23,6 +23,13 @@ body {
     align-items: center;
     background-color: #1e293b;
     padding: 14px 28px;
+    position: relative;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .nav-logo {
@@ -31,6 +38,7 @@ body {
     color: #ffffff;
 }
 
+/* Desktop Links */
 .nav-links {
     list-style: none;
     display: flex;
@@ -48,6 +56,16 @@ body {
 .nav-links li.active a {
     color: #ffffff;
     border-bottom: 2px solid #38bdf8;
+}
+
+/* Hamburger Button */
+.menu-toggle {
+    display: none;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
 }
 
 /* ===============================
@@ -89,6 +107,33 @@ body {
 
 .logout-btn:hover {
     background-color: #dc2626;
+}
+
+/* ===============================
+   MOBILE NAV
+================================ */
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 100%;
+        background: #1e293b;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 18px;
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
 }
 
 /* ===============================
