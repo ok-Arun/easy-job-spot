@@ -1,5 +1,5 @@
 const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
-const POST_JOB_URL = `${API_BASE_URL}/provider/jobs`; // ✅ FIXED
+const POST_JOB_URL = `${API_BASE_URL}/provider/jobs`;
 
 document.addEventListener("DOMContentLoaded", () => {
     requireAuth();
@@ -30,12 +30,13 @@ function populateDropdowns() {
 
     setOptions("workMode", ["Remote", "Hybrid", "On-site"]);
 
+    // ✅ FIXED — ENUM SAFE VALUES
     setOptions("jobType", [
-        "Full-time",
-        "Part-time",
-        "Contract",
-        "Internship",
-        "Freelance"
+        { value: "FULL_TIME", label: "Full-time" },
+        { value: "PART_TIME", label: "Part-time" },
+        { value: "CONTRACT", label: "Contract" },
+        { value: "INTERNSHIP", label: "Internship" },
+        { value: "FREELANCE", label: "Freelance" }
     ]);
 
     setOptions("employmentLevel", [
@@ -57,8 +58,15 @@ function setOptions(selectId, options) {
 
     options.forEach(opt => {
         const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
+
+        if (typeof opt === "string") {
+            option.value = opt;
+            option.textContent = opt;
+        } else {
+            option.value = opt.value;
+            option.textContent = opt.label;
+        }
+
         select.appendChild(option);
     });
 }
@@ -100,10 +108,10 @@ function setupForm() {
 
         const payload = {
             title: getValue("title"),
-            company: getValue("company"), // ✅ REQUIRED BY BACKEND
+            company: getValue("company"),
             category: getValue("category"),
             location: getValue("location"),
-            jobType: getValue("jobType"),
+            jobType: getValue("jobType"), // ✅ now ENUM SAFE
             description: getValue("description"),
             workMode: getValue("workMode"),
             employmentLevel: getValue("employmentLevel"),
@@ -140,7 +148,7 @@ function setupForm() {
             showMessage("Job posted successfully!", "success");
 
             setTimeout(() => {
-                window.location.href = "/pages/provider-jobs.html"; // ✅ safer redirect
+                window.location.href = "/pages/provider-jobs.html";
             }, 1200);
 
         } catch (err) {
