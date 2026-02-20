@@ -26,6 +26,9 @@
                 <a href="provider-jobs.html">My Jobs</a>
             </li>
             <li>
+                <a href="provider-profile.html">Edit Profile</a> <!-- ✅ Added -->
+            </li>
+            <li>
                 <button id="logoutBtn" class="logout-btn">Logout</button>
             </li>
         </ul>
@@ -82,6 +85,11 @@
             <button id="viewJobsBtn" class="btn btn-secondary">
                 View My Jobs
             </button>
+
+            <button onclick="window.location.href='provider-profile.html'"
+                    class="btn btn-outline">
+                Edit Profile
+            </button> <!-- ✅ Added -->
         </section>
 
         <!-- PERFORMANCE TABLE -->
@@ -101,7 +109,6 @@
                 </thead>
 
                 <tbody id="jobStatsBody">
-                <!-- Injected by JS -->
                 </tbody>
             </table>
 
