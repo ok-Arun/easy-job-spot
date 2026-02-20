@@ -30,7 +30,6 @@ public class AdminUsersService {
         boolean hasSearch = search != null && !search.isBlank();
         boolean hasUserType = userType != null && !userType.isBlank();
 
-        // ===== filtering by search + userType =====
         if (hasSearch && hasUserType) {
             usersPage = userRepository
                     .findByUserTypeAndNameContainingIgnoreCaseOrUserTypeAndEmailContainingIgnoreCase(
@@ -53,7 +52,6 @@ public class AdminUsersService {
             usersPage = userRepository.findAll(pageable);
         }
 
-        // ===== map to DTO =====
         Page<UserDTO> dtoPage = usersPage.map(user ->
                 UserDTO.builder()
                         .id(user.getId())
@@ -61,11 +59,11 @@ public class AdminUsersService {
                         .email(user.getEmail())
                         .role(user.getRole())
                         .userType(user.getUserType().name())
+                        .providerStatus(user.getProviderStatus())
                         .createdAt(user.getCreatedAt())
                         .build()
         );
 
-        // ===== stats =====
         long totalUsers = userRepository.count();
         long seekers = userRepository.countByUserType(User.UserType.JOB_SEEKER);
         long providers = userRepository.countByUserType(User.UserType.JOB_PROVIDER);
