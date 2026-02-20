@@ -1,41 +1,45 @@
 const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
-const token = localStorage.getItem("token");
 const message = document.getElementById("message");
 
 // ================= TOKEN GUARD =================
+const token = localStorage.getItem("token");
 if (!token) {
     window.location.href = "login.html";
 }
 
-// ================= MESSAGE HANDLER =================
+// ================= MESSAGE =================
 function showMessage(text, type) {
     message.innerText = text;
     message.className = `form-message ${type}`;
     message.style.display = "block";
 }
 
-// ================= FETCH PROFILE ON LOAD =================
+// ================= FETCH PROFILE =================
 document.addEventListener("DOMContentLoaded", () => {
     fetchProfile();
 });
 
 async function fetchProfile() {
     try {
-        const res = await fetch(`${API_BASE_URL}/profile/provider`, {
+        const res = await fetch(`${API_BASE_URL}/profile/me`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
             }
         });
 
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            showMessage(data.message || "Failed to load profile.", "error");
+        if (!res.ok) {
+            showMessage("Failed to load profile.", "error");
             return;
         }
 
-        const profile = data.data;
+        const profile = await res.json();
+
+        // If empty object → first time profile
+        if (!profile || Object.keys(profile).length === 0) {
+            document.getElementById("approvalStatus").innerText = "PENDING";
+            return;
+        }
 
         document.getElementById("companyName").value = profile.companyName || "";
         document.getElementById("companyEmail").value = profile.companyEmail || "";
@@ -44,18 +48,15 @@ async function fetchProfile() {
         document.getElementById("description").value = profile.description || "";
         document.getElementById("website").value = profile.website || "";
 
-        // Approval Status Badge
+        // Approval badge
         const badge = document.getElementById("approvalStatus");
-        const status = profile.approvalStatus || "PENDING";
+        const status = profile.approvedAt ? "APPROVED" : "PENDING";
 
         badge.innerText = status;
-
         badge.classList.remove("approved", "pending", "rejected");
 
-        if (status.toUpperCase() === "APPROVED") {
+        if (status === "APPROVED") {
             badge.classList.add("approved");
-        } else if (status.toUpperCase() === "REJECTED") {
-            badge.classList.add("rejected");
         } else {
             badge.classList.add("pending");
         }
@@ -78,16 +79,15 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
         website: document.getElementById("website").value.trim()
     };
 
-    // Final frontend validation
     for (const key in payload) {
         if (!payload[key]) {
-            showMessage("All fields are mandatory. Please complete your company profile.", "error");
+            showMessage("All fields are mandatory.", "error");
             return;
         }
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/profile/provider`, {
+        const res = await fetch(`${API_BASE_URL}/profile/me`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -103,15 +103,13 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
             return;
         }
 
-        showMessage("Company profile updated successfully. Redirecting to dashboard…", "success");
-
-        localStorage.setItem("profileCompleted", "1");
+        showMessage("Profile updated successfully.", "success");
 
         setTimeout(() => {
             window.location.href = "/provider-dashboard.html";
-        }, 1200);
+        }, 1000);
 
     } catch (err) {
-        showMessage("Server error. Please try again.", "error");
+        showMessage("Server error.", "error");
     }
 });
