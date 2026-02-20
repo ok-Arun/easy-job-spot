@@ -29,7 +29,7 @@ body {
 .navbar-inner,
 .hero-content,
 .section-inner {
-    max-width: 1500px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 0 40px;
 }
