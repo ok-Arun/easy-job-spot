@@ -23,6 +23,22 @@ async function loadDashboard() {
             }
         });
 
+        // 🔒 PROFILE NOT COMPLETED
+        if (response.status === 403) {
+            showError(`
+                <div style="text-align:center;">
+                    <p style="margin-bottom:15px;">
+                        Please complete your company profile before using the dashboard.
+                    </p>
+                    <button class="btn btn-primary"
+                        onclick="window.location.href='/pages/provider-profile.html'">
+                        Complete Profile
+                    </button>
+                </div>
+            `);
+            return;
+        }
+
         if (!response.ok) {
             throw new Error("Failed to load dashboard data");
         }
@@ -76,7 +92,6 @@ function renderJobTable(perJob) {
     perJob.forEach(job => {
 
         const statusMeta = getStatusMeta(job.status);
-
         const row = document.createElement("tr");
 
         row.innerHTML = `
@@ -114,9 +129,8 @@ function getStatusMeta(status) {
         case "PENDING_APPROVAL":
             return { label: "PENDING", class: "badge-pending" };
         case "CLOSED":
-            return { label: "CLOSED", class: "badge-closed" };
         case "EXPIRED":
-            return { label: "EXPIRED", class: "badge-closed" };
+            return { label: "CLOSED", class: "badge-closed" };
         default:
             return { label: "", class: "" };
     }
