@@ -1,6 +1,7 @@
 // navbar.js
 
 document.addEventListener("DOMContentLoaded", () => {
+
     const token = getToken();
     const rawUserName = getUserName();
 
@@ -14,6 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const logo = document.querySelector(".logo");
     const profileIcon = document.getElementById("profileIcon");
     const profileMenu = document.getElementById("profileMenu");
+
+    /* ================= MOBILE MENU TOGGLE ================= */
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+    }
 
     /* ================= LOGO REDIRECT ================= */
     if (logo) {
@@ -40,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ctaSection) ctaSection.style.display = "none";
 
-    /* ================= DROPDOWN TOGGLE ================= */
+    /* ================= PROFILE DROPDOWN ================= */
     if (profileIcon && profileMenu) {
         profileIcon.addEventListener("click", (e) => {
             e.stopPropagation();
