@@ -29,7 +29,6 @@ public class ProfileController {
     public ResponseEntity<?> getStatus(Authentication authentication) {
 
         String email = authentication.getName();
-
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
@@ -45,13 +44,10 @@ public class ProfileController {
 
     // ================= JOB SEEKER =================
 
-    @PutMapping("/job-seeker")
-    public ResponseEntity<?> updateJobSeeker(
-            Authentication authentication,
-            @RequestBody JobSeekerProfileRequest request
-    ) {
-        String email = authentication.getName();
+    @GetMapping("/job-seeker")
+    public ResponseEntity<?> getJobSeeker(Authentication authentication) {
 
+        String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
@@ -60,21 +56,57 @@ public class ProfileController {
             );
         }
 
-        Object response =
-                profileService.saveJobSeekerProfile(user.getId(), request);
+        return ResponseEntity.ok(
+                profileService.getJobSeekerProfile(user.getId())
+        );
+    }
 
-        return ResponseEntity.ok(response);
+    @PutMapping("/job-seeker")
+    public ResponseEntity<?> updateJobSeeker(
+            Authentication authentication,
+            @RequestBody JobSeekerProfileRequest request
+    ) {
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.ok(
+                    new ProfileResponse(false, "USER_NOT_FOUND")
+            );
+        }
+
+        return ResponseEntity.ok(
+                profileService.saveJobSeekerProfile(user.getId(), request)
+        );
     }
 
     // ================= PROVIDER =================
+
+    @GetMapping("/provider")
+    public ResponseEntity<?> getProvider(Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.ok(
+                    new ProfileResponse(false, "USER_NOT_FOUND")
+            );
+        }
+
+        return ResponseEntity.ok(
+                profileService.getProviderProfile(user.getId())
+        );
+    }
 
     @PutMapping("/provider")
     public ResponseEntity<?> updateProvider(
             Authentication authentication,
             @RequestBody ProviderProfileRequest request
     ) {
-        String email = authentication.getName();
 
+        String email = authentication.getName();
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
@@ -83,9 +115,37 @@ public class ProfileController {
             );
         }
 
-        Object response =
-                profileService.saveProviderProfile(user.getId(), request);
+        return ResponseEntity.ok(
+                profileService.saveProviderProfile(user.getId(), request)
+        );
+    }
 
-        return ResponseEntity.ok(response);
+    // ================= ADMIN =================
+
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAdmin(Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.ok(
+                    new ProfileResponse(false, "USER_NOT_FOUND")
+            );
+        }
+
+        if (!user.getUserType().name().equals("SYSTEM_ADMIN")) {
+            return ResponseEntity.ok(
+                    new ProfileResponse(false, "PROFILE_NOT_ALLOWED_FOR_USER")
+            );
+        }
+
+        return ResponseEntity.ok(
+                new AdminProfileResponse(
+                        user.getEmail(),
+                        user.getUserType().name(),
+                        user.isProfileCompleted()
+                )
+        );
     }
 }
