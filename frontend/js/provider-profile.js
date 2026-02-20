@@ -2,17 +2,70 @@ const API_BASE_URL = window.APP_CONFIG.API_BASE_URL;
 const token = localStorage.getItem("token");
 const message = document.getElementById("message");
 
-// Hard guard (same as job seeker)
+// ================= TOKEN GUARD =================
 if (!token) {
     window.location.href = "login.html";
 }
 
+// ================= MESSAGE HANDLER =================
 function showMessage(text, type) {
     message.innerText = text;
-    message.className = `message-bar ${type}`;
+    message.className = `form-message ${type}`;
     message.style.display = "block";
 }
 
+// ================= FETCH PROFILE ON LOAD =================
+document.addEventListener("DOMContentLoaded", () => {
+    fetchProfile();
+});
+
+async function fetchProfile() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/profile/provider`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+            showMessage(data.message || "Failed to load profile.", "error");
+            return;
+        }
+
+        const profile = data.data;
+
+        document.getElementById("companyName").value = profile.companyName || "";
+        document.getElementById("companyEmail").value = profile.companyEmail || "";
+        document.getElementById("companyPhone").value = profile.companyPhone || "";
+        document.getElementById("address").value = profile.address || "";
+        document.getElementById("description").value = profile.description || "";
+        document.getElementById("website").value = profile.website || "";
+
+        // Approval Status Badge
+        const badge = document.getElementById("approvalStatus");
+        const status = profile.approvalStatus || "PENDING";
+
+        badge.innerText = status;
+
+        badge.classList.remove("approved", "pending", "rejected");
+
+        if (status.toUpperCase() === "APPROVED") {
+            badge.classList.add("approved");
+        } else if (status.toUpperCase() === "REJECTED") {
+            badge.classList.add("rejected");
+        } else {
+            badge.classList.add("pending");
+        }
+
+    } catch (err) {
+        showMessage("Server error while loading profile.", "error");
+    }
+}
+
+// ================= UPDATE PROFILE =================
 document.getElementById("providerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -25,7 +78,7 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
         website: document.getElementById("website").value.trim()
     };
 
-    // Final frontend validation (same pattern as seeker)
+    // Final frontend validation
     for (const key in payload) {
         if (!payload[key]) {
             showMessage("All fields are mandatory. Please complete your company profile.", "error");
@@ -35,7 +88,7 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
 
     try {
         const res = await fetch(`${API_BASE_URL}/profile/provider`, {
-            method: "PUT", // must match backend
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -50,10 +103,8 @@ document.getElementById("providerForm").addEventListener("submit", async (e) => 
             return;
         }
 
-        // SUCCESS
         showMessage("Company profile updated successfully. Redirecting to dashboard…", "success");
 
-        // same UX optimization
         localStorage.setItem("profileCompleted", "1");
 
         setTimeout(() => {
