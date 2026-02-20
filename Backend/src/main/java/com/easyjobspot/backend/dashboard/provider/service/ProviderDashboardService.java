@@ -31,10 +31,19 @@ public class ProviderDashboardService {
                         .getAuthentication()
                         .getPrincipal();
 
+        User currentUser = principal.getUser();
+
         // ================= ROLE VALIDATION =================
-        if (principal.getUser().getUserType() != User.UserType.JOB_PROVIDER) {
+        if (currentUser.getUserType() != User.UserType.JOB_PROVIDER) {
             throw new AccessDeniedException(
                     "Only job providers can access dashboard statistics"
+            );
+        }
+
+        // ================= PROFILE COMPLETION CHECK =================
+        if (!currentUser.isProfileCompleted()) {
+            throw new AccessDeniedException(
+                    "Please complete your profile before accessing dashboard"
             );
         }
 
@@ -42,11 +51,15 @@ public class ProviderDashboardService {
 
         // ================= JOB STATS =================
         long totalJobs = jobRepository.countByCreatedBy(providerId);
+
         long activeJobs = jobRepository.countByStatusAndCreatedBy(
-                Job.JobStatus.ACTIVE, providerId
+                Job.JobStatus.ACTIVE,
+                providerId
         );
+
         long pendingJobs = jobRepository.countByStatusAndCreatedBy(
-                Job.JobStatus.PENDING_APPROVAL, providerId
+                Job.JobStatus.PENDING_APPROVAL,
+                providerId
         );
 
         ProviderDashboardStatsResponse.JobStats jobStats =
@@ -62,12 +75,14 @@ public class ProviderDashboardService {
 
         long shortlisted =
                 applicationRepository.countByStatusAndProvider(
-                        ApplicationStatus.SHORTLISTED, providerId
+                        ApplicationStatus.SHORTLISTED,
+                        providerId
                 );
 
         long hired =
                 applicationRepository.countByStatusAndProvider(
-                        ApplicationStatus.HIRED, providerId
+                        ApplicationStatus.HIRED,
+                        providerId
                 );
 
         ProviderDashboardStatsResponse.ApplicationStats applicationStats =
