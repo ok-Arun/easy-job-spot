@@ -11,29 +11,7 @@
 </head>
 <body>
 
-<header id="providerNavbar">
-    <nav class="provider-nav">
-        <div class="nav-logo">Job Portal</div>
-
-        <ul class="nav-links">
-            <li class="active">
-                <a href="provider-dashboard.html">Dashboard</a>
-            </li>
-            <li>
-                <a href="provider-post-job.html">Post Job</a>
-            </li>
-            <li>
-                <a href="provider-jobs.html">My Jobs</a>
-            </li>
-            <li>
-                <a href="provider-profile.html">Edit Profile</a> <!-- ✅ Added -->
-            </li>
-            <li>
-                <button id="logoutBtn" class="logout-btn">Logout</button>
-            </li>
-        </ul>
-    </nav>
-</header>
+<!-- Navbar will be injected by provider-layout.js -->
 
 <main class="container provider-dashboard">
 
@@ -85,11 +63,6 @@
             <button id="viewJobsBtn" class="btn btn-secondary">
                 View My Jobs
             </button>
-
-            <button onclick="window.location.href='provider-profile.html'"
-                    class="btn btn-outline">
-                Edit Profile
-            </button> <!-- ✅ Added -->
         </section>
 
         <!-- PERFORMANCE TABLE -->
@@ -108,8 +81,7 @@
                 </tr>
                 </thead>
 
-                <tbody id="jobStatsBody">
-                </tbody>
+                <tbody id="jobStatsBody"></tbody>
             </table>
 
             <div id="emptyJobsMessage" class="hidden empty-state-box">
@@ -123,6 +95,7 @@
 
 <script src="../js/config.js"></script>
 <script src="../js/auth-util.js"></script>
+<script src="../js/provider-layout.js"></script>
 <script src="../js/provider-dashboard.js"></script>
 
 </body>
