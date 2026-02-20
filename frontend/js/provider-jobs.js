@@ -3,7 +3,6 @@ const JOBS_URL = `${API_BASE_URL}/provider/jobs`;
 
 document.addEventListener("DOMContentLoaded", () => {
     requireAuth();
-    setupLogout();
     loadJobs();
 });
 
@@ -27,6 +26,7 @@ async function loadJobs(status = "") {
     showLoading(state, container);
 
     try {
+
         const url = status ? `${JOBS_URL}?status=${status}` : JOBS_URL;
 
         const res = await fetch(url, {
@@ -118,37 +118,28 @@ function getStatusMeta(status) {
         case "PENDING_APPROVAL":
             return { label: "PENDING", badgeClass: "badge-pending", cardClass: "job-pending" };
         case "CLOSED":
-            return { label: "CLOSED", badgeClass: "badge-closed", cardClass: "job-closed" };
         case "EXPIRED":
-            return { label: "EXPIRED", badgeClass: "badge-closed", cardClass: "job-closed" };
+            return { label: "CLOSED", badgeClass: "badge-closed", cardClass: "job-closed" };
         default:
             return { label: status || "UNKNOWN", badgeClass: "", cardClass: "" };
     }
 }
 
 
-// ================= ACTIONS (MODAL BASED) =================
+// ================= ACTIONS =================
 async function closeJob(id) {
-    if (!id) return;
-
     openConfirmModal(
         "Close Job",
         "Are you sure you want to close this job?",
-        async () => {
-            await jobAction(`${JOBS_URL}/${id}/close`);
-        }
+        async () => await jobAction(`${JOBS_URL}/${id}/close`)
     );
 }
 
 async function reopenJob(id) {
-    if (!id) return;
-
     openConfirmModal(
         "Reopen Job",
         "Are you sure you want to reopen this job?",
-        async () => {
-            await jobAction(`${JOBS_URL}/${id}/reopen`);
-        }
+        async () => await jobAction(`${JOBS_URL}/${id}/reopen`)
     );
 }
 
@@ -163,14 +154,13 @@ async function jobAction(url) {
 
 // ================= CONFIRM MODAL =================
 function openConfirmModal(title, message, onConfirm) {
+
     const modal = document.getElementById("confirmModal");
-    const titleEl = document.getElementById("confirmTitle");
-    const msgEl = document.getElementById("confirmMessage");
     const okBtn = document.getElementById("confirmOk");
     const cancelBtn = document.getElementById("confirmCancel");
 
-    titleEl.textContent = title;
-    msgEl.textContent = message;
+    document.getElementById("confirmTitle").textContent = title;
+    document.getElementById("confirmMessage").textContent = message;
 
     modal.classList.remove("hidden");
 
@@ -189,25 +179,12 @@ function openConfirmModal(title, message, onConfirm) {
 
 // ================= NAVIGATION =================
 function editJob(id) {
-    if (!id) return alert("Invalid job ID");
-    window.location.href = `/pages/provider-post-job.html?jobId=${id}`;
+    window.location.href = `provider-post-job.html?jobId=${id}`;
 }
 
 function viewApplicants(id) {
-    if (!id) return alert("Invalid job ID");
-    window.location.href = `/pages/provider-job-applications.html?jobId=${id}`;
-}
-
-
-// ================= LOGOUT =================
-function setupLogout() {
-    const btn = document.getElementById("logoutBtn");
-    if (!btn) return;
-
-    btn.onclick = () => {
-        clearAuthSession();
-        window.location.href = "/pages/login.html";
-    };
+    window.location.href =
+        `provider-job-applications.html?jobId=${id}`;
 }
 
 
