@@ -40,7 +40,7 @@ public class JobService {
     private final AuditLogService auditLogService;
 
     // ====================================================
-    // PUBLIC JOB LISTING
+    // PUBLIC JOB LISTING (UPDATED WITH FILTER SUPPORT)
     // ====================================================
     @Transactional(readOnly = true)
     public Page<JobDTO> getAllJobs(
@@ -49,8 +49,10 @@ public class JobService {
             String sortBy,
             String search,
             String category,
-            String title,      // ⭐ NEW
-            String location    // ⭐ NEW
+            String title,
+            String location,
+            Job.JobType jobType,
+            Integer experienceMin
     ) {
 
         Pageable pageable =
@@ -58,20 +60,26 @@ public class JobService {
 
         Page<Job> jobs;
 
-        // 1️⃣ NEW — TITLE / LOCATION FILTER (highest priority)
-        if ((title != null && !title.trim().isEmpty())
-                || (location != null && !location.trim().isEmpty())) {
+        boolean hasAdvancedFilters =
+                (title != null && !title.isBlank()) ||
+                        (location != null && !location.isBlank()) ||
+                        jobType != null ||
+                        experienceMin != null;
 
-            jobs = jobRepository.filterByTitleAndLocation(
+        if (hasAdvancedFilters) {
+
+            jobs = jobRepository.filterJobs(
                     Job.JobStatus.ACTIVE,
                     (title != null && !title.isBlank()) ? title.trim() : null,
                     (location != null && !location.isBlank()) ? location.trim() : null,
+                    jobType,
+                    experienceMin,
                     pageable
             );
         }
 
-        // 2️⃣ EXISTING — KEYWORD SEARCH
         else if (search != null && !search.trim().isEmpty()) {
+
             jobs = jobRepository.searchByStatus(
                     Job.JobStatus.ACTIVE,
                     search.trim(),
@@ -79,8 +87,8 @@ public class JobService {
             );
         }
 
-        // 3️⃣ EXISTING — CATEGORY FILTER
         else if (category != null && !category.trim().isEmpty()) {
+
             jobs = jobRepository.findByStatusAndCategory(
                     Job.JobStatus.ACTIVE,
                     category.trim(),
@@ -88,9 +96,12 @@ public class JobService {
             );
         }
 
-        // 4️⃣ EXISTING — ALL ACTIVE JOBS
         else {
-            jobs = jobRepository.findByStatus(Job.JobStatus.ACTIVE, pageable);
+
+            jobs = jobRepository.findByStatus(
+                    Job.JobStatus.ACTIVE,
+                    pageable
+            );
         }
 
         return jobs.map(jobMapper::toDTO);

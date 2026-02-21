@@ -2,6 +2,7 @@ package com.easyjobspot.backend.job.controller;
 
 import com.easyjobspot.backend.common.dto.ApiResponse;
 import com.easyjobspot.backend.job.dto.JobDTO;
+import com.easyjobspot.backend.job.entity.Job;
 import com.easyjobspot.backend.job.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,12 +28,24 @@ public class JobController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String title,      // ⭐ NEW
-            @RequestParam(required = false) String location    // ⭐ NEW
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Job.JobType jobType,     // ✅ NEW
+            @RequestParam(required = false) Integer experienceMin    // ✅ NEW
     ) {
 
         Page<JobDTO> jobs =
-                jobService.getAllJobs(page, size, sortBy, search, category, title, location);
+                jobService.getAllJobs(
+                        page,
+                        size,
+                        sortBy,
+                        search,
+                        category,
+                        title,
+                        location,
+                        jobType,
+                        experienceMin
+                );
 
         return ResponseEntity.ok(
                 ApiResponse.success("Jobs fetched successfully", jobs)

@@ -40,17 +40,23 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // ================= FILTER BY TITLE + LOCATION =================
+    // =========================================================
+    // ✅ NEW DYNAMIC FILTER (TITLE + LOCATION + JOB TYPE + EXPERIENCE)
+    // =========================================================
     @Query("""
         SELECT j FROM Job j
         WHERE j.status = :status
         AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
         AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
+        AND (:jobType IS NULL OR j.jobType = :jobType)
+        AND (:experienceMin IS NULL OR j.experienceMin <= :experienceMin)
     """)
-    Page<Job> filterByTitleAndLocation(
+    Page<Job> filterJobs(
             @Param("status") Job.JobStatus status,
             @Param("title") String title,
             @Param("location") String location,
+            @Param("jobType") Job.JobType jobType,
+            @Param("experienceMin") Integer experienceMin,
             Pageable pageable
     );
 
@@ -78,7 +84,6 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     // ================= DASHBOARD — GLOBAL =================
     long countByStatus(Job.JobStatus status);
 
-    // ================= DASHBOARD — TIME BASED =================
     long countByCreatedAtAfter(LocalDateTime date);
 
     long countByStatusAndCreatedAtAfter(
@@ -86,7 +91,6 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             LocalDateTime date
     );
 
-    // ================= DASHBOARD — PROVIDER =================
     long countByCreatedBy(UUID createdBy);
 
     long countByStatusAndCreatedBy(
@@ -103,9 +107,8 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-
     // =========================================================
-    // ⭐ CRITICAL FIX — JOBS WITH APPLICATION COUNT
+    // PROVIDER JOBS WITH APPLICATION COUNT
     // =========================================================
     @Query("""
         SELECT
