@@ -171,7 +171,8 @@ public class Job {
         FULL_TIME,
         PART_TIME,
         INTERNSHIP,
-        CONTRACT
+        CONTRACT,
+        FREELANCE
     }
 
     public enum JobStatus {

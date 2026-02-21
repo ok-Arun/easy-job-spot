@@ -30,8 +30,9 @@ public class JobController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) Job.JobType jobType,     // ✅ NEW
-            @RequestParam(required = false) Integer experienceMin    // ✅ NEW
+            @RequestParam(required = false) Job.JobType jobType,
+            @RequestParam(required = false) String workMode,
+            @RequestParam(required = false) String employmentLevel
     ) {
 
         Page<JobDTO> jobs =
@@ -44,7 +45,8 @@ public class JobController {
                         title,
                         location,
                         jobType,
-                        experienceMin
+                        workMode,
+                        employmentLevel
                 );
 
         return ResponseEntity.ok(

@@ -52,7 +52,8 @@ public class JobService {
             String title,
             String location,
             Job.JobType jobType,
-            Integer experienceMin
+            String workMode,
+            String employmentLevel
     ) {
 
         Pageable pageable =
@@ -64,7 +65,8 @@ public class JobService {
                 (title != null && !title.isBlank()) ||
                         (location != null && !location.isBlank()) ||
                         jobType != null ||
-                        experienceMin != null;
+                        (workMode != null && !workMode.isBlank()) ||
+                        (employmentLevel != null && !employmentLevel.isBlank());
 
         if (hasAdvancedFilters) {
 
@@ -73,7 +75,8 @@ public class JobService {
                     (title != null && !title.isBlank()) ? title.trim() : null,
                     (location != null && !location.isBlank()) ? location.trim() : null,
                     jobType,
-                    experienceMin,
+                    (workMode != null && !workMode.isBlank()) ? workMode.trim() : null,
+                    (employmentLevel != null && !employmentLevel.isBlank()) ? employmentLevel.trim() : null,
                     pageable
             );
         }

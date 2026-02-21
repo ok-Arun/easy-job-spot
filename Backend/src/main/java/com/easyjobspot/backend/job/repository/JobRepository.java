@@ -41,25 +41,26 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     );
 
     // =========================================================
-    // ✅ NEW DYNAMIC FILTER (TITLE + LOCATION + JOB TYPE + EXPERIENCE)
+    // ✅ UPDATED DYNAMIC FILTER (NO experienceMin)
     // =========================================================
     @Query("""
-        SELECT j FROM Job j
-        WHERE j.status = :status
-        AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
-        AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
-        AND (:jobType IS NULL OR j.jobType = :jobType)
-        AND (:experienceMin IS NULL OR j.experienceMin <= :experienceMin)
+    SELECT j FROM Job j
+    WHERE j.status = :status
+    AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
+    AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
+    AND (:jobType IS NULL OR j.jobType = :jobType)
+    AND (:workMode IS NULL OR LOWER(j.workMode) = LOWER(:workMode))
+    AND (:employmentLevel IS NULL OR LOWER(j.employmentLevel) = LOWER(:employmentLevel))
     """)
     Page<Job> filterJobs(
             @Param("status") Job.JobStatus status,
             @Param("title") String title,
             @Param("location") String location,
             @Param("jobType") Job.JobType jobType,
-            @Param("experienceMin") Integer experienceMin,
+            @Param("workMode") String workMode,
+            @Param("employmentLevel") String employmentLevel,
             Pageable pageable
     );
-
     // ================= ADMIN — MODERATION =================
     Page<Job> findByStatusOrderByCreatedAtDesc(
             Job.JobStatus status,
