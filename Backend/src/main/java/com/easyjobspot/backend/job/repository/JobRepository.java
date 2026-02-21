@@ -18,6 +18,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     // ================= PUBLIC — ONLY ACTIVE JOBS =================
     Page<Job> findByStatus(Job.JobStatus status, Pageable pageable);
 
+    // You can keep this (not harmful), but it won't be used anymore
     Page<Job> findByStatusAndCategory(
             Job.JobStatus status,
             String category,
@@ -41,16 +42,17 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     );
 
     // =========================================================
-    // ✅ UPDATED DYNAMIC FILTER (NO experienceMin)
+    // ✅ FULL DYNAMIC FILTER (NOW WITH CATEGORY SUPPORT)
     // =========================================================
     @Query("""
-    SELECT j FROM Job j
-    WHERE j.status = :status
-    AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
-    AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
-    AND (:jobType IS NULL OR j.jobType = :jobType)
-    AND (:workMode IS NULL OR LOWER(j.workMode) = LOWER(:workMode))
-    AND (:employmentLevel IS NULL OR LOWER(j.employmentLevel) = LOWER(:employmentLevel))
+        SELECT j FROM Job j
+        WHERE j.status = :status
+        AND (:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%')))
+        AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
+        AND (:jobType IS NULL OR j.jobType = :jobType)
+        AND (:workMode IS NULL OR LOWER(j.workMode) = LOWER(:workMode))
+        AND (:employmentLevel IS NULL OR LOWER(j.employmentLevel) = LOWER(:employmentLevel))
+        AND (:category IS NULL OR LOWER(j.category) = LOWER(:category))
     """)
     Page<Job> filterJobs(
             @Param("status") Job.JobStatus status,
@@ -59,8 +61,10 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             @Param("jobType") Job.JobType jobType,
             @Param("workMode") String workMode,
             @Param("employmentLevel") String employmentLevel,
+            @Param("category") String category,
             Pageable pageable
     );
+
     // ================= ADMIN — MODERATION =================
     Page<Job> findByStatusOrderByCreatedAtDesc(
             Job.JobStatus status,

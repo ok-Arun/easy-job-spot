@@ -61,14 +61,15 @@ public class JobService {
 
         Page<Job> jobs;
 
-        boolean hasAdvancedFilters =
+        boolean hasFilters =
                 (title != null && !title.isBlank()) ||
                         (location != null && !location.isBlank()) ||
                         jobType != null ||
                         (workMode != null && !workMode.isBlank()) ||
-                        (employmentLevel != null && !employmentLevel.isBlank());
+                        (employmentLevel != null && !employmentLevel.isBlank()) ||
+                        (category != null && !category.isBlank());
 
-        if (hasAdvancedFilters) {
+        if (hasFilters) {
 
             jobs = jobRepository.filterJobs(
                     Job.JobStatus.ACTIVE,
@@ -77,6 +78,7 @@ public class JobService {
                     jobType,
                     (workMode != null && !workMode.isBlank()) ? workMode.trim() : null,
                     (employmentLevel != null && !employmentLevel.isBlank()) ? employmentLevel.trim() : null,
+                    (category != null && !category.isBlank()) ? category.trim() : null,
                     pageable
             );
         }
@@ -86,15 +88,6 @@ public class JobService {
             jobs = jobRepository.searchByStatus(
                     Job.JobStatus.ACTIVE,
                     search.trim(),
-                    pageable
-            );
-        }
-
-        else if (category != null && !category.trim().isEmpty()) {
-
-            jobs = jobRepository.findByStatusAndCategory(
-                    Job.JobStatus.ACTIVE,
-                    category.trim(),
                     pageable
             );
         }
