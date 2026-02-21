@@ -3,29 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Browse Jobs | EasyJobSpot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/jobs.css">
 
-    <!-- Font Awesome -->
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 <body>
 
-<!-- ================= SHARED NAVBAR ================= -->
+<!-- ================= NAVBAR ================= -->
 <header class="navbar">
-    <div class="logo">EasyJobSpot</div>
+    <a href="../index.html" class="logo">EasyJobSpot</a>
 
-    <!-- Logged OUT -->
-    <div id="auth-actions" class="nav-actions hidden">
-        <a href="login.html">Login</a>
-        <a href="register.html" class="btn-primary">Register</a>
-    </div>
-
-    <!-- Logged IN -->
-    <div id="user-actions" class="user-actions hidden">
+    <div class="user-actions">
         <div class="profile-box">
             <span id="navUserName" class="nav-username"></span>
             <i id="profileIcon" class="fa-solid fa-user profile-icon"></i>
@@ -39,18 +30,118 @@
     </div>
 </header>
 
-<!-- ================= JOB LIST ================= -->
-<section class="section">
-    <h2>Available Jobs</h2>
+<!-- ================= JOB PAGE ================= -->
+<section class="jobs-page">
 
-    <!-- Active Filter Label -->
-    <p id="activeFilter"></p>
+    <!-- ================= SEARCH BAR ================= -->
+    <div class="jobs-search">
+        <input id="searchTitle" type="text" placeholder="Job title or keyword">
+        <input id="searchLocation" type="text" placeholder="City, State or Remote">
 
-    <!-- Jobs Grid -->
-    <div id="jobList" class="jobs-grid"></div>
+        <button class="search-btn">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Jobs
+        </button>
+    </div>
+
+    <div class="jobs-layout">
+
+        <!-- ================= FILTER SIDEBAR ================= -->
+        <aside class="jobs-filters">
+
+            <h4>Filters</h4>
+
+            <!-- Job Type -->
+            <div class="filter-group">
+                <p>Job Type</p>
+
+                <label>
+                    <input type="checkbox" name="jobType" value="FULL_TIME">
+                    Full-time
+                </label>
+
+                <label>
+                    <input type="checkbox" name="jobType" value="PART_TIME">
+                    Part-time
+                </label>
+
+                <label>
+                    <input type="checkbox" name="jobType" value="CONTRACT">
+                    Contract
+                </label>
+
+                <label>
+                    <input type="checkbox" name="jobType" value="INTERNSHIP">
+                    Internship
+                </label>
+            </div>
+
+            <!-- Work Mode -->
+            <div class="filter-group">
+                <p>Work Mode</p>
+
+                <label>
+                    <input type="checkbox" name="workMode" value="Remote">
+                    Remote
+                </label>
+
+                <label>
+                    <input type="checkbox" name="workMode" value="Hybrid">
+                    Hybrid
+                </label>
+
+                <label>
+                    <input type="checkbox" name="workMode" value="On-site">
+                    On-site
+                </label>
+            </div>
+
+            <!-- Employment Level (REAL EXPERIENCE FILTER) -->
+            <div class="filter-group">
+                <p>Employment Level</p>
+
+                <label>
+                    <input type="checkbox" name="employmentLevel" value="Fresher">
+                    Fresher
+                </label>
+
+                <label>
+                    <input type="checkbox" name="employmentLevel" value="Entry Level">
+                    Entry Level
+                </label>
+
+                <label>
+                    <input type="checkbox" name="employmentLevel" value="Mid Level">
+                    Mid Level
+                </label>
+
+                <label>
+                    <input type="checkbox" name="employmentLevel" value="Senior Level">
+                    Senior Level
+                </label>
+
+                <label>
+                    <input type="checkbox" name="employmentLevel" value="Lead / Manager">
+                    Lead / Manager
+                </label>
+            </div>
+
+        </aside>
+
+        <!-- ================= JOB RESULTS ================= -->
+        <div class="jobs-results">
+
+            <div class="results-header"></div>
+
+            <div id="jobList"></div>
+
+            <div class="pagination"></div>
+
+        </div>
+
+    </div>
+
 </section>
 
-<!-- ================= SCRIPTS ================= -->
 <script src="../js/config.js"></script>
 <script src="../js/auth-util.js"></script>
 <script src="../js/navbar.js"></script>

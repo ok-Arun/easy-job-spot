@@ -1,0 +1,310 @@
+/* ================= BASE ================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f2f6fc;
+    color: #1f2937;
+}
+
+/* ================= WHITE NAVBAR ================= */
+
+.navbar {
+    height: 64px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #111827;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.profile-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.nav-username {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-icon {
+    color: #374151;
+    font-size: 16px;
+}
+
+.profile-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    min-width: 200px;
+    overflow: hidden;
+}
+
+.profile-menu a,
+.profile-menu button {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1f2937;
+    font-size: 14px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+    background: #f3f4f6;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= PAGE ================= */
+
+.jobs-page {
+    padding: 40px 40px 60px 40px; /* FULL WIDTH */
+}
+
+/* ================= SEARCH ================= */
+
+.jobs-search {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 30px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.jobs-search input {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.jobs-search input:focus {
+    outline: none;
+    border-color: #1f6fd9;
+}
+
+.search-btn {
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    background: #1f6fd9;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.search-btn:hover {
+    background: #1559b7;
+}
+
+/* ================= LAYOUT ================= */
+
+.jobs-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+}
+
+/* ================= FILTER SIDEBAR ================= */
+
+.jobs-filters {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    height: fit-content;
+}
+
+.jobs-filters h4 {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.filter-group {
+    margin-bottom: 22px;
+}
+
+.filter-group p {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+/* ================= REMOVE DISTURBING HEADER ================= */
+
+.results-header {
+    display: none;
+}
+
+/* ================= JOB GRID (2 COLUMNS) ================= */
+
+#jobList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* ================= JOB CARD ================= */
+
+.job-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 240px; /* equal height look */
+    transition: 0.2s ease;
+}
+
+.job-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.job-card h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.job-meta {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 8px 0 12px 0;
+}
+
+.job-card p {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+/* Footer */
+
+.job-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.posted-time {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* ================= APPLY BUTTON ================= */
+
+.apply-btn {
+    padding: 8px 16px;
+    background: #1f6fd9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.apply-btn:hover {
+    background: #1559b7;
+}
+
+.apply-btn.applied {
+    background: #16a34a;
+    cursor: default;
+}
+
+.apply-btn.applied:hover {
+    background: #16a34a;
+}
+
+/* ================= PAGINATION ================= */
+
+.pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.pagination button.active {
+    background: #1f6fd9;
+    color: white;
+    border-color: #1f6fd9;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1000px) {
+
+    .jobs-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #jobList {
+        grid-template-columns: 1fr;
+    }
+
+    .jobs-search {
+        flex-direction: column;
+    }
+}

@@ -2,65 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Seeker Profile</title>
     <link rel="stylesheet" href="../css/profile.css">
 </head>
 <body>
 
-<div class="profile-wrapper">
-    <div class="profile-card">
+<div class="profile-container">
 
-        <!-- Header with Back -->
-        <div class="profile-header">
-            <button type="button" class="back-btn" onclick="goBack()">
-                ← Back
-            </button>
-            <h2>Job Seeker Profile</h2>
+    <div class="profile-header">
+        <button type="button" class="back-btn" onclick="goBack()">← Back</button>
+        <h1>Job Seeker Profile</h1>
+    </div>
+
+    <form id="jobSeekerForm" class="profile-card">
+
+        <!-- PERSONAL INFO -->
+        <section class="form-section">
+            <h2>Personal Information</h2>
+            <div class="form-grid">
+                <input type="text" id="firstName" placeholder="First Name *" required>
+                <input type="text" id="lastName" placeholder="Last Name *" required>
+                <input type="text" id="phone" placeholder="Phone Number *" required>
+                <input type="text" id="location" placeholder="Current Location *" required>
+            </div>
+        </section>
+
+        <!-- PROFESSIONAL INFO -->
+        <section class="form-section">
+            <h2>Professional Details</h2>
+            <div class="form-grid">
+                <textarea id="skills" placeholder="Skills (comma separated) *" required></textarea>
+                <input type="text" id="education" placeholder="Education *" required>
+                <input type="text" id="experience" placeholder="Experience *" required>
+                <input type="text" id="currentJobTitle" placeholder="Current Job Title *" required>
+                <input type="text" id="preferredJobType" placeholder="Preferred Job Type *" required>
+                <input type="text" id="preferredLocation" placeholder="Preferred Location *" required>
+                <input type="text" id="noticePeriod" placeholder="Notice Period *" required>
+            </div>
+        </section>
+
+        <!-- LINKS -->
+        <section class="form-section">
+            <h2>Professional Links</h2>
+            <div class="form-grid">
+                <input type="url" id="resumeUrl" placeholder="Resume URL *" required>
+                <input type="url" id="linkedinUrl" placeholder="LinkedIn Profile URL *" required>
+                <input type="url" id="portfolioUrl" placeholder="Portfolio URL *" required>
+            </div>
+        </section>
+
+        <div id="message" class="message-bar"></div>
+
+        <div class="form-actions">
+            <button type="submit" class="save-btn">Save Profile</button>
         </div>
 
-        <form id="jobSeekerForm">
+    </form>
 
-            <!-- ================= PERSONAL INFO ================= -->
-            <div class="form-section">
-                <h3>Personal Information</h3>
-                <div class="form-grid">
-                    <input type="text" id="firstName" placeholder="First Name *" required>
-                    <input type="text" id="lastName" placeholder="Last Name *" required>
-                    <input type="text" id="phone" placeholder="Phone Number *" required>
-                    <input type="text" id="location" placeholder="Current Location *" required>
-                </div>
-            </div>
-
-            <!-- ================= PROFESSIONAL INFO ================= -->
-            <div class="form-section">
-                <h3>Professional Details</h3>
-                <div class="form-grid">
-                    <textarea id="skills" placeholder="Skills (comma separated) *" required></textarea>
-                    <input type="text" id="education" placeholder="Education *" required>
-                    <input type="text" id="experience" placeholder="Experience *" required>
-                    <input type="text" id="currentJobTitle" placeholder="Current Job Title *" required>
-                    <input type="text" id="preferredJobType" placeholder="Preferred Job Type *" required>
-                    <input type="text" id="preferredLocation" placeholder="Preferred Location *" required>
-                    <input type="text" id="noticePeriod" placeholder="Notice Period *" required>
-                </div>
-            </div>
-
-            <!-- ================= LINKS ================= -->
-            <div class="form-section">
-                <h3>Professional Links</h3>
-                <div class="form-grid">
-                    <input type="url" id="resumeUrl" placeholder="Resume URL *" required>
-                    <input type="url" id="linkedinUrl" placeholder="LinkedIn Profile URL *" required>
-                    <input type="url" id="portfolioUrl" placeholder="Portfolio URL *" required>
-                </div>
-            </div>
-
-            <div id="message" class="message-bar"></div>
-
-            <button type="submit" class="save-btn">Save Profile</button>
-
-        </form>
-    </div>
 </div>
 
 <script>
@@ -71,5 +70,6 @@
 
 <script src="../js/config.js"></script>
 <script src="../js/job-seeker-profile.js"></script>
+
 </body>
 </html>

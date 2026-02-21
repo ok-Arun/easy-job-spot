@@ -1,0 +1,65 @@
+/* ===== Login-Specific Layout ===== */
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* Prevent scroll only on login */
+}
+
+/* Center wrapper unique to login */
+.auth-wrapper {
+    height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+/* Slightly larger login card */
+.auth-card {
+    width: 460px;
+    padding: 44px;
+    text-align: center;
+}
+
+/* Login heading weight override */
+.auth-card h2 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+/* Login subtitle spacing */
+.subtitle {
+    margin-bottom: 30px;
+}
+
+/* Input spacing adjustment for login */
+input {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* ================= MOBILE (Login Specific Only) ================= */
+
+@media (max-width: 768px) {
+
+    .auth-wrapper {
+        align-items: flex-start;
+        padding: 0;
+        height: 100vh;
+    }
+
+    .auth-card {
+        margin-top: 100px;
+        text-align: left;
+    }
+
+    .auth-card h2 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .subtitle {
+        margin-bottom: 48px;
+    }
+}

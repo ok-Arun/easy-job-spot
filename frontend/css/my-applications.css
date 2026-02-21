@@ -1,0 +1,273 @@
+/* ================= PAGE BASE ================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f4f6fb;
+}
+
+/* ================= SECTION ================= */
+
+.applications-section {
+    padding: 50px 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ================= CLICKABLE LOGO ================= */
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.logo:hover {
+    color: #1f6fd9;
+}
+
+.logo:active {
+    transform: scale(0.97);
+}
+/* ================= WHITE NAVBAR ================= */
+
+.navbar {
+    height: 64px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.nav-actions a {
+    color: #374151;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+}
+
+.nav-actions a:hover {
+    color: #1f6fd9;
+}
+
+.btn-primary {
+    background: #1f6fd9;
+    color: #ffffff !important;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.profile-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.nav-username {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-icon {
+    color: #374151;
+    font-size: 16px;
+}
+
+.profile-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    min-width: 180px;
+    overflow: hidden;
+}
+
+.profile-menu a,
+.profile-menu button {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1f2937;
+    font-size: 14px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+    background: #f3f4f6;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= PAGE HEADER ================= */
+
+.page-header h2 {
+    font-size: 28px;
+    margin-bottom: 6px;
+    color: #111827;
+}
+
+.subtext {
+    color: #6b7280;
+    margin-bottom: 35px;
+    font-size: 14px;
+}
+
+/* ================= LIST ================= */
+
+.applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ================= CARD ================= */
+
+.application-card {
+    background: #ffffff;
+    padding: 26px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: 0.2s ease;
+}
+
+.application-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= CARD HEADER ================= */
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.company {
+    margin: 8px 0 14px 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* ================= FOOTER ================= */
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.applied-date {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.applied-date i {
+    margin-right: 6px;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.status-badge {
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.status-badge.shortlisted {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ================= BUTTON ================= */
+
+.view-btn {
+    padding: 7px 15px;
+    border: none;
+    background: #1f6fd9;
+    color: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s ease;
+}
+
+.view-btn:hover {
+    background: #155ab6;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

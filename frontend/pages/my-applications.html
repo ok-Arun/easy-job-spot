@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>My Applications | EasyJobSpot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../css/styles.css">
+    <!-- Page Specific CSS -->
+    <link rel="stylesheet" href="../css/my-applications.css">
 
     <!-- Font Awesome -->
     <link
@@ -38,11 +40,44 @@
 </header>
 
 <!-- ================= APPLICATIONS ================= -->
-<section class="section">
-    <h2>My Applications</h2>
+<section class="applications-section">
+    <div class="container">
 
-    <div id="applicationsContainer" class="jobs-grid">
-        Loading applications...
+        <div class="page-header">
+            <h2>My Applications</h2>
+            <p class="subtext">Track the status of all your job applications</p>
+        </div>
+
+        <div id="applicationsContainer" class="applications-list">
+
+            <!-- Example Card -->
+            <div class="application-card">
+                <div class="card-header">
+                    <div>
+                        <h3>Senior Java Backend Developer</h3>
+                        <p class="company">
+                            Nexora Innovations • Bangalore, India
+                        </p>
+                    </div>
+
+                    <span class="status-badge shortlisted">
+                        Shortlisted
+                    </span>
+                </div>
+
+                <div class="card-footer">
+                    <span class="applied-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        Applied on 20 Feb 2026
+                    </span>
+
+                    <button class="view-btn">
+                        View Job
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 

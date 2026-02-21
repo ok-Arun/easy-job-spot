@@ -1,7 +1,7 @@
 // home.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadJobs();
+    loadLatestJobs();
     setupCategoryNavigation();
     setupSearch();
 });
@@ -19,24 +19,22 @@ function setupSearch() {
         const title = titleInput.value.trim();
         const location = locationInput.value.trim();
 
-        // If nothing entered → go to all jobs
+        // If nothing entered → go to all jobs page
         if (!title && !location) {
             window.location.href = "pages/jobs.html";
             return;
         }
 
-        // Build correct query params for backend
-        let query = [];
+        const params = new URLSearchParams();
 
-        if (title) query.push(`title=${encodeURIComponent(title)}`);
-        if (location) query.push(`location=${encodeURIComponent(location)}`);
+        if (title) params.append("title", title);
+        if (location) params.append("location", location);
 
-        window.location.href = `pages/jobs.html?${query.join("&")}`;
+        window.location.href = `pages/jobs.html?${params.toString()}`;
     }
 
     searchBtn.addEventListener("click", performSearch);
 
-    // Enter key support
     titleInput.addEventListener("keypress", e => {
         if (e.key === "Enter") performSearch();
     });
@@ -55,16 +53,20 @@ function setupCategoryNavigation() {
         card.style.cursor = "pointer";
 
         card.addEventListener("click", () => {
-            const category = encodeURIComponent(card.textContent.trim());
-            window.location.href = `pages/jobs.html?category=${category}`;
+            const category = card.textContent.trim();
+
+            const params = new URLSearchParams();
+            params.append("category", category);
+
+            window.location.href = `pages/jobs.html?${params.toString()}`;
         });
     });
 }
 
 /* ================= LOAD LATEST JOBS ================= */
 
-function loadJobs() {
-    fetch(`${APP_CONFIG.API_BASE_URL}/jobs`)
+function loadLatestJobs() {
+    fetch(`${APP_CONFIG.API_BASE_URL}/jobs?page=0&size=6`)
         .then(res => {
             if (!res.ok) throw new Error("Failed to load jobs");
             return res.json();
@@ -92,7 +94,7 @@ function loadJobs() {
                     <div class="job-meta">
                         ${job.company} • ${job.location}
                     </div>
-                    <p>${job.description.substring(0, 120)}...</p>
+                    <p>${(job.description || "").substring(0, 120)}...</p>
                 `;
 
                 div.addEventListener("click", () => {

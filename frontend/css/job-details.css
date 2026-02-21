@@ -1,47 +1,209 @@
-/* Wrapper */
-.job-details-wrapper {
-    max-width: 720px;
-    margin: auto;
+/* ================= BASE ================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: #f2f6fc;
+    color: #1f2937;
 }
 
-/* Back button */
+/* ================= NAVBAR ================= */
+
+.navbar {
+    height: 64px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.nav-actions a {
+    color: #374151;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+}
+
+.nav-actions a:hover {
+    color: #1f6fd9;
+}
+
+.btn-primary {
+    background: #1f6fd9;
+    color: #ffffff !important;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.profile-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.nav-username {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-icon {
+    color: #374151;
+    font-size: 16px;
+}
+
+.profile-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    min-width: 200px;
+    overflow: hidden;
+}
+
+.profile-menu a,
+.profile-menu button {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1f2937;
+    font-size: 14px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+    background: #f3f4f6;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= PAGE SECTION ================= */
+
+.section {
+    padding: 40px;
+}
+
+.job-details-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ================= BACK BUTTON ================= */
+
 .back-btn {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     background: none;
     border: none;
     color: #2563eb;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
-/* Apply button (NO hover effect) */
+.back-btn:hover {
+    color: #1f6fd9;
+    transform: translateX(-3px);
+}
+
+/* ================= JOB CARD ================= */
+
+.job-card {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* ================= APPLY BUTTON ================= */
+
 .apply-btn {
-    margin-top: 12px;
-    background: #2563eb;
+    margin-top: 20px;
+    background: #1f6fd9;
     color: #ffffff;
     border: none;
-    padding: 10px 16px;
+    padding: 10px 18px;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
-/* Message box base */
+.apply-btn:hover {
+    background: #1559b7;
+}
+
+.apply-btn.applied {
+    background: #16a34a;
+    cursor: default;
+}
+
+.apply-btn.applied:hover {
+    background: #16a34a;
+}
+
+/* ================= MESSAGE BOX ================= */
+
 .message-box {
-    margin-top: 12px;
+    margin-top: 14px;
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 14px;
 }
 
-/* Success message */
 .message-box.success {
     background: #dcfce7;
     color: #166534;
 }
 
-/* Error message */
 .message-box.error {
     background: #fee2e2;
     color: #991b1b;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 0 20px;
+    }
+
+    .section {
+        padding: 24px;
+    }
+
+    .job-card {
+        padding: 24px;
+    }
 }
