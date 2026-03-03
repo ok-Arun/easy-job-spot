@@ -139,4 +139,29 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             @Param("providerId") UUID providerId,
             @Param("status") Job.JobStatus status
     );
+
+    // =========================================================
+// ADMIN — ALL JOBS WITH TOTAL APPLICANTS
+// =========================================================
+    @Query("""
+    SELECT
+        j.id,
+        j.title,
+        j.company,
+        j.location,
+        j.status,
+        j.createdAt,
+        COUNT(a.id)
+    FROM Job j
+    LEFT JOIN Application a ON a.job = j
+    WHERE (:status IS NULL OR j.status = :status)
+    GROUP BY
+        j.id, j.title, j.company,
+        j.location, j.status, j.createdAt
+    ORDER BY j.createdAt DESC
+""")
+    Page<Object[]> fetchAdminJobsWithApplicationCount(
+            @Param("status") Job.JobStatus status,
+            Pageable pageable
+    );
 }

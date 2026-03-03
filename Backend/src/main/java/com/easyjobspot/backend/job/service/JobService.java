@@ -419,30 +419,33 @@ public class JobService {
     @Transactional(readOnly = true)
     public Page<JobDTO> getAllJobsForAdmin(String status, int page, int size) {
 
-        Pageable pageable =
-                PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Job.JobStatus jobStatus = null;
 
-        Page<Job> jobs;
-
-        if (status == null || status.isBlank()) {
-            jobs = jobRepository.findAll(pageable);
-        } else {
-
-            Job.JobStatus jobStatus;
-
+        if (status != null && !status.isBlank()) {
             try {
                 jobStatus = Job.JobStatus.valueOf(status.toUpperCase());
             } catch (Exception e) {
                 throw new BadRequestException("Invalid job status");
             }
-
-            jobs = jobRepository.findByStatus(jobStatus, pageable);
         }
 
-        return jobs.map(jobMapper::toDTO);
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<Object[]> rows =
+                jobRepository.fetchAdminJobsWithApplicationCount(jobStatus, pageable);
+
+        return rows.map(r -> JobDTO.builder()
+                .id((UUID) r[0])
+                .title((String) r[1])
+                .company((String) r[2])
+                .location((String) r[3])
+                .status(((Job.JobStatus) r[4]).name())
+                .createdAt((LocalDateTime) r[5])
+                .totalApplicants((Long) r[6])
+                .build()
+        );
     }
-
-
 
     // ====================================================
     // ADMIN — VIEW PENDING JOBS

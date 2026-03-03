@@ -21,7 +21,6 @@ public class JobDTO {
     private String jobType;
     private String description;
 
-    // ✅ THIS FIXES "UNKNOWN"
     private String status;
 
     private LocalDateTime createdAt;
@@ -41,4 +40,7 @@ public class JobDTO {
 
     private String applicationType;
     private String applicationUrl;
+
+    // ✅ ADD THIS
+    private Long totalApplicants;
 }
