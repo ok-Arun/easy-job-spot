@@ -57,9 +57,9 @@ Result: **no privilege leakage, no hidden authority, no logic ambiguity.**
 * **JWT-based stateless authentication**
 * **Role-based authorization**
 
-  * `USER`
-  * `PROVIDER`
-  * `ADMIN`
+    * `USER`
+    * `PROVIDER`
+    * `ADMIN`
 * **Profile completion required** before privileged actions
 * **Provider approval mandatory** before job publishing
 * **Admin APIs isolated** under `/api/admin/**`
@@ -308,8 +308,209 @@ http://localhost:8081
 ```
 
 ---
+# 9.1 Development Data Seeding
 
-# 10. Production Strengths
+To improve developer experience and eliminate repetitive manual setup, the system includes a **data seeding mechanism** for development environments.
+
+### Behavior
+
+When the application starts in the `dev` profile:
+
+- Predefined **job seekers**, **providers**, and **jobs** are automatically created
+- Providers are seeded in an **APPROVED state**
+- Jobs are created directly in **ACTIVE state** for immediate visibility
+- Profiles are marked as **completed** to allow full workflow testing
+
+### Purpose
+
+This allows:
+
+- Immediate testing of job browsing and applications
+- Admin dashboard to display meaningful data
+- Faster iteration without manual setup
+
+### Important
+
+- Seeding runs **only in development (`dev`) profile**
+- Production environment strictly follows:
+    - Job approval required by admin
+    - Provider approval required before job posting
+
+This ensures **no compromise in production security or workflow integrity**.
+---# 9.2 Demo Accounts
+
+EasyJobSpot ships with pre-seeded demo data to simplify testing and showcase complete business workflows.
+
+All demo accounts use:
+
+```text
+Password: 12345678
+```
+
+---
+
+## Administrator Account
+
+The administrator has oversight authority over the platform.
+
+| Role  | Email                                                 |
+| ----- | ----------------------------------------------------- |
+| ADMIN | [admin@easyjobspot.com](mailto:admin@easyjobspot.com) |
+
+### Admin Capabilities
+
+Admins can:
+
+* Approve providers
+* Reject providers
+* Approve jobs
+* Reject jobs
+* Close jobs
+* View all applications
+* Access dashboard statistics
+* View platform trends
+
+Admins cannot:
+
+* Apply to jobs
+* Shortlist candidates
+* Hire candidates
+* Participate in hiring decisions
+
+---
+
+## Provider Accounts
+
+These providers are already approved and have completed profiles.
+
+| Company         | Email                                                                   |
+| --------------- | ----------------------------------------------------------------------- |
+| Google India    | [google.demo@easyjobspot.com](mailto:google.demo@easyjobspot.com)       |
+| Microsoft India | [microsoft.demo@easyjobspot.com](mailto:microsoft.demo@easyjobspot.com) |
+| Amazon India    | [amazon.demo@easyjobspot.com](mailto:amazon.demo@easyjobspot.com)       |
+
+### Provider Capabilities
+
+Providers can:
+
+* Create jobs
+* Update their own jobs
+* Close and reopen their own jobs
+* View applications for their jobs
+* Shortlist candidates
+* Reject candidates
+* Hire candidates
+
+Providers cannot:
+
+* Approve jobs
+* Approve providers
+* Manage jobs owned by other providers
+
+---
+
+## Job Seeker Accounts
+
+These accounts have completed profiles and are ready for testing.
+
+| Candidate  | Email                                                           |
+| ---------- | --------------------------------------------------------------- |
+| Arun Demo  | [arun.demo@easyjobspot.com](mailto:arun.demo@easyjobspot.com)   |
+| Rahul Demo | [rahul.demo@easyjobspot.com](mailto:rahul.demo@easyjobspot.com) |
+| Priya Demo | [priya.demo@easyjobspot.com](mailto:priya.demo@easyjobspot.com) |
+| Neha Demo  | [neha.demo@easyjobspot.com](mailto:neha.demo@easyjobspot.com)   |
+| Amit Demo  | [amit.demo@easyjobspot.com](mailto:amit.demo@easyjobspot.com)   |
+
+### Job Seeker Capabilities
+
+Users can:
+
+* Browse active jobs
+* Apply to jobs
+* View their own applications
+
+Users cannot:
+
+* Create jobs
+* Access other users' applications
+* Perform provider actions
+* Perform admin actions
+
+---
+
+## Recommended Demo Walkthrough
+
+### 1. Login as Admin
+
+```text
+Email:
+admin@easyjobspot.com
+
+Password:
+12345678
+```
+
+Review:
+
+* Pending providers
+* Pending jobs
+* Dashboard statistics
+* Platform trends
+
+---
+
+### 2. Login as Provider
+
+```text
+Email:
+google.demo@easyjobspot.com
+
+Password:
+12345678
+```
+
+Review:
+
+* Provider jobs
+* Applications received
+* Candidate statuses
+
+---
+
+### 3. Login as Job Seeker
+
+```text
+Email:
+arun.demo@easyjobspot.com
+
+Password:
+12345678
+```
+
+Review:
+
+* Active jobs
+* My applications
+* Application statuses
+
+---
+
+## Seeded Application States
+
+The demo dataset includes candidates in various stages:
+
+```text
+APPLIED
+SHORTLISTED
+HIRED
+REJECTED
+```
+
+This allows the complete platform workflow to be demonstrated immediately without manual data creation.
+
+---
+
+# 10. Production Strengths[README.md](../README.md)
 
 * Clear **domain ownership boundaries**
 * Strict **approval-driven workflows**

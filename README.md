@@ -185,6 +185,160 @@ const API_BASE_URL = "http://localhost:8081";
 
 ---
 
+# 🎭 6.1 Demo Accounts
+
+EasyJobSpot includes pre-seeded demo data to simplify testing and showcase the complete hiring workflow.
+
+All demo accounts use:
+
+```text
+Password: 12345678
+```
+
+---
+
+## 🔴 Administrator
+
+The administrator controls platform governance and approvals.
+
+| Role  | Email                                                 |
+| ----- | ----------------------------------------------------- |
+| ADMIN | [admin@easyjobspot.com](mailto:admin@easyjobspot.com) |
+
+### Admin Responsibilities
+
+* Approve or reject providers
+* Approve or reject jobs
+* Close jobs
+* View applications across the platform
+* Access dashboard statistics and trends
+
+---
+
+## 🟣 Providers
+
+Approved provider accounts are automatically available.
+
+| Company         | Email                                                                   |
+| --------------- | ----------------------------------------------------------------------- |
+| Google India    | [google.demo@easyjobspot.com](mailto:google.demo@easyjobspot.com)       |
+| Microsoft India | [microsoft.demo@easyjobspot.com](mailto:microsoft.demo@easyjobspot.com) |
+| Amazon India    | [amazon.demo@easyjobspot.com](mailto:amazon.demo@easyjobspot.com)       |
+
+### Provider Capabilities
+
+* Create jobs
+* Update owned jobs
+* Close and reopen jobs
+* View applicants
+* Shortlist candidates
+* Reject candidates
+* Hire candidates
+
+---
+
+## 🔵 Job Seekers
+
+Completed job seeker profiles are also seeded.
+
+| Candidate  | Email                                                           |
+| ---------- | --------------------------------------------------------------- |
+| Arun Demo  | [arun.demo@easyjobspot.com](mailto:arun.demo@easyjobspot.com)   |
+| Rahul Demo | [rahul.demo@easyjobspot.com](mailto:rahul.demo@easyjobspot.com) |
+| Priya Demo | [priya.demo@easyjobspot.com](mailto:priya.demo@easyjobspot.com) |
+| Neha Demo  | [neha.demo@easyjobspot.com](mailto:neha.demo@easyjobspot.com)   |
+| Amit Demo  | [amit.demo@easyjobspot.com](mailto:amit.demo@easyjobspot.com)   |
+
+### Job Seeker Capabilities
+
+* Browse active jobs
+* Apply to jobs
+* Track application status
+* View personal applications
+
+---
+
+# 🔄 Recommended Demo Flow
+
+### 1. Login as Admin
+
+```text
+Email: admin@easyjobspot.com
+Password: 12345678
+```
+
+Review:
+
+* Pending providers
+* Pending jobs
+* Dashboard statistics
+* Platform trends
+
+---
+
+### 2. Login as Provider
+
+```text
+Email: google.demo@easyjobspot.com
+Password: 12345678
+```
+
+Review:
+
+* Provider jobs
+* Applications received
+* Candidate statuses
+
+---
+
+### 3. Login as Job Seeker
+
+```text
+Email: arun.demo@easyjobspot.com
+Password: 12345678
+```
+
+Browse active jobs and apply.
+
+---
+
+### 4. Switch Back to Provider
+
+```text
+Email: google.demo@easyjobspot.com
+Password: 12345678
+```
+
+Perform hiring actions:
+
+* Shortlist
+* Reject
+* Hire
+
+---
+
+## 📊 Seeded Data
+
+The development environment automatically populates:
+
+* Approved providers
+* Completed job seeker profiles
+* Active jobs
+* Applications
+
+Application states include:
+
+```text
+APPLIED
+SHORTLISTED
+HIRED
+REJECTED
+```
+
+This enables immediate exploration of the entire platform without manual setup.
+
+---
+
 # 📜 7. Core Business Rules
 
 * Jobs visible **only after admin approval**

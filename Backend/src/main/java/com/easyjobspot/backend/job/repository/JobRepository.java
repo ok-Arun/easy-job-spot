@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -18,7 +19,6 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     // ================= PUBLIC — ONLY ACTIVE JOBS =================
     Page<Job> findByStatus(Job.JobStatus status, Pageable pageable);
 
-    // You can keep this (not harmful), but it won't be used anymore
     Page<Job> findByStatusAndCategory(
             Job.JobStatus status,
             String category,
@@ -41,9 +41,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // =========================================================
-    // ✅ FULL DYNAMIC FILTER (NOW WITH CATEGORY SUPPORT)
-    // =========================================================
+    // ================= FULL DYNAMIC FILTER =================
     @Query("""
         SELECT j FROM Job j
         WHERE j.status = :status
@@ -86,6 +84,9 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             UUID createdBy
     );
 
+    // ================= DEMO DATA SUPPORT =================
+    List<Job> findByTitleIgnoreCase(String title);
+
     // ================= DASHBOARD — GLOBAL =================
     long countByStatus(Job.JobStatus status);
 
@@ -112,9 +113,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
-    // =========================================================
-    // PROVIDER JOBS WITH APPLICATION COUNT
-    // =========================================================
+    // ================= PROVIDER JOBS WITH APPLICATION COUNT =================
     @Query("""
         SELECT
             j.id,
@@ -140,9 +139,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             @Param("status") Job.JobStatus status
     );
 
-    // =========================================================
-// ADMIN — ALL JOBS WITH TOTAL APPLICANTS
-// =========================================================
+    // ================= ADMIN — ALL JOBS WITH TOTAL APPLICANTS =================
     @Query("""
     SELECT
         j.id,
@@ -159,9 +156,10 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
         j.id, j.title, j.company,
         j.location, j.status, j.createdAt
     ORDER BY j.createdAt DESC
-""")
+    """)
     Page<Object[]> fetchAdminJobsWithApplicationCount(
             @Param("status") Job.JobStatus status,
             Pageable pageable
     );
 }
+
