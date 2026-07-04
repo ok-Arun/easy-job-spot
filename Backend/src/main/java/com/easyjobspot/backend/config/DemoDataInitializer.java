@@ -14,14 +14,15 @@ import com.easyjobspot.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@Configuration
 @RequiredArgsConstructor
-public class DemoDataInitializer implements CommandLineRunner {
+public class DemoDataInitializer {
 
     private static final String DEFAULT_PASSWORD = "12345678";
 
@@ -42,20 +43,21 @@ public class DemoDataInitializer implements CommandLineRunner {
     private final ApplicationRepository applicationRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public void run(String... args) {
+    @Bean
+    public CommandLineRunner seedDemoData() {
+        return args -> {
 
-        seedProviders();
+            System.out.println("========== DEMO DATA INITIALIZER STARTED ==========");
 
-        seedJobSeekers();
+            seedProviders();
+            seedJobSeekers();
+            seedProviderProfiles();
+            seedJobSeekerProfiles();
+            seedJobs();
+            seedApplications();
 
-        seedProviderProfiles();
-
-        seedJobSeekerProfiles();
-
-        seedJobs();
-
-        seedApplications();
+            System.out.println("========== DEMO DATA INITIALIZER FINISHED ==========");
+        };
     }
 
     /**
@@ -567,5 +569,4 @@ public class DemoDataInitializer implements CommandLineRunner {
     }
 
 }
-
 
