@@ -1,4 +1,4 @@
 // config.js
 window.APP_CONFIG = {
-    API_BASE_URL: "http://localhost:8080/api"
+    API_BASE_URL: "easy-job-spot-live-production.up.railway.app"
 };
