@@ -6,7 +6,7 @@ It combines:
 
 * ⚙️ **Spring Boot (Java 17)** backend
 * 🎨 **Vanilla HTML/CSS/JS** frontend
-* 🐘 **PostgreSQL** database
+* 🐘 **MySQL** database
 * 🔐 **JWT-based stateless security**
 
 Designed around **strict authorization, auditable workflows, and scalable architecture**.
@@ -20,7 +20,7 @@ Frontend (Static UI)
         ↓ REST API
 Spring Boot Backend
         ↓
-PostgreSQL Database
+MySQL Database
 ```
 
 ### 🎯 Core Design Goals
@@ -53,7 +53,7 @@ easyjobspot/
 * Spring Boot
 * Spring Security (JWT, stateless)
 * Spring Data JPA / Hibernate
-* PostgreSQL
+* MySQL
 * Maven
 
 ## 🎨 Frontend
@@ -139,7 +139,7 @@ easyjobspot/
 ### Requirements
 
 * Java **17+**
-* PostgreSQL **running**
+* MySQL **running**
 * Maven **installed**
 
 ```bash
@@ -395,7 +395,7 @@ GET /api/admin/dashboard/stats
 ## ⚙️ Backend
 
 * Docker (recommended)
-* VPS with Java & PostgreSQL
+* VPS with Java & MySQL
 * AWS / GCP / Azure
 
 ## 🎨 Frontend (Static Hosting)
