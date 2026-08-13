@@ -43,9 +43,16 @@ public class DemoDataInitializer {
     private final ApplicationRepository applicationRepository;
     private final PasswordEncoder passwordEncoder;
 
+   @Value("${app.demo-data.enabled:false}")
+    private boolean demoDataEnabled;
+
     @Bean
     public CommandLineRunner seedDemoData() {
         return args -> {
+
+            if (!demoDataEnabled) {
+                return;
+            }
 
             System.out.println("========== DEMO DATA INITIALIZER STARTED ==========");
 
@@ -59,7 +66,6 @@ public class DemoDataInitializer {
             System.out.println("========== DEMO DATA INITIALIZER FINISHED ==========");
         };
     }
-
     /**
      * Demo providers
      */
@@ -569,4 +575,3 @@ public class DemoDataInitializer {
     }
 
 }
-
